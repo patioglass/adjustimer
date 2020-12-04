@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<head>
+    <title>AdjusTimer(アドジャスタイマー)</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0 auto;
+            text-align: center;
+        }
+        #remaining_time_wrapper{
+            margin-top: 60px;
+            font-size: 50px;
+        }
+        #video__title {
+            font-size: 70%;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script src="adjustimer.js"></script>
+</head>
+<body>
+    <div id="wrapper">
+        <h1>AdjusTimer(アジャストタイマー)</h1>
+        <p>Amazon Primeの同時視聴時間表示拡張</p>
+        <p><input id="switch_background" type="checkbox">グリーンバックにする</p>
+        <div id="alert">現在、AmazonPrimeの情報は取得できていません。再生ボタンを押すことで読み込みが開始されます。</div>
+        <div id="remaining_time_wrapper">
+            <div id="video__title"></div>
+            <div id="video__time">
+                <span id="video__time_current"></span>
+                /
+                <span id="video__time_remaining"></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

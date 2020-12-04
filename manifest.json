@@ -1,0 +1,22 @@
+{
+    "name": "AdjusTimer",
+    "manifest_version": 2,
+    "version": "1.0",
+    "description": "",
+    "content_scripts": [
+        {
+            "matches": [ "https://www.amazon.co.jp/gp/video/detail/*" ],
+            "run_at": "document_end",
+            "js": ["content_scripts.js"]
+        }
+    ],
+    "background":{
+        "scripts":[
+          "event.js"
+        ],
+        "persistent": false
+    },
+    "permissions": [
+        "contextMenus"
+    ]
+}
