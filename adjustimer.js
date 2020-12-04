@@ -4,7 +4,7 @@ window.onload = () => {
         const wrapper = document.getElementById("wrapper");
         if (e.target.checked) {
             // グリーンバック
-            wrapper.style.backgroundColor = "green";
+            wrapper.style.backgroundColor = "lime";
         } else {
             wrapper.style.backgroundColor = "white";
         }
