@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>AdjusTimer(アドジャスタイマー)</title>
+    <title>AdjusTimer</title>
     <meta charset="utf-8">
     <style>
         body {
@@ -23,17 +23,18 @@
 </head>
 <body>
     <div id="wrapper">
-        <h1>AdjusTimer(アジャストタイマー)</h1>
-        <p>Amazon Primeの同時視聴時間表示拡張</p>
+        <h1>AdjusTimer(アジャスタイマー)</h1>
+        <p>バグ報告・要望などはTweitter/Gメール経由でよろしくお願いします。</p>
+        <a href="https://twitter.com/patioglass" target="_blank">@patioglass</a>/<span>patiopatimon@gmail.com</span>
         <p><input id="switch_background" type="checkbox">グリーンバックにする</p>
-        <div id="alert">現在、AmazonPrimeの情報は取得できていません。再生ボタンを押すことで読み込みが開始されます。</div>
         <div id="remaining_time_wrapper">
-            <div id="video__title"></div>
+            <div id="video__title">(ここにタイトルが入ります)</div>
             <div id="video__time">
-                <span id="video__time_current"></span>
+                <span id="video__time_current">00:00:00</span>
                 <!-- <span id="video__time_remaining"></span> -->
             </div>
         </div>
+        <div id="alert">現在、AmazonPrimeの情報は取得できていません。再生ボタンを押すことで読み込みが開始されます。</div>
     </div>
 </body>
 </html>

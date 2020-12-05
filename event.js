@@ -4,7 +4,7 @@ chrome.runtime.onInstalled.addListener(function(){
     const parent_menu = chrome.contextMenus.create({
       type: "normal",
       id: "parent",
-      title: "AdjusTimer(アドジャスタイマー)"
+      title: "AdjusTimer(アジャスタイマー)"
     });
 });
 chrome.contextMenus.onClicked.addListener(function(item){
