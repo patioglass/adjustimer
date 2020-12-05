@@ -34,7 +34,7 @@ function startObserver(target) {
                     title: videoTitle,
                     remainingTime: record.target.nextElementSibling.textContent,
                     currentTime: record.target.textContent
-                }, (response) =>{console.log(response)});
+                }, (response) =>{});
             }
         })
     })
