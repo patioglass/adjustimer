@@ -3,21 +3,25 @@ chrome.runtime.sendMessage({
     name: "init",
 });
 window.onload = () => {
+    const urlCheck = setInterval(() => {
+        // Prime Video判定
+        const currentPage = document.querySelector(".av-retail-m-nav-text-logo").text;
+        if (currentPage && currentPage === 'Prime Video') {
+            Array.from(document.querySelectorAll("a"), (e) => {
+                e.addEventListener("click", () => {
+                    const watchVideo = setInterval(() => {
+                        target = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0];
+                        if (target) {
+                            clearInterval(watchVideo);
+                            startObserver(target);
+                        }
+                    }, 500);
+                })
+            })
+            clearInterval(urlCheck);
+        }
+    }, 1000);
 
-    // 「今すぐ観る」ボタン
-    const playButton = document.getElementsByClassName("dv-dp-node-playback");
-    if (playButton[0]) {
-        // タイトル
-        playButton[0].addEventListener("click", () => {
-            const watchVideo = setInterval(() => {
-                target = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0];
-                if (target) {
-                    clearInterval(watchVideo);
-                    startObserver(target);
-                }
-            }, 500);
-        })
-    }
 }
 
 function startObserver(target) {

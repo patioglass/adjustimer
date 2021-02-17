@@ -11,7 +11,7 @@ chrome.contextMenus.onClicked.addListener(function(item){
     adjusTimerWindow = window.open(
         "/adjustimer.html",
         "adjustimer",
-        "width=500, height=500"
+        "width=1000, height=700"
     );
 });
 
