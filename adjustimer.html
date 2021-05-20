@@ -8,16 +8,36 @@
             text-align: center;
         }
         #wrapper {
-            height: 500px;
+            padding: 30px;
             background-color: #ccc;
         }
-        #remaining_time_wrapper{
+        #remaining_time_wrapper {
+            display: none;
             margin-top: 60px;
             font-size: 50px;
             color: #77D5FF;
             font-weight: bold;
-            font-size: 70px;
             letter-spacing : 10px;
+        }
+        .button__sync {
+            margin-top: 60px;
+            font-size: 20px;
+            color: white;
+            width: 300px;
+            font-weight: bold;
+            background-color: rgb(88, 86, 85);
+            border: 1px solid white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 0 auto;
+            margin-top: 60px;
+        }
+        #button__get_video_info {
+            background-color: coral !important;
+            cursor: pointer;
+        }
+        #button__get_video_info:hover {
+            background-color: rgb(230, 61, 0) !important;
         }
         #video__title {
             font-size: 70%;
@@ -64,17 +84,23 @@
         <h1><img src="./img/icon48.png">AdjusTimer(アジャスタイマー)</h1>
         <p>バグ報告・要望などはTweitter/Gメール経由でよろしくお願いします。</p>
         <a href="https://twitter.com/patioglass" target="_blank">@patioglass</a>/<span>patiopatimon@gmail.com</span>
+
+        <br>
+        <br>
+
+        <div id="button__start">現在、情報は取得できていません。<br>対応ページ(Amazon Prime Video, Tver(一部動画のみ対応))の画面から起動しなおしてください</div>
+        <h2>現在ページ: <span id="current_page_name"><未対応のページ></span>です</h2>
         <div id="remaining_time_wrapper">
-            <div id="video__title" class="word-text-stroke">(ここにタイトルが入ります)</div>
+            <div id="video__title" class="word-text-stroke"></div>
             <div id="video__time">
                 <span id="video__time_current" class="word-text-stroke">00:00:00</span>
-                <!-- <span id="video__time_remaining"></span> -->
             </div>
         </div>
-        <div id="alert">現在、AmazonPrimeの情報は取得できていません。再生ボタンを押すことで読み込みが開始されます。</div>
     </div>
 
     <hr>
+    <div class="button__sync">情報を取得する</div>
+
     <div class="color-picker-wrapper">
         <p><input id="switch_border" type="checkbox" checked="checked">縁取り</p>
         <p><select name="文字フォント選択">
@@ -92,19 +118,19 @@
                 </div>
             </div>
         </div>
-        <div class="entry">
-            <div class="innr">
-                <div class="another">
-                    <div class="background-color-picker"></div>
-                    <span>背景色の変更</span>
-                </div>
-            </div>
-        </div>
         <div class="entry" id="border-wrapper">
             <div class="innr">
                 <div class="another">
                     <div class="border-color-picker"></div>
                     <span>文字縁取り色の変更</span>
+                </div>
+            </div>
+        </div>
+        <div class="entry">
+            <div class="innr">
+                <div class="another">
+                    <div class="background-color-picker"></div>
+                    <span>背景色の変更</span>
                 </div>
             </div>
         </div>
