@@ -13,7 +13,7 @@ chrome.contextMenus.onClicked.addListener(function(item){
     adjusTimerWindow = window.open(
         "/adjustimer.html",
         "adjustimer",
-        "width=1000, height=700"
+        "width=1000, height=1000"
     );
     if (connectionPort) {
         // adjusTimer起動をcontent_scriptに送信
