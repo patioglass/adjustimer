@@ -12,7 +12,6 @@
             background-color: #ccc;
         }
         #remaining_time_wrapper {
-            display: none;
             margin-top: 60px;
             font-size: 50px;
             color: #77D5FF;
@@ -20,7 +19,6 @@
             letter-spacing : 10px;
         }
         .button__sync {
-            margin-top: 60px;
             font-size: 20px;
             color: white;
             width: 300px;
@@ -30,7 +28,6 @@
             border-radius: 8px;
             padding: 20px;
             margin: 0 auto;
-            margin-top: 60px;
         }
         #button__get_video_info {
             background-color: coral !important;
@@ -80,25 +77,18 @@
     <script src="adjustimer.js"></script>
 </head>
 <body>
-    <div id="wrapper">
-        <h1><img src="./img/icon48.png">AdjusTimer(アジャスタイマー)</h1>
-        <p>バグ報告・要望などはTweitter/Gメール経由でよろしくお願いします。</p>
-        <a href="https://twitter.com/patioglass" target="_blank">@patioglass</a>/<span>patiopatimon@gmail.com</span>
+    <h1><img src="./img/icon48.png">AdjusTimer(アジャスタイマー)</h1>
+    <h2>最終更新:2021/08/29(Ver. 1.4)</h2>
+    <p>バグ報告・要望などはTweitter/Gメール経由でよろしくお願いします。</p>
+    <a href="https://twitter.com/patioglass" target="_blank">@patioglass</a>
+    <br>
+    <span>email: patiopatimon@gmail.com</span>
+    <br>
+    <br>
 
-        <br>
-        <br>
+    <div id="button__start">対応ページ(Amazon Prime Video / ウォッチパーティ)の画面から起動しなおしてください</div>
+    <h2>現在ページ: <span id="current_page_name"><未対応のページ></span>です</h2>
 
-        <div id="button__start">現在、情報は取得できていません。<br>対応ページ(Amazon Prime Video, Tver(一部動画のみ対応))の画面から起動しなおしてください</div>
-        <h2>現在ページ: <span id="current_page_name"><未対応のページ></span>です</h2>
-        <div id="remaining_time_wrapper">
-            <div id="video__title" class="word-text-stroke"></div>
-            <div id="video__time">
-                <span id="video__time_current" class="word-text-stroke">00:00:00</span>
-            </div>
-        </div>
-    </div>
-
-    <hr>
     <div class="button__sync">情報を取得する</div>
 
     <div class="color-picker-wrapper">
@@ -132,6 +122,15 @@
                     <div class="background-color-picker"></div>
                     <span>背景色の変更</span>
                 </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div id="wrapper">
+        <div id="remaining_time_wrapper">
+            <div id="video__title" class="word-text-stroke">(未取得)</div>
+            <div id="video__time">
+                <span id="video__time_current" class="word-text-stroke">00:00:00</span>
             </div>
         </div>
     </div>

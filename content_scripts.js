@@ -1,5 +1,6 @@
 const PAGE_TYPE_NAMES = {
-    "PrimeVideo": "PrimeVideo",
+    "WatchParty": "Prime Video: ウォッチパーティ",
+    "PrimeVideo": "Prime Video",
     "Tver": "Tver"
 }
 let target;
@@ -37,6 +38,7 @@ window.onload = () => {
             });
             switch(response.pageType) {
                 case PAGE_TYPE_NAMES["PrimeVideo"]:
+                case PAGE_TYPE_NAMES["WatchParty"]:
                     watchVideo = setInterval(() => {
                         const target = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0];
                         if (target) {
@@ -95,13 +97,23 @@ function urlCheck() {
     if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/*/)) {
         const urlCheckPrime = setInterval(() => {
             // Prime Video判定
-            const currentPage = document.querySelector(".av-retail-m-nav-text-logo").text;
-            if (isAdjusTimerPage && currentPage && currentPage === "Prime Video") {
+            const primeVideoPage = document.querySelector(".av-retail-m-nav-text-logo");
+            if (primeVideoPage) {
+                if (primeVideoPage.text === "Prime Video") {
+                    currentPage = primeVideoPage.text;
+                }
+            } else {
+                // watchParty判定
+                if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/gp\/video\/watchparty\/*/)) {
+                    currentPage = document.getElementsByTagName("title")[0].innerText; // Prime Video: ウォッチパーティ
+                }
+            }
+            if (isAdjusTimerPage && currentPage && (currentPage === PAGE_TYPE_NAMES["WatchParty"] || currentPage === PAGE_TYPE_NAMES["PrimeVideo"])) {
                 // Prime判定ができたことをeventに伝える
                 port.postMessage({
                     name: "update",
                     type: "init_page",
-                    pageType: PAGE_TYPE_NAMES["PrimeVideo"]
+                    pageType: currentPage
                 });
                 clearInterval(urlCheckPrime);
             }
@@ -133,11 +145,22 @@ function getVideoTitle(pageType) {
                 : "";
             videoTitle = document.getElementsByClassName("av-detail-section")[0].querySelector("[data-automation-id]").textContent + " " + season;
             break;
+        case PAGE_TYPE_NAMES["WatchParty"]:
+            if (document.querySelector("._3KdeRQ")) {
+                videoTitle = document.querySelector("._3KdeRQ").textContent;
+            } else {
+                videoTitle = document.querySelector(".atvwebplayersdk-title-text").textContent;
+            }
+            break;
         case PAGE_TYPE_NAMES["Tver"]:
             videoTitle = document.querySelector(".vjs-dock-title").textContent;
             break;
         default:
             break;
+    }
+
+    if (!videoTitle) {
+        videoTitle = "正しく取得できませんでした、再生前の画面からやり直すかお問い合わせください";
     }
     return videoTitle;
 }
