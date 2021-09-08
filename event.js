@@ -79,8 +79,14 @@ function updateTimerDom(update) {
 }
 
 function syncVideoInfo(e) {
-    e.target.port.postMessage({
-        name: "sync_video_info",
-        pageType: e.target.pageType
-    })
+    try {
+        e.target.port.postMessage({
+            name: "sync_video_info",
+            pageType: e.target.pageType
+        })
+    } catch(e) {
+        connectionPort.postMessage({
+            name: "create_adjustimer"
+        });
+    }
 }
