@@ -59,7 +59,27 @@ const commonPickrSwatches = [
     'rgba(255, 193, 7, 1)'
 ];
 
+let defaultBackgroundPickr = "#ccc";
+let defaultWordPickr = "#77D5FF";
+let defaultBorderPickr = "#000";
+
 window.onload = () => {
+    // 前回のカラーを取得
+    if (localStorage.getItem('adjusTimer-defaultBackgroundPickr')) {
+        defaultBackgroundPickr = localStorage.getItem('adjusTimer-defaultBackgroundPickr');
+        document.querySelector("#wrapper").style.backgroundColor = defaultBackgroundPickr;
+    }
+    if (localStorage.getItem('adjusTimer-defaultWordPickr')) {
+        defaultWordPickr = localStorage.getItem('adjusTimer-defaultWordPickr');
+        document.querySelector("#remaining_time_wrapper").style.color = defaultWordPickr;
+    }
+    if (localStorage.getItem('adjusTimer-defaultBorderPickr')) {
+        defaultBorderPickr = localStorage.getItem('adjusTimer-defaultBorderPickr');
+        document.querySelectorAll(".word-text-stroke").forEach((el) => {
+            el.style.textShadow = getTextShadow(defaultBorderPickr);
+        })
+    }
+
     const switchBorderCheckElement = document.querySelector("#switch_border");
     const borderWrap = document.querySelector("#border-wrapper");
 
@@ -88,21 +108,21 @@ window.onload = () => {
             theme: 'nano', // or 'monolith', or 'nano'
             swatches: commonPickrSwatches,
             components: commonPickrComponent,
-            default: '#ccc'
+            default: defaultBackgroundPickr
         }),
         "wordPickr": Pickr.create({
             el: '.word-color-picker',
             theme: 'nano',
             swatches: commonPickrSwatches,
             components: commonPickrComponent,
-            default: '#77D5FF'
+            default: defaultWordPickr
         }),
         "borderPickr": Pickr.create({
             el: '.border-color-picker',
             theme: 'nano',
             swatches: commonPickrSwatches,
             components: commonPickrComponent,
-            default: '#000'
+            default: defaultBorderPickr
         })
     };
 
@@ -116,16 +136,19 @@ window.onload = () => {
                 case "backgroundPickr":
                     // 背景色変更
                     const wrapper = document.querySelector("#wrapper");
+                    localStorage.setItem("adjusTimer-defaultBackgroundPickr", targetColorRGB);
                     wrapper.style.backgroundColor = targetColorRGB;
                     break;
                 case "wordPickr":
                     // 文字色変更
                     const word = document.querySelector("#remaining_time_wrapper");
                     word.style.color = targetColorRGB;
+                    localStorage.setItem("adjusTimer-defaultWordPickr", targetColorRGB);
                     break;
                 case "borderPickr":
                     // 縁色変更
                     const borders = document.querySelectorAll(".word-text-stroke");
+                    localStorage.setItem("adjusTimer-defaultBorderPickr", targetColorHex);
                     borders.forEach((el) => {
                         el.style.textShadow = getTextShadow(targetColorHex);
                     })
