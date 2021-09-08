@@ -18,6 +18,17 @@
             font-weight: bold;
             letter-spacing : 10px;
         }
+        .howto_link {
+            text-decoration: none;
+            color: #444;
+            padding: 10px 40px;
+            border: #ccc 1px solid;
+            border-radius: 5px;
+        }
+        .howto_link:hover {
+            color: white;
+            background-color: rgb(102, 219, 255);
+        }
         .button__sync {
             font-size: 20px;
             color: white;
@@ -78,15 +89,13 @@
 </head>
 <body>
     <h1><img src="./img/icon48.png">AdjusTimer(アジャスタイマー)</h1>
-    <h2>最終更新:2021/08/29(Ver. 1.4)</h2>
-    <p>バグ報告・要望などはTweitter/Gメール経由でよろしくお願いします。</p>
-    <a href="https://twitter.com/patioglass" target="_blank">@patioglass</a>
-    <br>
-    <span>email: patiopatimon@gmail.com</span>
-    <br>
-    <br>
+    <h2>最終更新:2021/09/09(Ver. 1.5)</h2>
+    <a href="https://patiopatimon.com/adjustimer" class="howto_link" target="_blank">使い方ページ</a>
 
-    <div id="button__start">対応ページ(Amazon Prime Video / ウォッチパーティ)の画面から起動しなおしてください</div>
+    <br>
+    <br>
+    <br>
+    <div id="button__start">対応ページ(Amazon Prime Video / ウォッチパーティ)の画面から起動してください</div>
     <h2>現在ページ: <span id="current_page_name"><未対応のページ></span>です</h2>
 
     <div class="button__sync">情報を取得する</div>
