@@ -1,11 +1,11 @@
 {
     "name": "AdjusTimer",
     "manifest_version": 2,
-    "version": "1.4",
-    "description": "Amazon Prime Video/Tverの現在の再生時間を別ウィンドウで映す拡張",
+    "version": "1.5",
+    "description": "Amazon Prime Video/Tver/Youtubeの現在の再生時間を別ウィンドウで映す拡張",
     "content_scripts": [
         {
-            "matches": [ "https://www.amazon.co.jp/*", "https://tver.jp/corner/*" ],
+            "matches": [ "https://www.amazon.co.jp/*", "https://tver.jp/corner/*", "https://www.youtube.com/watch*" ],
             "run_at": "document_end",
             "js": ["content_scripts.js"]
         }
