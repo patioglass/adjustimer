@@ -19,7 +19,7 @@
     <style>
         body {
             font-family: 'Sawarabi Gothic', sans-serif;
-            font-size: 130%;
+            font-size: 105%;
             margin: 0 auto;
         }
         header h1 {
@@ -27,7 +27,7 @@
         }
         @media (min-width: 1200px){
             #wrapper {
-                width: 65%;
+                width: 85%;
                 margin: 0 auto;
             }
             header img#logo {
@@ -35,14 +35,19 @@
             }
             article {
                 display: grid;
-                grid-template-rows: 100px auto;
-                grid-template-columns: 40% 20px 1fr;
                 width: 100%;
                 min-height: 200px;
-                max-height: 800px;
                 margin: 0 auto;
                 text-align: left;
                 margin-top: 20px;
+            }
+            article.article-single {
+                grid-template-rows: 100px auto;
+                grid-template-columns: 1fr;
+            }
+            article.article-multi {
+                grid-template-rows: 100px auto;
+                grid-template-columns: 40% 20px 40%;
             }
             article h1 {
                 grid-row: 1 / 2;
@@ -60,7 +65,8 @@
                 grid-column: 3 / 4;
             }
             .demo-image {
-                width: 450px;
+                width: 100%;
+                text-align: center;
             }
         }
         @media (max-width: 1199px) {
@@ -73,12 +79,18 @@
             }
             article {
                 display: grid;
-                grid-template-rows: 100px 1fr 1fr;
-                grid-template-columns: 1fr;
                 width: 100%;
                 margin: 0 auto;
                 text-align: left;
                 margin-top: 20px;
+            }
+            article.article-single {
+                grid-template-rows: 100px 1fr;
+                grid-template-columns: 1fr;
+            }
+            article.article-multi {
+                grid-template-rows: 100px 1fr 1fr;
+                grid-template-columns: 1fr;
             }
             article h1 {
                 grid-row: 1 / 2;
@@ -92,6 +104,7 @@
             }
             article img {
                 width: 80%;
+                text-align: center;
             }
             article .article-detail-right {
                 grid-row: 3 / 4;
@@ -152,9 +165,9 @@
                 data-size="small"
                 data-share="true">
             </div>
-            <article>
+            <article class="article-single">
                 <h1><span>概要</span></h1>
-                <div class="article-detail-left">
+                <div>
                     <p>AdjusTimer - 同時視聴配信用タイマー(chrome拡張)</p>
                     <p>
                         各種動画サイトの現在視聴時間を別ウィンドウで表示することのできる拡張
@@ -180,7 +193,7 @@
                 </div>
             </article>
             
-            <article>
+            <article class="article-multi">
                 <h1><span>使い方</span></h1>
                 <div class="article-detail-left">
                     <h3>STEP 1.対象の再生ページまで移動</h3>
@@ -200,7 +213,7 @@
                 </div>
                 
             </article>
-            <article>
+            <article class="article-multi">
                 <h1><span>OBS使っている方に注意</span></h1>
                 <div class="article-detail-left">
                     <p>AdjusTimerはちゃんとタイマーが動いているが、<strong>OBS側でタイマーが更新されない現象</strong>が時々見られます。(OBSのブラウザキャプチャによる仕様の可能性があります）</p>
@@ -215,12 +228,12 @@
                     <img class="demo-image" src="./img/caution.png">
                 </div>
             </article>
-            <article>
+            <article class="article-single">
                 <h1><span>デモ動画</span></h1>
                 <iframe width="660" height="415" src="https://www.youtube.com/embed/Dlw-WGnG1j4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </article>
 
-            <article>
+            <article class="article-multi">
                 <h1><span>その他</span></h1>
                 <div class="article-detail-left">
                     
