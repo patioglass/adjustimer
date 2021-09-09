@@ -85,8 +85,6 @@ function syncVideoInfo(e) {
             pageType: e.target.pageType
         })
     } catch(e) {
-        connectionPort.postMessage({
-            name: "create_adjustimer"
-        });
+        alert("AjusTimerを再起動してください");
     }
 }
