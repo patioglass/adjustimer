@@ -23,5 +23,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
-          path: ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
+          path: ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
           mime-type: application/zip
