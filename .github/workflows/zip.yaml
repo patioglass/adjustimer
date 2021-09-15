@@ -20,10 +20,11 @@ jobs:
       - name: compress src
         run: |
           {
-            cd src && zip -r ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip .
+            cd src && zip -r ../ajustimer.zip .
           }
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
-          path: ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
+          name: ajustimer.zip
+          path: ajustimer.zip
+          if-no-files-found: error
