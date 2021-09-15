@@ -18,7 +18,10 @@ jobs:
       - name: install zip
         run: sudo apt install zip
       - name: compress src
-        run: cd src && zip -r ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip .
+        run: |
+          {
+            cd src && zip -r ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip .,
+          }
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
