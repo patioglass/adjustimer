@@ -1,9 +1,8 @@
-name: generate-zip
+name: generate test
 on:
-  push:
+  pull_request:
     branches:
-      - main
-
+      - master
 jobs:
   zip:
     name: generate zip
@@ -19,9 +18,3 @@ jobs:
         run: apt install zip
       - name: compress src
         run: cd src && zip -r ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip .
-      - name: upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
-          path: ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
-          mime-type: application/zip
