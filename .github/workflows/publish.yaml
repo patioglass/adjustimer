@@ -1,0 +1,26 @@
+name: generate-zip
+on:
+  push:
+    branches: [main]
+
+jobs:
+  zip:
+    name: generate zip
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: install zip
+        run: apt install zip
+      - name: compress src
+        run: cd src && zip -r ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip .
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
+          path: ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip
+          mime-type: application/zip
