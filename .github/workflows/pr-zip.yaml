@@ -15,6 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: install zip
-        run: apt install zip
+        run: sudo apt install zip
       - name: compress src
         run: cd src && zip -r ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip .
