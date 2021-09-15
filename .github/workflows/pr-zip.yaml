@@ -1,0 +1,20 @@
+name: generate test
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  zip:
+    name: generate zip
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: install zip
+        run: apt install zip
+      - name: compress src
+        run: cd src && zip -r ../ajustimer-$(git rev-parse --short "$GITHUB_SHA").zip .
