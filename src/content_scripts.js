@@ -2,7 +2,9 @@ const PAGE_TYPE_NAMES = {
     "WatchParty": "Prime Video: ウォッチパーティ",
     "PrimeVideo": "Prime Video",
     "Tver": "Tver",
-    "Youtube": "Youtube"
+    "Youtube": "Youtube",
+    "dAnime": "dアニメストア",
+    "Netflix": "Netflix"
 }
 let target;
 let isAdjusTimerPage = false;
@@ -29,13 +31,10 @@ window.onload = () => {
             isAdjusTimerPage = false;
             clearInterval(watchVideo);
         } else if (response.name === "sync_video_info") {
-            // 情報同期（タイトルやvideo要素の取得）
-            const videoTitle = getVideoTitle(response.pageType);
-
             port.postMessage({
                 name: "update",
                 status: "set_video_info",
-                videoTitle: videoTitle
+                videoTitle: getVideoTitle(response.pageType)
             });
             let target;
             switch(response.pageType) {
@@ -47,7 +46,7 @@ window.onload = () => {
                         if (target) {
                             clearInterval(watchVideo);
                             // observer起動
-                            startObserver(target, videoTitle);
+                            startObserver(target, getVideoTitle(response.pageType));
                         }
                     }, 500);
                     break;
@@ -57,11 +56,27 @@ window.onload = () => {
                     if (target) {
                         target.addEventListener('timeupdate', (a, b) => postCurrentTime(
                             secondToTimeString(target.currentTime),
-                            videoTitle
+                            getVideoTitle(response.pageType)
                         ));
                     }
                     break;
                 case PAGE_TYPE_NAMES["Youtube"]:
+                    target = document.querySelector("video");
+                    target.addEventListener('timeupdate', (a, b) => postCurrentTime(
+                        secondToTimeString(target.currentTime),
+                        getVideoTitle(response.pageType)
+                    ));
+                    break;
+                case PAGE_TYPE_NAMES["dAnime"]:
+                    target = document.querySelector("video");
+                    target.addEventListener('timeupdate', (a, b) => postCurrentTime(
+                        secondToTimeString(target.currentTime),
+                        getVideoTitle(response.pageType)
+                    ));
+                    break;
+                case PAGE_TYPE_NAMES["Netflix"]:
+                    const videoTitle = getVideoTitle(response.pageType)
+                    // Netflixは動画タイトルのover要素が再生中は消えるっぽいので取得したら更新しない
                     target = document.querySelector("video");
                     target.addEventListener('timeupdate', (a, b) => postCurrentTime(
                         secondToTimeString(target.currentTime),
@@ -142,11 +157,29 @@ function urlCheck() {
                 clearInterval(urlCheckYoutube);
             }
         }, 1000);
+    } else if (currentPageUrl.match(/https:\/\/anime.dmkt-sp.jp\/*/)) {
+        const urlCheckDanime = setInterval(() => {
+            const backInfo = document.querySelector('#backInfo');
+            const title = backInfo?.querySelector('.backInfoTxt1')?.textContent;
+            const epNum = backInfo?.querySelector('.backInfoTxt2')?.textContent;
+            const epTitle = backInfo?.querySelector('.backInfoTxt3')?.textContent;
+            if (title != null && epNum != null && epTitle != null) {
+                postInitSetting(PAGE_TYPE_NAMES["dAnime"]);
+                clearInterval(urlCheckDanime);
+            }
+        }, 1000)
+    } else if (currentPageUrl.match(/https:\/\/www.netflix.com\/watch*/)) {
+        const urlCheckNetflix = setInterval(() => {
+            const overPlay = document.querySelector(".watch-video--player-view");
+            if (overPlay) {
+                postInitSetting(PAGE_TYPE_NAMES["Netflix"]);
+                clearInterval(urlCheckNetflix);
+            }
+        }, 1000)
     }
 }
 
 function getVideoTitle(pageType) {
-    let videoTitle = "";
     switch(pageType) {
         case PAGE_TYPE_NAMES["PrimeVideo"]:
             // シーズンがある場合（prime videoのみ）
@@ -164,6 +197,19 @@ function getVideoTitle(pageType) {
             return document.querySelector(".vjs-dock-title").textContent;
         case PAGE_TYPE_NAMES["Youtube"]:
             return document.querySelector("h1.title").textContent;
+        case PAGE_TYPE_NAMES["dAnime"]:
+            const backInfo = document.querySelector('#backInfo');
+            const title = backInfo?.querySelector('.backInfoTxt1')?.textContent;
+            const epNum = backInfo?.querySelector('.backInfoTxt2')?.textContent;
+            const epTitle = backInfo?.querySelector('.backInfoTxt3')?.textContent;
+            return `${title} - ${epNum} ${epTitle}`;
+        case PAGE_TYPE_NAMES["Netflix"]:
+            let fullTitle = 'もう一度取得してください';
+            const overPlay = document.querySelector(".watch-video--player-view");
+            if (overPlay) {
+                fullTitle = overPlay.querySelector("h2") ? overPlay.querySelector("h2").textContent : "もう一度取得してください";
+            }
+            return fullTitle;
         default:
             return "正しく取得できませんでした、再生前の画面からやり直すかお問い合わせください";
     }
