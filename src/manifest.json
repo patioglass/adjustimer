@@ -1,11 +1,17 @@
 {
     "name": "AdjusTimer",
     "manifest_version": 2,
-    "version": "1.5",
-    "description": "Amazon Prime Video/Tver/Youtubeの現在の再生時間を別ウィンドウで映す拡張",
+    "version": "1.6",
+    "description": "Amazon Prime Video/Tver/Youtube/dアニメストア/Netflixの現在の再生時間を別ウィンドウで映す拡張",
     "content_scripts": [
         {
-            "matches": [ "https://www.amazon.co.jp/*", "https://tver.jp/corner/*", "https://www.youtube.com/watch*" ],
+            "matches": [
+                "https://www.amazon.co.jp/*",
+                "https://tver.jp/corner/*",
+                "https://www.youtube.com/watch*",
+                "https://anime.dmkt-sp.jp/*",
+                "https://www.netflix.com/watch*"
+            ],
             "run_at": "document_end",
             "js": ["content_scripts.js"]
         }
@@ -20,8 +26,8 @@
         "contextMenus"
     ],
     "icons": {
-        "16": "img/icon16.png",
-        "48": "img/icon48.png",
-        "128": "img/icon128.png"
+        "16": "img/icons/icon16.png",
+        "48": "img/icons/icon48.png",
+        "128": "img/icons/icon128.png"
     }
 }

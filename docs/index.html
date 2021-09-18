@@ -153,6 +153,9 @@
         .install_button a:hover {
             background-color: rgb(116, 227, 255);
         }
+        .caution-text {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -195,6 +198,8 @@
                         <li>Amazon Prime Video(ウォッチパーティを含む）</li>
                         <li>Tver</li>
                         <li>Youtube</li>
+                        <li>dアニメストア</li>
+                        <li>Netflix(<span class="caution-text">操作上の注意あり</span>)</li>
                     </ul>
                     <br>
                     <div class="install_button">
@@ -220,6 +225,10 @@
                         一度AdjusTimerを閉じ、ページの更新（F5など）をかけてから再度右クリックからAdjusTimerを起動しなおしてみてください。
                     </p>
                     <img class="demo-image" src="img/demo-1.jpg">
+                    <hr>
+                    <p><strong class="caution-text">Netflixの場合注意</strong></p>
+                    <p>タイトル取得が特殊なため、図のような<span>一時停止でタイトルが出る画面の時にボタンを押して</span>ください</p>
+                    <img src="img/netflix.jpg" style="width: 400px;">
                 </div>
                 
             </article>
@@ -266,6 +275,8 @@
                 <div class="article-detail-right">
                     <h2>更新履歴</h2>
                     <ul>
+                        <li>(2021/09/19)：dアニメストア, Netflixに対応</li>
+                        <li>(2021/09/09)：Youtubeに対応/最後に使った色を保存するように対応/使い方ページを作成/他正常に動かない場合にポップアップを出すように修正など</li>
                         <li>(2021/08/29)：ウォッチパーティにも対応、デフォルトのウィンドウサイズを大きく変更</li>
                         <li>(2021/05/21)：色々の取得方法を変更、Tverの一部ビデオに対応</li>
                         <li>(2021/02/18)：文字色/背景色/縁色の変更/文字フォント変更機能追加。他一部仕様の変更</li>
