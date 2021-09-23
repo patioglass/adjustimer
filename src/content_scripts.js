@@ -4,7 +4,8 @@ const PAGE_TYPE_NAMES = {
     "Tver": "Tver",
     "Youtube": "Youtube",
     "dAnime": "dアニメストア",
-    "Netflix": "Netflix"
+    "Netflix": "Netflix",
+    "Twitch": "Twitch"
 }
 let target;
 let isAdjusTimerPage = false;
@@ -82,6 +83,19 @@ window.onload = () => {
                         secondToTimeString(target.currentTime),
                         videoTitle
                     ));
+                    break;
+                case PAGE_TYPE_NAMES["Twitch"]:
+                    const twitchWatchParty = setInterval(() => {
+                        target = document.querySelector('video:not(video[playsinline])');
+                        if (target) {
+                            target.addEventListener('timeupdate', (a, b) => postCurrentTime(
+                                secondToTimeString(target.currentTime),
+                                getVideoTitle(response.pageType)
+                            ));
+                            clearInterval(twitchWatchParty);
+                        }
+                    }, 1000);
+
                     break;
                 default:
                     break;
@@ -176,6 +190,14 @@ function urlCheck() {
                 clearInterval(urlCheckNetflix);
             }
         }, 1000)
+    } else if (currentPageUrl.match(/https:\/\/www.twitch.tv\/*/)) {
+        const urlCheckTwitch = setInterval(() => {
+            const titleDom = document.querySelector("p[data-test-selector=title]");
+            if (titleDom) {
+                postInitSetting(PAGE_TYPE_NAMES["Twitch"]);
+                clearInterval(urlCheckTwitch);
+            }
+        }, 1000)
     }
 }
 
@@ -210,6 +232,8 @@ function getVideoTitle(pageType) {
                 fullTitle = overPlay.querySelector("h2") ? overPlay.querySelector("h2").textContent : "もう一度取得してください";
             }
             return fullTitle;
+        case PAGE_TYPE_NAMES["Twitch"]:
+            return document.querySelector("p[data-test-selector=title]") ? document.querySelector("p[data-test-selector=title]").textContent : "もう一度取得してください";
         default:
             return "正しく取得できませんでした、再生前の画面からやり直すかお問い合わせください";
     }
