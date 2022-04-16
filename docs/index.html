@@ -143,6 +143,9 @@
             background-color: #fff;
             text-align: left;
         }
+        .install_button {
+            margin-bottom: 25px;
+        }
         .install_button a {
             padding: 10px;
             color: white;
@@ -152,6 +155,16 @@
         }
         .install_button a:hover {
             background-color: rgb(116, 227, 255);
+        }
+        .fanbox_button a {
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            background-color: rgb(255, 183, 39);
+        }
+        .fanbox_button a:hover {
+            background-color: rgb(255, 230, 179);
         }
         .caution-text {
             color: red;
@@ -181,8 +194,9 @@
             <article class="article-single">
                 <h1><span>概要</span></h1>
                 <div>
-                    <h2 class="caution-text">※現在Netflixは不具合が多いため利用は非推奨です!</h2>
                     <p>AdjusTimer - 同時視聴配信用タイマー(chrome拡張)</p>
+                    <img style="width: 400px;" src="../src/img/250users.png">
+
                     <p>
                         各種動画サイトの現在視聴時間を別ウィンドウで表示することのできる拡張
                     </p>
@@ -200,12 +214,15 @@
                         <li>Tver</li>
                         <li>Youtube</li>
                         <li>dアニメストア</li>
-                        <li>Netflix(<span class="caution-text">操作上の注意あり</span>)</li>
+                        <li>Netflix</li>
                         <li>Twitch(ウォッチパーティ)</li>
                     </ul>
                     <br>
                     <div class="install_button">
                         <a href="https://chrome.google.com/webstore/detail/adjustimer/cbolehniipnbcbmecpekldhjhnohifpm" target="_blank">インストールはこちら</a>
+                    </div>
+                    <div class="fanbox_button">
+                        <a href="https://patioglass.fanbox.cc/plans" target="_blank">開発支援(fanbox)🙇‍♀️</a>
                     </div>
                 </div>
             </article>
@@ -215,7 +232,7 @@
                 <div class="article-detail-left">
                     <h3>STEP 1.対象の再生ページまで移動</h3>
                     <p>例えば、対象がAmazon Prime Videoの場合、「今すぐに観る」「続きから観る」などのボタンのあるページに移動してください。</p>
-                    <p>Youtubeなら動画(/watch?v=xxxxx)、Tverなら(/corner/xxxxxx)のページです。</p>
+                    <p>Youtubeなら動画(/watch?v=xxxxx)、Tverなら(/corner/xxxxxx)、Netflixなら(/watch/xxxxx)のページです。</p>
                     <h3>STEP 2.右クリックで起動</h3>
                     <p>右クリックから「AdjusTimer(アジャスタイマー)」の項目を選択する(例:Amazon Prime Video)</p>
                     <img class="demo-image" src="img/how-to-1.jpg">
@@ -227,10 +244,6 @@
                         一度AdjusTimerを閉じ、ページの更新（F5など）をかけてから再度右クリックからAdjusTimerを起動しなおしてみてください。
                     </p>
                     <img class="demo-image" src="img/demo-1.jpg">
-                    <hr>
-                    <p><strong class="caution-text">Netflixの場合注意</strong></p>
-                    <p>タイトル取得が特殊なため、図のような<span>一時停止でタイトルが出る画面の時にボタンを押して</span>ください</p>
-                    <img src="img/netflix.jpg" style="width: 400px;">
                 </div>
                 
             </article>
@@ -277,6 +290,7 @@
                 <div class="article-detail-right">
                     <h2>更新履歴</h2>
                     <ul>
+                        <li>(2021/04/16)：Netflixに対応</li>
                         <li>(2021/09/23)：Twitch(ウォッチパーティ)に対応</li>
                         <li>(2021/09/19)：dアニメストア, Netflixに対応</li>
                         <li>(2021/09/09)：Youtubeに対応/最後に使った色を保存するように対応/使い方ページを作成/他正常に動かない場合にポップアップを出すように修正など</li>
