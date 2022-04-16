@@ -1,7 +1,7 @@
 {
     "name": "AdjusTimer",
     "manifest_version": 2,
-    "version": "1.7",
+    "version": "1.8",
     "description": "Amazon Prime Video/Tver/Youtube/dアニメストア/Netflixの現在の再生時間を別ウィンドウで映す拡張",
     "content_scripts": [
         {
