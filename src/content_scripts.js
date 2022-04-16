@@ -76,12 +76,12 @@ window.onload = () => {
                     ));
                     break;
                 case PAGE_TYPE_NAMES["Netflix"]:
-                    const videoTitle = getVideoTitle(response.pageType)
+                    const netflixTitle = document.querySelector(".netflixTitle").textContent;
                     // Netflixは動画タイトルのover要素が再生中は消えるっぽいので取得したら更新しない
                     target = document.querySelector("video");
                     target.addEventListener('timeupdate', (a, b) => postCurrentTime(
                         secondToTimeString(target.currentTime),
-                        videoTitle
+                        netflixTitle
                     ));
                     break;
                 case PAGE_TYPE_NAMES["Twitch"]:
@@ -182,10 +182,15 @@ function urlCheck() {
                 clearInterval(urlCheckDanime);
             }
         }, 1000)
-    } else if (currentPageUrl.match(/https:\/\/www.netflix.com\/watch*/)) {
+    } else if (currentPageUrl.match(/https:\/\/www.netflix.com*/)) {
+        console.log("inject");
+        // DOM内にタイトルを出現させる(windowオブジェクトに情報があるため)
+        injectScript(chrome.extension.getURL('loader.js'), 'body');
+
         const urlCheckNetflix = setInterval(() => {
+            const netflixTitle = document.querySelector(".netflixTitle")?.textContent;
             const overPlay = document.querySelector(".watch-video--player-view");
-            if (overPlay) {
+            if (overPlay && netflixTitle) {
                 postInitSetting(PAGE_TYPE_NAMES["Netflix"]);
                 clearInterval(urlCheckNetflix);
             }
@@ -226,12 +231,8 @@ function getVideoTitle(pageType) {
             const epTitle = backInfo?.querySelector('.backInfoTxt3')?.textContent;
             return `${title} - ${epNum} ${epTitle}`;
         case PAGE_TYPE_NAMES["Netflix"]:
-            let fullTitle = 'もう一度取得してください';
-            const overPlay = document.querySelector(".watch-video--player-view");
-            if (overPlay) {
-                fullTitle = overPlay.querySelector("h2") ? overPlay.querySelector("h2").textContent : "もう一度取得してください";
-            }
-            return fullTitle;
+            const netflixTitle = document.querySelector(".netflixTitle")?.textContent;
+            return netflixTitle ? netflixTitle : "正しく取得できませんでした. adjusTimerを再起動しやり直してください.";
         case PAGE_TYPE_NAMES["Twitch"]:
             return document.querySelector("p[data-test-selector=title]") ? document.querySelector("p[data-test-selector=title]").textContent : "もう一度取得してください";
         default:
@@ -264,4 +265,16 @@ const postInitSetting = (pageType) => {
         type: "init_page",
         pageType: pageType
     });
+}
+
+const injectScript = (file, node) => {
+    const scripts = document.querySelectorAll("script");
+    const extensionScript = scripts[scripts.length - 1];
+    if (!extensionScript?.src.match("chrome-extension")) {
+        const th = document.getElementsByTagName(node)[0];
+        const s = document.createElement('script');
+        s.setAttribute('type', 'text/javascript');
+        s.setAttribute('src', file);
+        th.appendChild(s);
+    }
 }

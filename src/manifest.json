@@ -10,7 +10,7 @@
                 "https://tver.jp/corner/*",
                 "https://www.youtube.com/watch*",
                 "https://anime.dmkt-sp.jp/*",
-                "https://www.netflix.com/watch*",
+                "https://www.netflix.com/*",
                 "https://www.twitch.tv/*"
             ],
             "run_at": "document_end",
@@ -25,6 +25,9 @@
     },
     "permissions": [
         "contextMenus"
+    ],
+    "web_accessible_resources":[
+        "loader.js"
     ],
     "icons": {
         "16": "img/icons/icon16.png",
