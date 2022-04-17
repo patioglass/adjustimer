@@ -151,10 +151,10 @@ function urlCheck() {
                 clearInterval(urlCheckPrime);
             }
         }, 1000);
-    } else if (currentPageUrl.match(/https:\/\/tver.jp\/corner\/*/)) {
+    } else if (currentPageUrl.match(/https:\/\/tver.jp\/*/)) {
         const urlCheckTver = setInterval(() => {
             // Tver判定
-            const title = document.querySelector(".vjs-dock-title");
+            const title = document.querySelector(".titles_container__Ys0E6");
             if (isAdjusTimerPage && title && title.textContent) {
                 // Tver判定ができたことをeventに伝える
                 postInitSetting(PAGE_TYPE_NAMES["Tver"]);
@@ -171,7 +171,7 @@ function urlCheck() {
                 clearInterval(urlCheckYoutube);
             }
         }, 1000);
-    } else if (currentPageUrl.match(/https:\/\/anime.dmkt-sp.jp\/*/)) {
+    } else if (currentPageUrl.match(/https:\/\/anime.dmkt-sp.jp\/*/) || currentPageUrl.match(/https:\/\/animestore.docomo.ne.jp\/*/)) {
         const urlCheckDanime = setInterval(() => {
             const backInfo = document.querySelector('#backInfo');
             const title = backInfo?.querySelector('.backInfoTxt1')?.textContent;
@@ -221,9 +221,9 @@ function getVideoTitle(pageType) {
                 return document.querySelector(".atvwebplayersdk-title-text").textContent;
             }
         case PAGE_TYPE_NAMES["Tver"]:
-            return document.querySelector(".vjs-dock-title").textContent;
+            return document.querySelector(".titles_container__Ys0E6").textContent;
         case PAGE_TYPE_NAMES["Youtube"]:
-            return document.querySelector("h1.title").textContent;
+            return document.querySelector("h1.ytd-video-primary-info-renderer").textContent;
         case PAGE_TYPE_NAMES["dAnime"]:
             const backInfo = document.querySelector('#backInfo');
             const title = backInfo?.querySelector('.backInfoTxt1')?.textContent;
