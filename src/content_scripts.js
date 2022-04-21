@@ -185,7 +185,7 @@ function urlCheck() {
     } else if (currentPageUrl.match(/https:\/\/www.netflix.com*/)) {
         console.log("inject");
         // DOM内にタイトルを出現させる(windowオブジェクトに情報があるため)
-        injectScript(chrome.extension.getURL('loader.js'), 'body');
+        injectScript(chrome.extension.getURL('adjustimer-loader.js'), 'body');
 
         const urlCheckNetflix = setInterval(() => {
             const netflixTitle = document.querySelector(".netflixTitle")?.textContent;
@@ -270,7 +270,7 @@ const postInitSetting = (pageType) => {
 const injectScript = (file, node) => {
     const scripts = document.querySelectorAll("script");
     const extensionScript = scripts[scripts.length - 1];
-    if (!extensionScript?.src.match("chrome-extension")) {
+    if (!extensionScript?.src.match("adjustimer-loader.js")) {
         const th = document.getElementsByTagName(node)[0];
         const s = document.createElement('script');
         s.setAttribute('type', 'text/javascript');
