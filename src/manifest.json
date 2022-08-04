@@ -1,8 +1,8 @@
 {
     "name": "AdjusTimer",
     "manifest_version": 2,
-    "version": "1.11",
-    "description": "Amazon Prime Video/Tver/Youtube/dアニメストア/Netflixの現在の再生時間を別ウィンドウで映す拡張",
+    "version": "1.12",
+    "description": "Amazon Prime Video/Tver/Youtube/dアニメストア/Netflix/ニコニコ動画の現在の再生時間を別ウィンドウで映す拡張",
     "content_scripts": [
         {
             "matches": [
@@ -12,7 +12,8 @@
                 "https://anime.dmkt-sp.jp/*",
                 "https://animestore.docomo.ne.jp/*",
                 "https://www.netflix.com/*",
-                "https://www.twitch.tv/*"
+                "https://www.twitch.tv/*",
+                "https://www.nicovideo.jp/watch/*"
             ],
             "run_at": "document_end",
             "js": ["content_scripts.js"]
