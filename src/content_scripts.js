@@ -5,7 +5,8 @@ const PAGE_TYPE_NAMES = {
     "Youtube": "Youtube",
     "dAnime": "dアニメストア",
     "Netflix": "Netflix",
-    "Twitch": "Twitch"
+    "Twitch": "Twitch",
+    "NicoVideo": "ニコニコ"
 }
 let target;
 let isAdjusTimerPage = false;
@@ -96,6 +97,13 @@ window.onload = () => {
                         }
                     }, 1000);
 
+                    break;
+                case PAGE_TYPE_NAMES["NicoVideo"]:
+                    target = document.querySelector("video");
+                    target.addEventListener("timeupdate", (a, b) => postCurrentTime(
+                        secondToTimeString(target.currentTime),
+                        getVideoTitle(response.pageType)
+                    ));
                     break;
                 default:
                     break;
@@ -203,6 +211,16 @@ function urlCheck() {
                 clearInterval(urlCheckTwitch);
             }
         }, 1000)
+    } else if (currentPageUrl.match(/https:\/\/www.nicovideo.jp\/watch\/*/)) {
+        const urlCheckNicoVideo = setInterval(() => {
+            const nicoVideoTitle = document.querySelector(".VideoTitle")?.textContent;
+            const nicoVideo = document.querySelector("video");
+            if (nicoVideoTitle && nicoVideo) {
+                postInitSetting(PAGE_TYPE_NAMES["NicoVideo"]);
+                clearInterval(urlCheckNicoVideo);
+            }
+        }, 1000)
+
     }
 }
 
@@ -235,6 +253,8 @@ function getVideoTitle(pageType) {
             return netflixTitle ? netflixTitle : "正しく取得できませんでした. adjusTimerを再起動しやり直してください.";
         case PAGE_TYPE_NAMES["Twitch"]:
             return document.querySelector("p[data-test-selector=title]") ? document.querySelector("p[data-test-selector=title]").textContent : "もう一度取得してください";
+        case PAGE_TYPE_NAMES["NicoVideo"]:
+            return document.querySelector(".VideoTitle") ? document.querySelector(".VideoTitle").textContent : "もう一度取得してください";
         default:
             return "正しく取得できませんでした、再生前の画面からやり直すかお問い合わせください";
     }
