@@ -210,7 +210,7 @@ window.onload = () => {
 
                 console.log(videoServiceType)
                     $.ajax({
-                        url: "http://3.112.15.56/v1/videoHistory",
+                        url: "http://18.176.90.189/v1/videoHistory",
                         type: "POST",
                         dataType: "json",
                         contentType: "application/json",

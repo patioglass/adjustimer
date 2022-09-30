@@ -28,7 +28,7 @@
     "permissions": [
         "contextMenus",
         "https://raw.githubusercontent.com/patioglass/*",
-        "http://3.112.15.56/*"
+        "http://18.176.90.189/*"
     ],
     "web_accessible_resources":[
         "adjustimer-loader.js"
