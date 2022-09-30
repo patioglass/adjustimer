@@ -75,9 +75,17 @@ const VIDEO_SERVICE_TYPE = {
     "Youtube": 2,
     "dアニメストア": 3,
     "Netflix": 4,
-    "Twitch": 5,
-    "NicoVideo": 6
+    "ニコニコ": 5,
+    "Twitch": 6,
 }
+
+
+const currentDate = new Date();
+const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+const day = ('0' + currentDate.getDate()).slice(-2);
+
+const dateKey = currentDate.getFullYear() + month + day;
+refreshLocalStorage();
 
 let defaultBackgroundPickr = "#ccc";
 let defaultWordPickr = "#77D5FF";
@@ -193,7 +201,6 @@ window.onload = () => {
     const adjustSyncButton = document.querySelector(".button__sync");
     adjustSyncButton.addEventListener("click", () => {
         if (document.querySelector("#button__get_video_info")) {
-            console.log("start ajax!")
             // 動画タイトルが取れないのでとれるまでsetInterval
             let videoTitleFlag = false;
             const searchTitle = setInterval(() => {
@@ -201,6 +208,11 @@ window.onload = () => {
                     videoTitleFlag = true;
                 }
                 if (videoTitleFlag) {
+                    if (!checkVideo(document.querySelector("#video__title").textContent)) {
+                        clearInterval(searchTitle)
+                        return;
+                    }
+                    console.log("start ajax!")
                     const pageType = document.querySelector("#current_page_name").textContent;
                     const videoServiceType = Object.keys(VIDEO_SERVICE_TYPE)
                                                 .find(v => {
@@ -208,7 +220,6 @@ window.onload = () => {
                                                     return pageType.match(reg);
                                                 })
 
-                console.log(videoServiceType)
                     $.ajax({
                         url: "http://18.176.90.189/v1/videoHistory",
                         type: "POST",
@@ -237,6 +248,35 @@ function createUserId() {
     if (!localStorage.getItem('adjusTimer-userId')) {
         localStorage.setItem("adjusTimer-userId", "adjustimer-" + Math.random().toString(32).substring(2));
     }
+}
+
+// ボタン連打の場合の応急処置（その日のうちは同じビデオを登録しない）
+function checkVideo(videoTitle) {
+    if (!localStorage.getItem(dateKey)) {
+        localStorage.setItem(dateKey, JSON.stringify([]));
+    }
+
+    let historyToday = JSON.parse(localStorage.getItem(dateKey));
+    // すでに今日みたビデオタイトルならfalse(apiを叩かない)
+    if (historyToday.includes(videoTitle)) {
+        return false;
+    } else {
+        historyToday.push(videoTitle);
+        localStorage.setItem(dateKey, JSON.stringify(historyToday));
+        return true;
+    }
+
+}
+
+// 先日以前のkeyを消す
+function refreshLocalStorage() {
+    Object.keys(localStorage).forEach((key) => {
+        if (Number.isInteger(key)) {
+            if (parseInt(dateKey) > parseInt(key)) {
+                localStorage.removeItem(key);
+            }
+        }
+    })
 }
 
 function getTextShadow(targetColorHex) {
