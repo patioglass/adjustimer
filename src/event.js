@@ -63,9 +63,11 @@ function updateTimerDom(update) {
     } else if (update.status === "set_video_info") {
         const videoTitleDom = adjusTimerWindow.document.getElementById("video__title"); // ビデオタイトル
         const currentTimeDom = adjusTimerWindow.document.getElementById("video__time_current"); // 現在時間
+        const videoUrlDom = adjusTimerWindow.document.getElementById("video__url");
 
         videoTitleDom.innerText = update.videoTitle;
         currentTimeDom.innerText = "00:00";
+        videoUrlDom.innerText = update.videoUrl
         adjusTimerWindow.document.getElementById("remaining_time_wrapper").style.display = "block";
 
     } else if (update.status === "time_update") {

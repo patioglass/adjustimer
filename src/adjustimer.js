@@ -59,6 +59,26 @@ const commonPickrSwatches = [
     'rgba(255, 193, 7, 1)'
 ];
 
+/**
+ * @description サイト種別(API側と一致させる)
+ * 0:Amazon Prime Video
+ * 1:Tver
+ * 2:Youtube
+ * 3:dアニメストア
+ * 4:Netflix
+ * 5:ニコニコ動画
+ * 6:Twitch
+ */
+const VIDEO_SERVICE_TYPE = {
+    "Prime": 0,
+    "Tver": 1,
+    "Youtube": 2,
+    "dアニメストア": 3,
+    "Netflix": 4,
+    "Twitch": 5,
+    "NicoVideo": 6
+}
+
 let defaultBackgroundPickr = "#ccc";
 let defaultWordPickr = "#77D5FF";
 let defaultBorderPickr = "#000";
@@ -166,6 +186,57 @@ window.onload = () => {
         remainingTimeWrapper.style.fontFamily = e.target.value;
         console.log(e.target.value);
     })
+
+    createUserId()
+    // ajax通信
+    // 情報取得ボタンを押した時に送信
+    const adjustSyncButton = document.querySelector(".button__sync");
+    adjustSyncButton.addEventListener("click", () => {
+        if (document.querySelector("#button__get_video_info")) {
+            console.log("start ajax!")
+            // 動画タイトルが取れないのでとれるまでsetInterval
+            let videoTitleFlag = false;
+            const searchTitle = setInterval(() => {
+                if (document.querySelector("#video__title").textContent !== '(未取得)') {
+                    videoTitleFlag = true;
+                }
+                if (videoTitleFlag) {
+                    const pageType = document.querySelector("#current_page_name").textContent;
+                    const videoServiceType = Object.keys(VIDEO_SERVICE_TYPE)
+                                                .find(v => {
+                                                    const reg = new RegExp(v);
+                                                    return pageType.match(reg);
+                                                })
+
+                console.log(videoServiceType)
+                    $.ajax({
+                        url: "http://3.112.15.56/v1/videoHistory",
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            video_service_type: VIDEO_SERVICE_TYPE[videoServiceType],
+                            video_title: document.querySelector("#video__title").textContent,
+                            video_url: document.querySelector("#video__url").textContent,
+                            user_id: localStorage.getItem('adjusTimer-userId')
+                        })
+                    })
+                    .done((data) => {
+                        clearInterval(searchTitle)
+                        console.log(data)
+                    })
+                }
+            }, 500);
+
+        }
+    })
+}
+
+// 仮のユーザIDを発行
+function createUserId() {
+    if (!localStorage.getItem('adjusTimer-userId')) {
+        localStorage.setItem("adjusTimer-userId", "adjustimer-" + Math.random().toString(32).substring(2));
+    }
 }
 
 function getTextShadow(targetColorHex) {

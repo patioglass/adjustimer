@@ -36,7 +36,8 @@ window.onload = () => {
             port.postMessage({
                 name: "update",
                 status: "set_video_info",
-                videoTitle: getVideoTitle(response.pageType)
+                videoTitle: getVideoTitle(response.pageType),
+                videoUrl:  location.protocol + "//" + location.host + location.pathname
             });
             let target;
             switch(response.pageType) {
