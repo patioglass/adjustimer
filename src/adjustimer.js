@@ -59,6 +59,34 @@ const commonPickrSwatches = [
     'rgba(255, 193, 7, 1)'
 ];
 
+/**
+ * @description サイト種別(API側と一致させる)
+ * 0:Amazon Prime Video
+ * 1:Tver
+ * 2:Youtube
+ * 3:dアニメストア
+ * 4:Netflix
+ * 5:ニコニコ動画
+ * 6:Twitch
+ */
+const VIDEO_SERVICE_TYPE = {
+    "Prime": 0,
+    "Tver": 1,
+    "Youtube": 2,
+    "dアニメストア": 3,
+    "Netflix": 4,
+    "ニコニコ": 5,
+    "Twitch": 6,
+}
+
+
+const currentDate = new Date();
+const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+const day = ('0' + currentDate.getDate()).slice(-2);
+
+const dateKey = currentDate.getFullYear() + month + day;
+refreshLocalStorage();
+
 let defaultBackgroundPickr = "#ccc";
 let defaultWordPickr = "#77D5FF";
 let defaultBorderPickr = "#000";
@@ -165,6 +193,89 @@ window.onload = () => {
         const remainingTimeWrapper = document.querySelector("#remaining_time_wrapper");
         remainingTimeWrapper.style.fontFamily = e.target.value;
         console.log(e.target.value);
+    })
+
+    createUserId()
+    // ajax通信
+    // 情報取得ボタンを押した時に送信
+    const adjustSyncButton = document.querySelector(".button__sync");
+    adjustSyncButton.addEventListener("click", () => {
+        if (document.querySelector("#button__get_video_info")) {
+            // 動画タイトルが取れないのでとれるまでsetInterval
+            let videoTitleFlag = false;
+            const searchTitle = setInterval(() => {
+                if (document.querySelector("#video__title").textContent !== '(未取得)') {
+                    videoTitleFlag = true;
+                }
+                if (videoTitleFlag) {
+                    if (!checkVideo(document.querySelector("#video__title").textContent)) {
+                        clearInterval(searchTitle)
+                        return;
+                    }
+                    console.log("start ajax!")
+                    const pageType = document.querySelector("#current_page_name").textContent;
+                    const videoServiceType = Object.keys(VIDEO_SERVICE_TYPE)
+                                                .find(v => {
+                                                    const reg = new RegExp(v);
+                                                    return pageType.match(reg);
+                                                })
+
+                    $.ajax({
+                        url: "http://18.176.90.189/v1/videoHistory",
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            video_service_type: VIDEO_SERVICE_TYPE[videoServiceType],
+                            video_title: document.querySelector("#video__title").textContent,
+                            video_url: document.querySelector("#video__url").textContent,
+                            user_id: localStorage.getItem('adjusTimer-userId')
+                        })
+                    })
+                    .done((data) => {
+                        clearInterval(searchTitle)
+                        console.log(data)
+                    })
+                }
+            }, 500);
+
+        }
+    })
+}
+
+// 仮のユーザIDを発行
+function createUserId() {
+    if (!localStorage.getItem('adjusTimer-userId')) {
+        localStorage.setItem("adjusTimer-userId", "adjustimer-" + Math.random().toString(32).substring(2));
+    }
+}
+
+// ボタン連打の場合の応急処置（その日のうちは同じビデオを登録しない）
+function checkVideo(videoTitle) {
+    if (!localStorage.getItem(dateKey)) {
+        localStorage.setItem(dateKey, JSON.stringify([]));
+    }
+
+    let historyToday = JSON.parse(localStorage.getItem(dateKey));
+    // すでに今日みたビデオタイトルならfalse(apiを叩かない)
+    if (historyToday.includes(videoTitle)) {
+        return false;
+    } else {
+        historyToday.push(videoTitle);
+        localStorage.setItem(dateKey, JSON.stringify(historyToday));
+        return true;
+    }
+
+}
+
+// 先日以前のkeyを消す
+function refreshLocalStorage() {
+    Object.keys(localStorage).forEach((key) => {
+        if (Number.isInteger(key)) {
+            if (parseInt(dateKey) > parseInt(key)) {
+                localStorage.removeItem(key);
+            }
+        }
     })
 }
 

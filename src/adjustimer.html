@@ -77,6 +77,9 @@
             width: 150px;
         }
 
+        #video__url {
+            display: none;
+        }
     </style>
     <script src="./lib/pickr/js/pickr.min.js"></script>
     <script src="./lib/pickr/js/pickr.es5.min.js"></script>
@@ -89,15 +92,18 @@
     <link href="https://fonts.googleapis.com/css?family=Sawarabi+Gothic" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet">
 
+    <script src="jquery-3.x-git.min.js"></script>
+
     <script src="adjustimer.js"></script>
 </head>
 <body>
     <h1><img src="./img/icons/icon48.png">AdjusTimer(アジャスタイマー)</h1>
-    <h2>最終更新:2022/09/25(Ver. 1.15)</h2>
+    <h2>最終更新:2022/10/01(Ver. 1.16)</h2>
     <img class="anniversary-img" src="https://raw.githubusercontent.com/patioglass/adjustimer/main/src/img/users_thanks.png">
     <br>
     <br>
     <br>
+    <div id="video__url"></div>
     <div id="button__start">対応ページの画面から起動してください(対応ページについては「<a href="https://patiopatimon.com/adjustimer" target="_blank">使い方ページ</a>」を参考にしてください)</div>
     <h2>現在ページ: <span id="current_page_name"><未対応のページ></span>です</h2>
 
