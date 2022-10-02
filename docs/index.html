@@ -15,163 +15,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet">
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-    <style>
-        body {
-            font-family: "Noto Sans JP";
-            margin: 0 auto;
-        }
-        header h1 {
-            display: inline-block;
-        }
-        @media (min-width: 1200px){
-            #wrapper {
-                width: 85%;
-                margin: 0 auto;
-            }
-            header img#logo {
-                width: 7%;
-            }
-            article {
-                display: grid;
-                width: 100%;
-                min-height: 200px;
-                margin: 0 auto;
-                text-align: left;
-                margin-top: 20px;
-            }
-            article.article-single {
-                grid-template-rows: 100px auto;
-                grid-template-columns: 1fr;
-            }
-            article.article-multi {
-                grid-template-rows: 100px auto;
-                grid-template-columns: 50% 20px 1fr;
-            }
-            article h1 {
-                grid-row: 1 / 2;
-                grid-column: 1 / 4;
-                position: relative;
-                letter-spacing: .25em;
-                margin: 30px 0;
-            }
-            article .article-detail-left {
-                grid-row: 2 / 3;
-                grid-column: 1 / 2;
-            }
-            article .article-detail-right {
-                grid-row: 2 / 3;
-                grid-column: 3 / 4;
-            }
-            .demo-image {
-                max-width: 800px;
-                width: 100%;
-                text-align: center;
-            }
-            iframe {
-                width: 660px;
-                height: 415px;
-            }
-        }
-        @media (max-width: 1199px) {
-            body {
-                padding: 15px;
-            }
-            #wrapper {
-                width: 95%;
-                margin: 0 auto;
-            }
-            header img#logo {
-                width: 20%;
-            }
-            article {
-                display: grid;
-                width: 100%;
-                margin: 0 auto;
-                text-align: left;
-                margin-top: 20px;
-            }
-            article.article-single {
-                grid-template-rows: 100px 1fr;
-                grid-template-columns: 1fr;
-            }
-            article.article-multi {
-                grid-template-rows: 100px 1fr 1fr;
-                grid-template-columns: 1fr;
-            }
-            article h1 {
-                grid-row: 1 / 2;
-                position: relative;
-                letter-spacing: .25em;
-                margin: 30px 0;
-            }
-            article .article-detail-left {
-                grid-row: 2 / 3;
-                width: 100%;
-            }
-            article img {
-                width: 80%;
-                text-align: center;
-            }
-            article .article-detail-right {
-                grid-row: 3 / 4;
-                width: 100%;
-            }
-            .demo-image {
-                width: 60%;
-            }
-            iframe {
-                width: 90%;
-                height: 355px;
-            }
-        }
-        article h1:before {
-            position: absolute;
-            top: 50%;
-            z-index: 1;
-            content: "";
-            display: block;
-            width: 100%;
-            height: 1px;
-            background-color: #ccc;
-        }
-        article h1 span {
-            position: relative;
-            z-index: 2;
-            display: inline-block;
-            margin: 0 1em;
-            padding: 0 1em;
-            background-color: #fff;
-            text-align: left;
-        }
-        .install_button {
-            margin-bottom: 25px;
-        }
-        .install_button a {
-            padding: 10px;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            background-color: rgb(39, 194, 255);
-        }
-        .install_button a:hover {
-            background-color: rgb(116, 227, 255);
-        }
-        .fanbox_button a {
-            padding: 10px;
-            display: block;
-            width: 150px;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            background-color: rgb(255, 183, 39);
-        }
-        .fanbox_button a:hover {
-            background-color: rgb(255, 230, 179);
-        }
-        .caution-text {
-            color: red;
-        }
-    </style>
+    <link rel="stylesheet" href="./css//main.css">
+    <link rel="stylesheet" href="./css//nav.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6617462744639866"
     crossorigin="anonymous"></script>
 </head>
@@ -179,7 +24,7 @@
     <div id="wrapper">
         <header>
             <img id="logo" src="./img/adjustimer-icon.png">
-            <h1>AdjusTimer - 同時視聴配信用タイマー -(chrome拡張)の使い方</h1>
+            <h1>AdjusTimer - 同時視聴配信用タイマー -(chrome拡張)</h1>
             <br>
             <a href="https://twitter.com/share"
                 class="twitter-share-button"
@@ -195,126 +40,94 @@
                 data-size="small"
                 data-share="true">
             </div>
-            <article class="article-single">
-                <h1><span>概要</span></h1>
-                <div class="article-detail-left">
-                    <h2>AdjusTimer</h2>
-                    <p>
-                        各種動画サイトの現在視聴時間を別ウィンドウで表示することのできる拡張
-                    </p>
-                    <p>
-                        <ul>
-                            <li>タイトル取得</li>
-                            <li>現在時間取得</li>
-                        </ul>
-                        が可能です。
-                        是非、同時視聴などをyoutube配信でする際のタイマーとしてご活用ください。
-                    </p>
-                    <div class="install_button">
-                        <a href="https://chrome.google.com/webstore/detail/adjustimer/cbolehniipnbcbmecpekldhjhnohifpm" target="_blank">インストールはこちら</a>
-                    </div>
-
-                    <h3>※現在対応済みサイト</h3>
-                    <ul>
-                        <li>Amazon Prime Video(ウォッチパーティを含む）</li>
-                        <li>Tver</li>
-                        <li>Youtube</li>
-                        <li>dアニメストア</li>
-                        <li>Netflix</li>
-                        <li>Twitch(ウォッチパーティ)</li>
-                        <li>ニコニコ動画</li>
-                    </ul>
-                </div>
-            </article>
-            
-            <article class="article-multi">
-                <h1><span>使い方</span></h1>
-                <div class="article-detail-left">
-                    <h3>STEP 1.対象の再生ページまで移動</h3>
-                    <p>例えば、対象がAmazon Prime Videoの場合、「今すぐに観る」「続きから観る」などのボタンのあるページに移動してください。</p>
-                    <p>Youtubeなら動画(/watch?v=xxxxx)、Tverなら(/corner/xxxxxx)、Netflixなら(/watch/xxxxx)のページです。</p>
-                    <h3>STEP 2.右クリックで起動</h3>
-                    <p>右クリックから「AdjusTimer(アジャスタイマー)」の項目を選択する(例:Amazon Prime Video)</p>
-                    <img class="demo-image" src="img/how-to-1.jpg">
-                </div>
-                <div class="article-detail-right">
-                    <h3>STEP 3. 「情報を取得する」を押し作品情報を取得</h3>
-                    <p>タイトルが取得できた時点で、再生ボタンを押すと再生時間が同期されるようになっています。</p>
-                    <p>ボタンがオレンジ色にならない、押しても情報が反映されない場合は、<br>
-                        一度AdjusTimerを閉じ、ページの更新（F5など）をかけてから再度右クリックからAdjusTimerを起動しなおしてみてください。
-                    </p>
-                    <img class="demo-image" src="img/demo-1.jpg">
-                </div>
-                
-            </article>
-            <article class="article-single">
-                <h1><span>Q & A</span></h1>
-                <div class="article-detail-left">
-                    <h3>Q. AdjusTimerはちゃんとタイマーが動いているが、OBS側でタイマーが更新されないことがある。</h3>
-                    <p>
-                        詳細な原因はわかりませんが、(OBSのブラウザキャプチャによる仕様？）OBSでキャプチャ配信する際に<br>
-                        AdjusTimerと動画を再生しているブラウザを被せる形で配信すると、
-                        再現できたことがあるため、できるだけAdjusTimerは独立した形で画面に配置するとこれが解消されます。
-                    </p>
-                    <p>もし配信画面にタイマーの時間が反映されないなどありましたら、一度AdjusTimerの位置を移動させてみてください。</p>
-
-                    <h3>Q. 時間が数秒合っていない</h3>
-                    <p>
-                        広告終了後などで、表示されている時間と再生時間に誤差がもし出た場合は、<br>
-                        再度「情報を取得する」ボタンを押してください。それでも直らない場合はお手数ですがAdjusTimerを一度落として再度起動してください。
-                    </p>
-                </div>
-            </article>
-            <article class="article-single">
-                <h1><span>デモ動画</span></h1>
-                <iframe src="https://www.youtube.com/embed/Dlw-WGnG1j4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </article>
-
-            <article class="article-multi">
-                <h1><span>その他</span></h1>
-                <div class="article-detail-left">
-                    
-                    <div>
-                        <p>何かありましたら</p>
-                        <p>
-                            <a href="https://twitter.com/patioglass">@patioglass</a>
-                        </p>
-                        または
-                        <p>
-                            <p>patiopatimon@gmail.com</p>
-                        </p>
-                        までよろしくお願いします。
-                        <div class="fanbox_button">
-                            <a href="https://patioglass.fanbox.cc/plans" target="_blank">開発支援(fanbox)🙇‍♀️</a>
-                        </div>
-                    </div>
-
-                    <a href="https://forms.gle/36TSR82ob8hNdXht5" target="_blank">⇒利用調査アンケート</a>
-
-                </div>
-                <div class="article-detail-right">
-                    <h2>更新履歴</h2>
-                    <ul>
-                        <li>(2022/10/01)：裏側のAPI部分を追加</li>
-                        <li>(2022/09/25)：画像別ドメイン対応</li>
-                        <li>(2022/09/24)：微調整</li>
-                        <li>(2022/08/18)：UI調整</li>
-                        <li>(2022/08/04)：ニコニコ動画に対応、その他画面整理、アンケートの設置</li>
-                        <li>(2022/04/26)：Netflixのシーズン情報も表示するように修正</li>
-                        <li>(2022/04/21)：Never Ending Netflixで競合を起こしてたので修正</li>
-                        <li>(2022/04/17)：Tverバグ修正・dアニメストアドメイン変更・Youtubeタイトルバグ修正対応</li>
-                        <li>(2022/04/16)：Netflixに対応</li>
-                        <li>(2021/09/23)：Twitch(ウォッチパーティ)に対応</li>
-                        <li>(2021/09/19)：dアニメストア, Netflixに対応</li>
-                        <li>(2021/09/09)：Youtubeに対応/最後に使った色を保存するように対応/使い方ページを作成/他正常に動かない場合にポップアップを出すように修正など</li>
-                        <li>(2021/08/29)：ウォッチパーティにも対応、デフォルトのウィンドウサイズを大きく変更</li>
-                        <li>(2021/05/21)：色々の取得方法を変更、Tverの一部ビデオに対応</li>
-                        <li>(2021/02/18)：文字色/背景色/縁色の変更/文字フォント変更機能追加。他一部仕様の変更</li>
-                    </ul>
-                </div>
-            </article>
-            
         </header>
+        <nav id="g_navi">
+            <ul>
+                <li><a href="/">AdjusTimer概要</a></li>
+                <li><a href="./history.html">更新履歴</a></li>
+                <li><a href="./policy.html">利用規約</a></li>
+                <li><a href="./contact.html">お問い合わせ</a></li>
+            </ul>
+        </nav>
+        <article class="article-single">
+            <h1><span>概要</span></h1>
+            <div class="article-detail-left">
+                <h2>AdjusTimer</h2>
+                <p>
+                    各種動画サイトの現在視聴時間を別ウィンドウで表示することのできる拡張
+                </p>
+                <p>
+                    <ul>
+                        <li>タイトル取得</li>
+                        <li>現在時間取得</li>
+                    </ul>
+                    が可能です。
+                    是非、同時視聴などをyoutube配信でする際のタイマーとしてご活用ください。
+                </p>
+                <div class="install_button">
+                    <a href="https://chrome.google.com/webstore/detail/adjustimer/cbolehniipnbcbmecpekldhjhnohifpm" target="_blank">インストールはこちら</a>
+                </div>
+
+                <h3>※現在対応済みサイト</h3>
+                <ul>
+                    <li>Amazon Prime Video(ウォッチパーティを含む）</li>
+                    <li>Tver</li>
+                    <li>Youtube</li>
+                    <li>dアニメストア</li>
+                    <li>Netflix</li>
+                    <li>Twitch(ウォッチパーティ)</li>
+                    <li>ニコニコ動画</li>
+                </ul>
+                <p>※twitchのウォッチパーティは動画が開始されてから起動してください。</p>
+
+                <div class="fanbox_button">
+                    <a href="https://patioglass.fanbox.cc/plans" target="_blank">開発支援(fanbox)🙇‍♀️</a>
+                </div>
+            </div>
+        </article>
+        
+        <article class="article-multi">
+            <h1><span>使い方</span></h1>
+            <div class="article-detail-left">
+                <h3>STEP 1.対象の再生ページまで移動</h3>
+                <p>例えば、対象がAmazon Prime Videoの場合、「今すぐに観る」「続きから観る」などのボタンのあるページに移動してください。</p>
+                <p>Youtubeなら動画(/watch?v=xxxxx)、Tverなら(/corner/xxxxxx)、Netflixなら(/watch/xxxxx)のページです。</p>
+                <h3>STEP 2.右クリックで起動</h3>
+                <p>右クリックから「AdjusTimer(アジャスタイマー)」の項目を選択する(例:Amazon Prime Video)</p>
+                <img class="demo-image" src="img/how-to-1.jpg">
+            </div>
+            <div class="article-detail-right">
+                <h3>STEP 3. 「情報を取得する」を押し作品情報を取得</h3>
+                <p>タイトルが取得できた時点で、再生ボタンを押すと再生時間が同期されるようになっています。</p>
+                <p>ボタンがオレンジ色にならない、押しても情報が反映されない場合は、<br>
+                    一度AdjusTimerを閉じ、ページの更新（F5など）をかけてから再度右クリックからAdjusTimerを起動しなおしてみてください。
+                </p>
+                <img class="demo-image" src="img/demo-1.jpg">
+            </div>
+            
+        </article>
+        <article class="article-single">
+            <h1><span>Q & A</span></h1>
+            <div class="article-detail-left">
+                <h3>Q. AdjusTimerはちゃんとタイマーが動いているが、OBS側でタイマーが更新されないことがある。</h3>
+                <p>
+                    詳細な原因はわかりませんが、(OBSのブラウザキャプチャによる仕様？）OBSでキャプチャ配信する際に<br>
+                    AdjusTimerと動画を再生しているブラウザを被せる形で配信すると、
+                    再現できたことがあるため、できるだけAdjusTimerは独立した形で画面に配置するとこれが解消されます。
+                </p>
+                <p>もし配信画面にタイマーの時間が反映されないなどありましたら、一度AdjusTimerの位置を移動させてみてください。</p>
+
+                <h3>Q. 時間が数秒合っていない</h3>
+                <p>
+                    広告終了後などで、表示されている時間と再生時間に誤差がもし出た場合は、<br>
+                    再度「情報を取得する」ボタンを押してください。それでも直らない場合はお手数ですがAdjusTimerを一度落として再度起動してください。
+                </p>
+            </div>
+        </article>
+        <article class="article-single">
+            <h1><span>デモ動画</span></h1>
+            <iframe src="https://www.youtube.com/embed/Dlw-WGnG1j4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </article>
     </div>
     <div id="fb-root"></div>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v11.0&appId=518192562066830&autoLogAppEvents=1" nonce="bs27sbWO"></script>
