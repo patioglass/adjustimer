@@ -106,3 +106,31 @@ article h1 span {
     background-color: #fff;
     text-align: left;
 }
+.install_button {
+    margin-bottom: 25px;
+}
+.install_button a {
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    background-color: rgb(39, 194, 255);
+}
+.install_button a:hover {
+    background-color: rgb(116, 227, 255);
+}
+.fanbox_button a {
+    padding: 10px;
+    display: block;
+    width: 150px;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    background-color: rgb(255, 183, 39);
+}
+.fanbox_button a:hover {
+    background-color: rgb(255, 230, 179);
+}
+.caution-text {
+    color: red;
+}
