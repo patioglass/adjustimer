@@ -33,11 +33,25 @@ window.onload = () => {
             isAdjusTimerPage = false;
             clearInterval(watchVideo);
         } else if (response.name === "sync_video_info") {
+            // サイトによっては最初のパラメータでビデオを指定するため
+            let urlPath = location.pathname;
+            let urlParam = location.search.split("&")[0];
+            let videoUrl = location.protocol + "//" + location.host + urlPath + urlParam;
+            switch(response.pageType) {
+                case PAGE_TYPE_NAMES["dAnime"]:
+                    urlPath = urlPath.slice(0, 12) + "ci_pc"; // /animestore/ci'
+                    urlParam += "&workId=" + urlParam.split("=")[1].slice(0, -3);
+                    videoUrl = location.protocol + "//" + location.host + urlPath + urlParam
+                    break;
+                case PAGE_TYPE_NAMES["Twitch"]:
+                    videoUrl = document.querySelector("a[data-test-selector=link_out]").getAttribute("href");
+                    break;
+            }
             port.postMessage({
                 name: "update",
                 status: "set_video_info",
                 videoTitle: getVideoTitle(response.pageType),
-                videoUrl:  location.protocol + "//" + location.host + location.pathname
+                videoUrl:  videoUrl
             });
             let target;
             switch(response.pageType) {
