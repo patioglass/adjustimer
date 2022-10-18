@@ -244,9 +244,9 @@ function getVideoTitle(pageType) {
         case PAGE_TYPE_NAMES["PrimeVideo"]:
             // シーズンがある場合（prime videoのみ）
             const season = document.querySelector(".dv-node-dp-seasons")
-                ? document.querySelector(".dv-node-dp-seasons").querySelector("[for]").textContent
+                ? " " + document.querySelector(".dv-node-dp-seasons").querySelector("[for]").textContent
                 : "";
-            return document.getElementsByClassName("av-detail-section")[0].querySelector("[data-automation-id]").textContent + " " + season;
+            return document.title.split(/Amazon.co.jp: | \| Prime Video/)[1].slice(0, -3) + season;
         case PAGE_TYPE_NAMES["WatchParty"]:
             if (document.querySelector("._3KdeRQ")) {
                 return document.querySelector("._3KdeRQ").textContent;
