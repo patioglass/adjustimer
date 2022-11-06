@@ -1,7 +1,7 @@
 {
     "name": "AdjusTimer",
-    "manifest_version": 2,
-    "version": "1.18",
+    "manifest_version": 3,
+    "version": "2.0.0",
     "description": "Amazon Prime Video/Tver/Youtube/dアニメストア/Netflix/ニコニコ動画の現在の再生時間を別ウィンドウで映す拡張",
     "content_scripts": [
         {
@@ -20,18 +20,21 @@
         }
     ],
     "background":{
-        "scripts":[
-          "event.js"
-        ],
-        "persistent": false
+        "service_worker": "event.js"
     },
     "permissions": [
-        "contextMenus",
+        "contextMenus"
+    ],
+    "host_permissions": [
         "https://raw.githubusercontent.com/patioglass/*",
         "http://18.176.90.189/*"
     ],
     "web_accessible_resources":[
-        "adjustimer-loader.js"
+        {
+            "resources": ["adjustimer-loader.js"],
+            "matches": ["https://www.netflix.com/*"],
+            "use_dynamic_url": true
+        }
     ],
     "icons": {
         "16": "img/icons/icon16.png",
