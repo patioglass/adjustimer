@@ -1,5 +1,8 @@
 let adjusTimerWindow;
 let connectionPort;
+let adjusTimerWindowPort;
+
+checkPort();
 
 chrome.runtime.onInstalled.addListener(function(){
     // メニューを生成
@@ -9,31 +12,71 @@ chrome.runtime.onInstalled.addListener(function(){
         title: "AdjusTimer(アジャスタイマー)"
     });
 });
-chrome.contextMenus.onClicked.addListener(function(item){
-    adjusTimerWindow = window.open(
-        "/adjustimer.html",
-        "adjustimer",
-        "width=1000, height=1000"
-    );
-    if (connectionPort) {
-        // adjusTimer起動をcontent_scriptに送信
-        connectionPort.postMessage({
-            name: "create_adjustimer"
-        });
+
+chrome.contextMenus.onClicked.addListener(async function(item, tab){
+    const window = chrome.windows.create({
+        url : './adjustimer.html',
+        focused : true,
+        type : 'popup',
+        height : 1000,
+        width : 1000
+    });
+});
+
+// content_script, adjustimer側の2つのコネクションをはる
+chrome.runtime.onConnect.addListener((port) => {
+    if (port.name.match(/contentScript/)) {
+        if (connectionPort) {
+            connectionPort.disconnect();
+        }
+        // init_connection時にポートを記録する
+        connectionPort = port;
+        // content_scriptからpostを受け取る
+        port.onMessage.addListener((request) => {
+            if (request.name === "update") {
+                updateTimerDom(request);
+            }
+        })
+        port.onDisconnect.addListener(() => {
+            connectionPort = undefined;
+            if (adjusTimerWindowPort) {
+                adjusTimerWindowPort.postMessage({
+                    name: "init"
+                });
+            }
+            checkPort();
+        })
+    } else {
+        if (adjusTimerWindowPort) {
+            adjusTimerWindowPort.disconnect()
+        }
+        adjusTimerWindowPort = port;
+        port.onMessage.addListener((request) => {
+            if (request.type === "get_video_info") {
+                connectionPort.postMessage({
+                    name: "sync_video_info",
+                    pageType: request.pageType
+                })
+            }
+        })
+        port.onDisconnect.addListener(() => {
+            adjusTimerWindowPort = undefined;
+            checkPort();
+        })
     }
 });
 
-// content_scriptとコネクションをはる
-chrome.runtime.onConnect.addListener((port) => {
-    // init_connection時にポートを記録する
-    connectionPort = port;
-    // content_scriptからpostを受け取る
-    port.onMessage.addListener((request) => {
-        if (request.name === "update") {
-            updateTimerDom(request);
+function checkPort() {
+    const check = setInterval(() => {
+        if (connectionPort && adjusTimerWindowPort) {
+            // adjusTimer起動をcontent_scriptに送信
+            connectionPort.postMessage({
+                name: "create_adjustimer"
+            });
+            clearInterval(check);
         }
-    })
-});
+    }, 500);
+}
 
 /**
  * 
@@ -44,49 +87,29 @@ chrome.runtime.onConnect.addListener((port) => {
  * currentTime 
  */
 function updateTimerDom(update) {
-    if (!adjusTimerWindow) {
+    if (!adjusTimerWindowPort) {
         return;
     }
 
+     // adjustimerのDOM変更
     if (update.type === "init_page") {
-        const syncButtonDom = adjusTimerWindow.document.querySelector(".button__sync");
-        syncButtonDom.setAttribute("id", "button__get_video_info");
-        const currentPageDom = adjusTimerWindow.document.querySelector("#current_page_name");
-        currentPageDom.innerText = update.pageType;
-
-        // 情報取得ボタンを押すことでcontent_scriptから情報をもらうようにする
-        syncButtonDom.removeEventListener("click", syncVideoInfo);
-        syncButtonDom.addEventListener("click", syncVideoInfo, false);
-        syncButtonDom.port = connectionPort;
-        syncButtonDom.pageType = update.pageType;
+        adjusTimerWindowPort.postMessage({
+            name: "sync_video_ready",
+            pageType: update.pageType
+        });
 
     } else if (update.status === "set_video_info") {
-        const videoTitleDom = adjusTimerWindow.document.getElementById("video__title"); // ビデオタイトル
-        const currentTimeDom = adjusTimerWindow.document.getElementById("video__time_current"); // 現在時間
-        const videoUrlDom = adjusTimerWindow.document.getElementById("video__url");
-
-        videoTitleDom.innerText = update.videoTitle;
-        currentTimeDom.innerText = "00:00";
-        videoUrlDom.innerText = update.videoUrl
-        adjusTimerWindow.document.getElementById("remaining_time_wrapper").style.display = "block";
-
-    } else if (update.status === "time_update") {
-        const videoTitleDom = adjusTimerWindow.document.getElementById("video__title"); // ビデオタイトル
-        const currentTimeDom = adjusTimerWindow.document.getElementById("video__time_current"); // 現在時間
-
-        videoTitleDom.innerText = update.title;
-        currentTimeDom.innerText = update.currentTime;
-    }
-
-}
-
-function syncVideoInfo(e) {
-    try {
-        e.target.port.postMessage({
-            name: "sync_video_info",
-            pageType: e.target.pageType
+        adjusTimerWindowPort.postMessage({
+            name: "set_video_info",
+            videoTitle: update.videoTitle,
+            videoUrl: update.videoUrl,
+            pageType: update.pageType
         })
-    } catch(e) {
-        alert("AjusTimerを再起動してください");
+    } else if (update.status === "time_update") {
+        adjusTimerWindowPort.postMessage({
+            name: "update_video_time",
+            title: update.title,
+            currentTime: update.currentTime
+        })
     }
 }

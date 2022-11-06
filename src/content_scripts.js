@@ -16,14 +16,13 @@ let port;
 
 window.onload = () => {
     // eventとコネクションをはる
-    port = chrome.runtime.connect({name: `event_${location.hostname}`});
+    port = chrome.runtime.connect({name: `contentScript_${location.hostname}`});
     port.postMessage({status: "connect_init"});
     // 右クリック禁止解除 
     document.addEventListener("contextmenu",function(e){e.stopPropagation();},true);
 
     // eventから受け取るイベント
     port.onMessage.addListener((response) => {
-        console.log(response);
         if (response.name === "create_adjustimer") {
             urlCheck();
             // adjusTimerが起動
@@ -53,13 +52,12 @@ window.onload = () => {
                 videoTitle: getVideoTitle(response.pageType),
                 videoUrl:  videoUrl
             });
-            let target;
             switch(response.pageType) {
                 case PAGE_TYPE_NAMES["PrimeVideo"]:
                 case PAGE_TYPE_NAMES["WatchParty"]:
                     // videoタグだと広告の関係でよくわからない時間表示になるパターンがある
                     watchVideo = setInterval(() => {
-                        const target = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0];
+                        target = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0];
                         if (target) {
                             clearInterval(watchVideo);
                             // observer起動
@@ -208,7 +206,7 @@ function urlCheck() {
     } else if (currentPageUrl.match(/https:\/\/www.netflix.com*/)) {
         console.log("inject");
         // DOM内にタイトルを出現させる(windowオブジェクトに情報があるため)
-        injectScript(chrome.extension.getURL('adjustimer-loader.js'), 'body');
+        injectScript(chrome.runtime.getURL('adjustimer-loader.js'), 'body');
 
         const urlCheckNetflix = setInterval(() => {
             const netflixTitle = document.querySelector(".netflixTitle")?.textContent;

@@ -91,7 +91,49 @@ let defaultBackgroundPickr = "#ccc";
 let defaultWordPickr = "#77D5FF";
 let defaultBorderPickr = "#000";
 
+let port;
+let pageType;
+
 window.onload = () => {
+    const manifestData = chrome.runtime.getManifest();
+    document.querySelector(".version").innerHTML = manifestData.version;
+
+    port = chrome.runtime.connect({name: `event_${location.hostname}`});
+    port.postMessage({status: "ready_adjustimer"});
+
+    // eventから受け取るイベント
+    port.onMessage.addListener((response) => {
+        switch(response.name) {
+            case "sync_video_ready":
+                const syncButton = document.querySelector(".button__sync");
+                syncButton.setAttribute("id", "button__get_video_info");
+                // 情報取得ボタンを押すことでcontent_scriptから情報をもらうようにする
+                syncButton.removeEventListener("click", syncVideoInfo);
+                syncButton.addEventListener("click", syncVideoInfo, false);
+                pageType = response.pageType;
+                document.querySelector("#current_page_name").innerText = response.pageType;
+
+                break;
+            case "set_video_info":
+                setVideoInfo(response.videoTitle, "00:00:00");
+                const videoUrlDom = document.getElementById("video__url");
+
+                videoUrlDom.innerText = response.videoUrl;
+                document.getElementById("remaining_time_wrapper").style.display = "block";
+                break;
+            case "update_video_time":
+                setVideoInfo(response.title, response.currentTime);
+                break;
+            default:
+                setVideoInfo("（未取得）", "00:00:00");
+                document.querySelector(".button__sync").setAttribute("id", "");
+                document.querySelector(".button__sync").removeEventListener("click", syncVideoInfo);
+                const currentPageDom = document.querySelector("#current_page_name");
+                currentPageDom.innerText = "<未対応のページ>";
+                break;
+        }
+    })
+
     // 前回のカラーを取得
     if (localStorage.getItem('adjusTimer-defaultBackgroundPickr')) {
         defaultBackgroundPickr = localStorage.getItem('adjusTimer-defaultBackgroundPickr');
@@ -271,7 +313,7 @@ function checkVideo(videoTitle) {
 // 先日以前のkeyを消す
 function refreshLocalStorage() {
     Object.keys(localStorage).forEach((key) => {
-        if (Number.isInteger(key)) {
+        if (parseInt(key)) {
             if (parseInt(dateKey) > parseInt(key)) {
                 localStorage.removeItem(key);
             }
@@ -288,4 +330,23 @@ function getTextShadow(targetColorHex) {
     + '0px  4px 3px ' + targetColorHex + ','
     + '-4px  0px 3px ' + targetColorHex + ','
     + '0px -4px 3px ' + targetColorHex;
+}
+
+function syncVideoInfo(e) {
+    try {
+        port.postMessage({
+            name: "update",
+            type: "get_video_info",
+            pageType: pageType
+        })
+    } catch(e) {
+        alert("AjusTimerを再起動してください");
+    }
+}
+
+function setVideoInfo(videoTitle, videoTime) {
+    const videoTitleDom = document.getElementById("video__title"); // ビデオタイトル
+    const currentTimeDom = document.getElementById("video__time_current"); // 現在時間
+    videoTitleDom.innerText = videoTitle;
+    currentTimeDom.innerText = videoTime;
 }
