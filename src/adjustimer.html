@@ -9,6 +9,7 @@
         }
         #wrapper {
             padding: 30px;
+            min-height: 33vh;
             background-color: #ccc;
         }
         #remaining_time_wrapper {
@@ -80,6 +81,43 @@
         #video__url {
             display: none;
         }
+        .button__usage {
+            display: inline-block;
+        }
+        .button__usage a{
+            width: 140px;
+            font-size: 10px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 0 auto;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 8px;
+            background-color: #ff3c6d;
+            color: white;
+            vertical-align: text-top;
+        }
+
+        .button__usage a:hover {
+            background-color: #c6273f !important;
+        }
+
+        .menu__content {
+            padding: 10px;
+            margin: 0 auto;
+            width: 80%;
+            border: #ccc solid 3px;
+            border-radius: 8px;
+        }
+        .menu__sync {
+            display: inline-block;
+            width: 39%;
+        }
+        .menu__color {
+            vertical-align: middle;
+            display: inline-block;
+            width: 60%;
+        }
     </style>
     <script src="./lib/pickr/js/pickr.min.js"></script>
     <script src="./lib/pickr/js/pickr.es5.min.js"></script>
@@ -98,47 +136,51 @@
 </head>
 <body>
     <h1><img src="./img/icons/icon48.png">AdjusTimer(アジャスタイマー)</h1>
-    <h2>最終更新:2022/10/19(Ver. 1.18)</h2>
-    <img class="anniversary-img" src="https://raw.githubusercontent.com/patioglass/adjustimer/main/src/img/users_thanks.png">
-    <br>
-    <br>
-    <div class="policy">サービス向上のため、動画情報を収集させていただいております（詳細は<a href="https://patiopatimon.com/adjustimer/privacy.html" target="_blank">プライバシーポリシー</a>を参照ください）</div>
-    <div id="video__url"></div>
-    <div id="button__start">対応ページの画面から起動してください(対応ページについては「<a href="https://patiopatimon.com/adjustimer" target="_blank">使い方ページ</a>」を参考にしてください)</div>
-    <h2>現在ページ: <span id="current_page_name"><未対応のページ></span>です</h2>
+    <div class="menu__content">
+        <p>最終更新:2022/10/19(Ver. 1.18)</p>
+        <div class="policy">サービス向上のため、動画情報を収集させていただいております（詳細は<a href="https://patiopatimon.com/adjustimer/privacy.html" target="_blank">プライバシーポリシー</a>を参照ください）</div>
+        <img class="anniversary-img" src="https://raw.githubusercontent.com/patioglass/adjustimer/main/src/img/users_thanks.png">
 
-    <div class="button__sync">情報を取得する</div>
+        <h2>現在ページ: <span id="current_page_name"><未対応のページ></span>です</h2>
+        <div id="video__url"></div>
 
-    <div class="color-picker-wrapper">
-        <p><input id="switch_border" type="checkbox" checked="checked">縁取り</p>
-        <p><select name="文字フォント選択">
-            <option value="'Segoe UI',Arial,Meiryo,sans-serif">通常</option>
-            <option value="'M PLUS Rounded 1c'">M PLUS Rounded 1c</option>
-            <option value="'Nico Moji'">ニコモジ</option>
-            <option value="'Sawarabi Gothic'">さわらびゴシック</option>
-            <option value="'Noto Sans JP'">Noto Sans JP</option>
-        </select></p>
-        <div class="entry">
-            <div class="innr">
-                <div class="another">
-                    <div class="word-color-picker"></div>
-                    <span>文字色の変更</span>
-                </div>
-            </div>
+        <div class="menu__sync">
+            <div class="button__sync">情報を取得する</div>
+            <div class="button__usage"><a href="https://patiopatimon.com/adjustimer/" target="_blank"><img src="https://icongr.am/entypo/book.svg?size=32&color=ffffff">使い方</a></div>
         </div>
-        <div class="entry" id="border-wrapper">
-            <div class="innr">
-                <div class="another">
-                    <div class="border-color-picker"></div>
-                    <span>文字縁取り色の変更</span>
+        <div class="menu__color">
+            <div class="color-picker-wrapper">
+                <p><input id="switch_border" type="checkbox" checked="checked">縁取り</p>
+                <p><select name="文字フォント選択">
+                    <option value="'Segoe UI',Arial,Meiryo,sans-serif">通常</option>
+                    <option value="'M PLUS Rounded 1c'">M PLUS Rounded 1c</option>
+                    <option value="'Nico Moji'">ニコモジ</option>
+                    <option value="'Sawarabi Gothic'">さわらびゴシック</option>
+                    <option value="'Noto Sans JP'">Noto Sans JP</option>
+                </select></p>
+                <div class="entry">
+                    <div class="innr">
+                        <div class="another">
+                            <div class="word-color-picker"></div>
+                            <span>文字色の変更</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="entry">
-            <div class="innr">
-                <div class="another">
-                    <div class="background-color-picker"></div>
-                    <span>背景色の変更</span>
+                <div class="entry" id="border-wrapper">
+                    <div class="innr">
+                        <div class="another">
+                            <div class="border-color-picker"></div>
+                            <span>文字縁取り色の変更</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="entry">
+                    <div class="innr">
+                        <div class="another">
+                            <div class="background-color-picker"></div>
+                            <span>背景色の変更</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
