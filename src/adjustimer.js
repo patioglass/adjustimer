@@ -95,6 +95,10 @@ let port;
 let pageType;
 
 window.onload = () => {
+    const manifestData = chrome.runtime.getManifest();
+    document.querySelector(".version").innerHTML = manifestData.version;
+    document.querySelector(".update_at").innerHTML = manifestData.update_at;
+
     port = chrome.runtime.connect({name: `event_${location.hostname}`});
     port.postMessage({status: "ready_adjustimer"});
 
