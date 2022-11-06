@@ -310,7 +310,7 @@ function checkVideo(videoTitle) {
 // 先日以前のkeyを消す
 function refreshLocalStorage() {
     Object.keys(localStorage).forEach((key) => {
-        if (Number.isInteger(key)) {
+        if (parseInt(key)) {
             if (parseInt(dateKey) > parseInt(key)) {
                 localStorage.removeItem(key);
             }
