@@ -155,7 +155,11 @@ function urlCheck() {
     if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/*/)) {
         const urlCheckPrime = setInterval(() => {
             // Prime Video判定
-            const primeVideoPage = document.querySelector(".av-retail-m-nav-text-logo");
+            let primeVideoPage = document.querySelector(".av-retail-m-nav-text-logo");
+            // 2023/03/03 新UIのABテストが始まったのでDOMが変わっている対応
+            if (!primeVideoPage) {
+                primeVideoPage = document.querySelectorAll("img[alt='Prime Video']");
+            }
             if (primeVideoPage) {
                 if (primeVideoPage.text === "Prime Video") {
                     currentPage = primeVideoPage.text;
@@ -241,9 +245,16 @@ function getVideoTitle(pageType) {
     switch(pageType) {
         case PAGE_TYPE_NAMES["PrimeVideo"]:
             // シーズンがある場合（prime videoのみ）
-            const season = document.querySelector(".dv-node-dp-seasons")
+            let season = document.querySelector(".dv-node-dp-seasons")
                 ? " " + document.querySelector(".dv-node-dp-seasons").querySelector("[for]").textContent
                 : "";
+
+            // アマプラ新UIの場合
+            if (document.querySelector(".dv-node-dp-seasons") && !season) {
+                season = document.querySelector(".dv-node-dp-seasons").querySelector("label")
+                    ? " " + document.querySelector(".dv-node-dp-seasons").querySelector("label").textContent
+                    : "";
+            }
             return document.title.split(/Amazon.co.jp: | \| Prime Video/)[1].slice(0, -3) + season;
         case PAGE_TYPE_NAMES["WatchParty"]:
             if (document.querySelector("._3KdeRQ")) {
