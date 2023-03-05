@@ -164,13 +164,13 @@ function urlCheck() {
             // 2023/03/03 新UIのABテストが始まったのでDOMが変わっている対応
             if (!primeVideoPage) {
                 primeVideoPage = document.querySelectorAll("img[alt='Prime Video']");
-                if (primeVideoPage) {
+                if (primeVideoPage.length > 0) {
                     if (primeVideoPage[0].getAttribute("alt") === "Prime Video") {
                         currentPage = primeVideoPage[0].getAttribute("alt");
                     }
                 }
             }
-            if (!primeVideoPage) {
+            if (!primeVideoPage || primeVideoPage.length === 0) {
                 // watchParty判定
                 if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/gp\/video\/watchparty\/*/)) {
                     currentPage = document.getElementsByTagName("title")[0].innerText; // Prime Video: ウォッチパーティ
