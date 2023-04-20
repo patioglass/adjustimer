@@ -195,7 +195,7 @@ function urlCheck() {
     } else if (currentPageUrl.match(/https:\/\/www.youtube.com\/watch*/)) {
         const urlCheckYoutube = setInterval(() => {
             // Youtube判定
-            const title = document.querySelector("h1.title");
+            const title = document.querySelector("h1.ytd-watch-metadata");
             if (isAdjusTimerPage && title && title.textContent) {
                 // Youtube判定ができたことをeventに伝える
                 postInitSetting(PAGE_TYPE_NAMES["Youtube"]);
