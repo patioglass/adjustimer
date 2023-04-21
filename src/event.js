@@ -28,7 +28,7 @@ chrome.contextMenus.onClicked.addListener(async function(item, tab){
 chrome.runtime.onConnect.addListener((port) => {
 
     if (port.name.match(/contentScript/)) {
-        if (connectionPort) {
+        if (connectionPort && adjusTimerWindowPort) {
             if (window.confirm("現在のページから\n" +  port.name.split("contentScript_")[1] + "\nに対象を変えようとしています、よろしいですか？(OKを押した場合、再度「情報を取得する」を押してください)")) {
                 connectionPort.postMessage({
                     name: "stop_video_update"
