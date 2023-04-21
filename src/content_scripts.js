@@ -13,10 +13,11 @@ let isAdjusTimerPage = false;
 // video要素の監視
 let watchVideo;
 let port;
+let timeupdate = true;
 
 window.onload = () => {
     // eventとコネクションをはる
-    port = chrome.runtime.connect({name: `contentScript_${location.hostname}`});
+    port = chrome.runtime.connect({name: `contentScript_${location.href}`});
     port.postMessage({status: "connect_init"});
     // 右クリック禁止解除 
     document.addEventListener("contextmenu",function(e){e.stopPropagation();},true);
@@ -31,6 +32,8 @@ window.onload = () => {
             // adjusTimerが終了
             isAdjusTimerPage = false;
             clearInterval(watchVideo);
+        } else if (response.name === "stop_video_update") {
+            timeupdate = false;
         } else if (response.name === "sync_video_info") {
             // サイトによっては最初のパラメータでビデオを指定するため
             let urlPath = location.pathname;
@@ -290,12 +293,14 @@ const secondToTimeString = (sec) => {
 
 
 const postCurrentTime = (currentTime, title) => {
-    port.postMessage({
-        name: "update",
-        status: "time_update",
-        title: title,
-        currentTime: currentTime
-    }, (response) =>{});
+    if (timeupdate) {
+        port.postMessage({
+            name: "update",
+            status: "time_update",
+            title: title,
+            currentTime: currentTime
+        }, (response) =>{});
+    }
 }
 
 const postInitSetting = (pageType) => {

@@ -99,12 +99,14 @@ window.onload = () => {
     document.querySelector(".version").innerHTML = manifestData.version;
 
     port = chrome.runtime.connect({name: `event_${location.hostname}`});
-    port.postMessage({status: "ready_adjustimer"});
+    port.postMessage({type: "ready_adjustimer"});
 
     // eventから受け取るイベント
     port.onMessage.addListener((response) => {
         switch(response.name) {
             case "sync_video_ready":
+                document.querySelector(".current_url").innerText = response.href;
+
                 const syncButton = document.querySelector(".button__sync");
                 syncButton.setAttribute("id", "button__get_video_info");
                 // 情報取得ボタンを押すことでcontent_scriptから情報をもらうようにする

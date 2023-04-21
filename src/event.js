@@ -1,6 +1,7 @@
 let adjusTimerWindow;
 let connectionPort;
 let adjusTimerWindowPort;
+let currentPageUrl;
 
 checkPort();
 
@@ -25,12 +26,25 @@ chrome.contextMenus.onClicked.addListener(async function(item, tab){
 
 // content_script, adjustimer側の2つのコネクションをはる
 chrome.runtime.onConnect.addListener((port) => {
+
     if (port.name.match(/contentScript/)) {
         if (connectionPort) {
-            connectionPort.disconnect();
+            if (window.confirm("現在のページから\n" +  port.name.split("contentScript_")[1] + "\nに対象を変えようとしています、よろしいですか？(OKを押した場合、再度「情報を取得する」を押してください)")) {
+                connectionPort.postMessage({
+                    name: "stop_video_update"
+                })
+                connectionPort.disconnect();
+                // init_connection時にポートを記録する
+                connectionPort = port;
+                checkPort();
+            } else {
+                return;
+            }
         }
         // init_connection時にポートを記録する
         connectionPort = port;
+
+        currentPageUrl = port.name.split("contentScript_")[1];
         // content_scriptからpostを受け取る
         port.onMessage.addListener((request) => {
             if (request.name === "update") {
@@ -57,6 +71,8 @@ chrome.runtime.onConnect.addListener((port) => {
                     name: "sync_video_info",
                     pageType: request.pageType
                 })
+            } else if (request.type === "ready_adjustimer") {
+                checkPort();
             }
         })
         port.onDisconnect.addListener(() => {
@@ -95,7 +111,8 @@ function updateTimerDom(update) {
     if (update.type === "init_page") {
         adjusTimerWindowPort.postMessage({
             name: "sync_video_ready",
-            pageType: update.pageType
+            pageType: update.pageType,
+            href: currentPageUrl
         });
 
     } else if (update.status === "set_video_info") {
