@@ -253,7 +253,7 @@ function urlCheck() {
 function getVideoTitle(pageType) {
     switch(pageType) {
         case PAGE_TYPE_NAMES["PrimeVideo"]:
-            return document.title.split(/Amazon.co.jp: | \| Prime Video/)[1].slice(0, -3);
+            return document.querySelector(".atvwebplayersdk-title-text").textContent;
         case PAGE_TYPE_NAMES["WatchParty"]:
             if (document.querySelector("._3KdeRQ")) {
                 return document.querySelector("._3KdeRQ").textContent;
