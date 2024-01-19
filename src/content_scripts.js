@@ -156,7 +156,7 @@ function startObserver(target, videoTitle) {
 
 function urlCheck() {
     const currentPageUrl = location.href;
-    if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/*/)) {
+    if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/gp\/video\/*/)) {
         const urlCheckPrime = setInterval(() => {
             // Prime Video判定
             let primeVideoPage = document.querySelector(".av-retail-m-nav-text-logo");
@@ -256,11 +256,7 @@ function getVideoTitle(pageType) {
         case PAGE_TYPE_NAMES["PrimeVideo"]:
             return document.querySelector(".atvwebplayersdk-title-text").textContent;
         case PAGE_TYPE_NAMES["WatchParty"]:
-            if (document.querySelector("._3KdeRQ")) {
-                return document.querySelector("._3KdeRQ").textContent;
-            } else {
-                return document.querySelector(".atvwebplayersdk-title-text").textContent;
-            }
+            return document.querySelector("h1").textContent;
         case PAGE_TYPE_NAMES["Tver"]:
             return document.querySelector("[class^=titles_container]").textContent;
         case PAGE_TYPE_NAMES["Youtube"]:

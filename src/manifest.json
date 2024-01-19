@@ -6,7 +6,7 @@
     "content_scripts": [
         {
             "matches": [
-                "https://www.amazon.co.jp/*",
+                "https://www.amazon.co.jp/gp/video/*",
                 "https://tver.jp/episodes/*",
                 "https://www.youtube.com/watch*",
                 "https://anime.dmkt-sp.jp/*",
