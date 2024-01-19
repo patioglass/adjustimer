@@ -16,6 +16,7 @@ let port;
 let timeupdate = true;
 
 window.onload = () => {
+    console.log("load adjustimer");
     // eventとコネクションをはる
     port = chrome.runtime.connect({name: `contentScript_${location.href}`});
     port.postMessage({status: "connect_init"});
@@ -70,7 +71,7 @@ window.onload = () => {
                     break;
                 case PAGE_TYPE_NAMES["Tver"]:
                     // 右クリック解除しないとAdjusTimerが起動できない
-                    target = document.querySelector("video[id*=html5_api");
+                    target = document.querySelector("video[role='application']");
                     if (target) {
                         target.addEventListener('timeupdate', (a, b) => postCurrentTime(
                             secondToTimeString(target.currentTime),
@@ -185,10 +186,10 @@ function urlCheck() {
                 clearInterval(urlCheckPrime);
             }
         }, 1000);
-    } else if (currentPageUrl.match(/https:\/\/tver.jp\/*/)) {
+    } else if (currentPageUrl.match(/https:\/\/tver.jp\/episodes\/*/)) {
         const urlCheckTver = setInterval(() => {
             // Tver判定
-            const title = document.querySelector(".titles_container__Ys0E6");
+            const title = document.querySelector("[class^=titles_container]");
             if (isAdjusTimerPage && title && title.textContent) {
                 // Tver判定ができたことをeventに伝える
                 postInitSetting(PAGE_TYPE_NAMES["Tver"]);
@@ -261,7 +262,7 @@ function getVideoTitle(pageType) {
                 return document.querySelector(".atvwebplayersdk-title-text").textContent;
             }
         case PAGE_TYPE_NAMES["Tver"]:
-            return document.querySelector(".titles_container__Ys0E6").textContent;
+            return document.querySelector("[class^=titles_container]").textContent;
         case PAGE_TYPE_NAMES["Youtube"]:
             return document.querySelector("h1.ytd-video-primary-info-renderer").textContent;
         case PAGE_TYPE_NAMES["dAnime"]:
