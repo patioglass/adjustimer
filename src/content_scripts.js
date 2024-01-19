@@ -206,7 +206,7 @@ function urlCheck() {
                 clearInterval(urlCheckYoutube);
             }
         }, 1000);
-    } else if (currentPageUrl.match(/https:\/\/anime.dmkt-sp.jp\/*/) || currentPageUrl.match(/https:\/\/animestore.docomo.ne.jp\/*/)) {
+    } else if (currentPageUrl.match(/https:\/\/animestore.docomo.ne.jp\/animestore\/sc_d_pc*/)) {
         const urlCheckDanime = setInterval(() => {
             const backInfo = document.querySelector('#backInfo');
             const title = backInfo?.querySelector('.backInfoTxt1')?.textContent;
