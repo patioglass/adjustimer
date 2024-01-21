@@ -1,12 +1,12 @@
 {
     "name": "AdjusTimer",
     "manifest_version": 2,
-    "version": "2.2.6",
+    "version": "2.2.7",
     "description": "Amazon Prime Video/Tver/Youtube/dアニメストア/Netflix/ニコニコ動画の現在の再生時間を別ウィンドウで映す拡張",
     "content_scripts": [
         {
             "matches": [
-                "https://www.amazon.co.jp/gp/video/*",
+                "https://www.amazon.co.jp/*",
                 "https://tver.jp/episodes/*",
                 "https://www.youtube.com/watch*",
                 "https://animestore.docomo.ne.jp/animestore/sc_d_pc*",

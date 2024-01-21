@@ -18,6 +18,13 @@ let timeupdate = true;
 window.onload = () => {
     console.log("load adjustimer");
     // eventとコネクションをはる
+    // アマプラのページのみ、URL正規表現で他アマゾンページと比較できないため、DOMで確認して弾く
+    if (location.href.match(/https:\/\/www.amazon.co.jp\/*/)) {
+        if (document.querySelectorAll("img[alt='Prime Video']").length === 0) {
+            console.log("not prime video");
+            return;
+        }
+    }
     port = chrome.runtime.connect({name: `contentScript_${location.href}`});
     port.postMessage({status: "connect_init"});
     // 右クリック禁止解除 
@@ -156,7 +163,7 @@ function startObserver(target, videoTitle) {
 
 function urlCheck() {
     const currentPageUrl = location.href;
-    if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/gp\/video\/*/)) {
+    if (currentPageUrl.match(/https:\/\/www.amazon.co.jp\/*/)) {
         const urlCheckPrime = setInterval(() => {
             // Prime Video判定
             let primeVideoPage = document.querySelector(".av-retail-m-nav-text-logo");
