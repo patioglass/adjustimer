@@ -19,10 +19,13 @@ window.onload = () => {
     console.log("load adjustimer");
     // eventとコネクションをはる
     // アマプラのページのみ、URL正規表現で他アマゾンページと比較できないため、DOMで確認して弾く
-    if (location.href.match(/https:\/\/www.amazon.co.jp\/*/)) {
-        if (document.querySelectorAll("img[alt='Prime Video']").length === 0) {
-            console.log("not prime video");
-            return;
+    if (location.href.match(/https:\/\/www.amazon.co.jp\//)) {
+        // URL内にウォッチパーティが含まれていない
+        if (!location.href.match(/watchparty/)) {
+            if (document.querySelectorAll("img[alt='Prime Video']").length === 0) {
+                console.log("not prime video");
+                return;
+            }
         }
     }
     port = chrome.runtime.connect({name: `contentScript_${location.href}`});
