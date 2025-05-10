@@ -16,5 +16,6 @@
     },
     "host_permissions": [
       "<all_urls>"
-    ]
+    ],
+    "permissions": ["contextMenus", "tabs"]
 }
