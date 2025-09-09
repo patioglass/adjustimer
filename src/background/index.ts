@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill';
+import { CONTENT_SCRIPT_TYPE_UPDATE } from '../constants';
 
 let vid = -1;
 let currentTabId: number | undefined;
@@ -24,7 +25,6 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
             return;
         }
         currentTabId = tab?.id;
-        console.log(currentTabId);
         // Content Script側との通信を切断する
 
         // AdjusTimerのWindowを新規で作る
@@ -40,13 +40,31 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
                 // vid 変数に window の id を保持しておく
                 vid = window.id;
 
-                // AdjusTimerWindow側との通信
-                // Content Script側との通信
+                // AdjusTimerWindow側との通信(AdjusTimerWindow ⇒ service worker)
+                // Content Script側との通信(Content-Script ⇒ service worker)
+                chrome.runtime.onMessage.addListener(onConnectContentScript);
 
                 // ウィンドウが閉じたらコネクションを切る
                 chrome.windows.onRemoved.addListener((vid) => {
+                    console.log("Close AdjusTimerWindow.");
                 })
             }
         );
     });
 });
+
+/**
+ * chrome.runtime.onMessage.addListener(Content-Script ⇒ service worker)で実行する
+ */
+const onConnectContentScript = (message: any, sender: any, sendResponse: any) => {
+    console.log(`recieve content script.Type: ${message.action}`);
+    switch(message.action) {
+        case CONTENT_SCRIPT_TYPE_UPDATE:
+            // AdjusTimer Window側 に更新を伝える
+            break;
+        default:
+            break;
+    }
+    sendResponse();
+    return true;
+}

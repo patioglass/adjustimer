@@ -8,7 +8,10 @@
     "content_scripts": [
       {
         "js": ["src/content/index.tsx"],
-        "matches": ["https://www.google.com/*"]
+        "matches": [
+          "https://anime.dmkt-sp.jp/*",
+          "https://animestore.docomo.ne.jp/*"
+        ]
       }
     ],
     "background": {
