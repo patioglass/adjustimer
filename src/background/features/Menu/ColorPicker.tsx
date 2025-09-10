@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 
 const ColorPicker = (): ReactElement => {
+    const onChangeColor = () => {
+        console.log("ColorPicker: change");
+    }
     return (
         <div className="border p-3 text-center">
             <div className="">
@@ -10,6 +13,7 @@ const ColorPicker = (): ReactElement => {
                     type="color"
                     className="w-7 align-middle cursor-pointer"
                     value={"#ffffff"}
+                    onChange={onChangeColor}
                 />
             </div>
             
@@ -19,6 +23,7 @@ const ColorPicker = (): ReactElement => {
                 type="color"
                 className="w-7 align-middle cursor-pointer"
                 value={"#000000"}
+                onChange={onChangeColor}
             />
         </div>
     )

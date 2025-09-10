@@ -3,8 +3,10 @@ import NavigationItem from "./NavigationItem";
 import { ReactElement, useEffect, useState } from "react";
 import Footer from "../Footer/Footer";
 import Help from "./Help";
+import { videoProps } from "../../../constants";
 
-const Menu = (): ReactElement => {
+const Menu = (props: videoProps): ReactElement => {
+    const { currentVideo, port } = props;
     const [isOpen, setIsOpen] = useState<boolean>(true);
     const [accordionHeight, setAccordionHeight] = useState<number>(0);
 
@@ -29,7 +31,7 @@ const Menu = (): ReactElement => {
     return (
         <>
             <div
-                onClick={() => changeWindowSize(!isOpen)} 
+                onClick={() => changeWindowSize(!isOpen)}
                 className="
                     w-screen
                     bg-gray-100
@@ -52,7 +54,7 @@ const Menu = (): ReactElement => {
                             tracking-widest
                         ">
                             <Help />
-                            <NavigationItem />
+                            <NavigationItem currentVideo={currentVideo} port={port} />
                         </div>
                     </div>
                 </div>

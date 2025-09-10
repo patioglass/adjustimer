@@ -13,7 +13,8 @@ export const initialVideoState: VideoState = {
     subTitle: '',
     currentTime: '00:00:00',
     url: '',
-    pageType: URL_TYPE_NOT_FOUND
+    pageType: URL_TYPE_NOT_FOUND,
+    tabTitle: '',
 }
 
 export const currentUrl = atom<string>();
@@ -47,6 +48,7 @@ export const getVideo = atom(
         newVideo.currentTime = secondToTimeString(
             update.currentTime ? update.currentTime : 0
         );
+        newVideo.tabTitle = document.title;
 
         set(videoAtom, newVideo);
     },

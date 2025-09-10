@@ -8,6 +8,7 @@
     "content_scripts": [
       {
         "js": ["src/content/index.tsx"],
+        "run_at":"document_start",
         "matches": [
           "https://anime.dmkt-sp.jp/*",
           "https://animestore.docomo.ne.jp/*"

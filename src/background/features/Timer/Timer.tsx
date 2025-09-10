@@ -1,4 +1,7 @@
-const Timer = () => {
+import { videoProps } from "../../../constants";
+
+const Timer = (props: videoProps) => {
+    const { currentVideo } = props;
     return (
         <div className="
             p-24
@@ -8,9 +11,9 @@ const Timer = () => {
             bg-gray-300
             grow
         ">
-            <p className="text-2xl"> 機動戦士Gundam GQuuuuuuX（ジークアクス）</p>
-            <p className="text-xl">1話</p>
-            <p className="mt-10 text-6xl">00:22:12</p>
+            <p className="text-2xl">{currentVideo.title}</p>
+            <p className="text-xl">{currentVideo.subTitle}</p>
+            <p className="mt-10 text-6xl">{currentVideo.currentTime}</p>
         </div>
     );
 }

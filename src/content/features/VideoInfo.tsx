@@ -2,7 +2,9 @@ import { useAtom } from "jotai";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { getVideo } from "../atom";
 import {
+    ADJUSTIMER_WINDOW_UPDATE,
     REGEX_URL_DANIME,
+    VideoState,
 } from "../../constants";
 import { useMutationObserver } from "../hooks";
 
@@ -55,15 +57,16 @@ const VideoInfo = (): ReactElement => {
             currentTime: videoElement?.currentTime
         });
         console.log("Content script: video update.")
+        const updateVideoState: VideoState = {
+            title: video.title,
+            subTitle: video.subTitle,
+            url: video.url,
+            currentTime: video.currentTime,
+            pageType: video.pageType,
+            tabTitle: video.tabTitle
+        }
         chrome.runtime.sendMessage(
-            {
-                action: "update",
-                title: video.title,
-                subTitle: video.subTitle,
-                url: video.url,
-                currentTime: video.currentTime,
-                pageType: video.pageType
-            }
+            Object.assign({action: "update"}, updateVideoState)
         );
     }
     /**
@@ -98,7 +101,6 @@ const VideoInfo = (): ReactElement => {
         return targetVideo;
     }
 
-
     /**
      * content script ⇐ service workerから受信部を最初に定義
      * AdjusTimerが起動する
@@ -111,8 +113,17 @@ const VideoInfo = (): ReactElement => {
         }
     }, []);
 
-    const onMessageServiceWorker = async (message: any) => {
-        // service workerからのtype別に処理する
+    const onMessageServiceWorker = (message: any) => {
+        // service workerからのaction別に処理する
+        console.log(`Content Script: recieve service worker.Type: ${message.action}`);
+        switch(message.action) {
+            case ADJUSTIMER_WINDOW_UPDATE:
+                // videoElementを更新させ、updateVideoを発火させる
+                setUpdateFlag((updateFlag) => !updateFlag);
+                break;
+            default:
+                break;
+        }
     }
     return (
         <>

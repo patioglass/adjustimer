@@ -1,8 +1,9 @@
 import browser from 'webextension-polyfill';
-import { CONTENT_SCRIPT_TYPE_UPDATE } from '../constants';
+import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE, CONTENT_SCRIPT_TYPE_UPDATE, MODE_CREATE_WINDOW, REGEX_ADJUSTIMER_WINDOW_PORT } from '../constants';
 
 let vid = -1;
-let currentTabId: number | undefined;
+let currentTabId: string | undefined;
+let adjusTimerWindowPort: any;
 
 browser.runtime.onInstalled.addListener(() => {
     // メニューを生成
@@ -24,8 +25,6 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
             chrome.windows.update(vid, { focused: true });
             return;
         }
-        currentTabId = tab?.id;
-        // Content Script側との通信を切断する
 
         // AdjusTimerのWindowを新規で作る
         chrome.windows.create({
@@ -41,12 +40,20 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
                 vid = window.id;
 
                 // AdjusTimerWindow側との通信(AdjusTimerWindow ⇒ service worker)
+                chrome.runtime.onConnect.addListener(onConnectAdjusTimerWindow);
                 // Content Script側との通信(Content-Script ⇒ service worker)
                 chrome.runtime.onMessage.addListener(onConnectContentScript);
 
                 // ウィンドウが閉じたらコネクションを切る
-                chrome.windows.onRemoved.addListener((vid) => {
-                    console.log("Close AdjusTimerWindow.");
+                chrome.windows.onRemoved.addListener((closeWindowId) => {
+                    if (vid === closeWindowId) {
+                        console.log("Close AdjusTimerWindow.");
+                        chrome.runtime.onConnect.removeListener(onConnectAdjusTimerWindow);
+                        chrome.runtime.onMessage.removeListener(onConnectContentScript);
+                        if (adjusTimerWindowPort) {
+                            adjusTimerWindowPort.onMessage.removeEventListener(onMessageAdjusTimer);
+                        }
+                    }
                 })
             }
         );
@@ -57,14 +64,68 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
  * chrome.runtime.onMessage.addListener(Content-Script ⇒ service worker)で実行する
  */
 const onConnectContentScript = (message: any, sender: any, sendResponse: any) => {
-    console.log(`recieve content script.Type: ${message.action}`);
+    if (currentTabId && currentTabId != sender.tab.id) return;
+
     switch(message.action) {
         case CONTENT_SCRIPT_TYPE_UPDATE:
             // AdjusTimer Window側 に更新を伝える
+            if (!adjusTimerWindowPort) return;
+            adjusTimerWindowPort.postMessage({
+                action: CONTENT_SCRIPT_TYPE_UPDATE,
+                title: message.title,
+                subTitle: message.subTitle,
+                url: message.url,
+                currentTime: message.currentTime,
+                pageType: message.pageType
+            });
             break;
         default:
             break;
     }
     sendResponse();
+    return true;
+}
+
+
+
+
+/**
+ * chrome.runtime.onMessage.addListener(AdjusTimer Window ⇒ service worker)で実行する
+ */
+const onMessageAdjusTimer = (message: any, sender: any, sendResponse: any) => {
+    switch(message.action) {
+        case ADJUSTIMER_WINDOW_TYPE_READY:
+            // AdjusTimerが起動され、接続が確立したことを、content_scriptに伝える
+            break;
+        case ADJUSTIMER_WINDOW_SET_TAB_ID:
+            // AdjusTimer側でウォッチするタブを決定
+            // content_scriptのうち、指定したタブからの更新情報のみを受け取れるようにする
+            currentTabId = message.tabId;
+            console.log(`Service Worker: update currentTabId (${currentTabId})`);
+            break;
+        case ADJUSTIMER_WINDOW_UPDATE:
+            if (currentTabId) {
+                // (service worker ⇒ Content-Script)で実行する
+                console.log(`Service Worker: update video to content script.`);
+                chrome.tabs.sendMessage(parseInt(currentTabId), message).then(() => {})
+            }
+            break;
+        default:
+            break;
+    }
+    return true;
+}
+
+const onConnectAdjusTimerWindow = (port: any) => {
+    if (port.name.match(REGEX_ADJUSTIMER_WINDOW_PORT)) {
+        adjusTimerWindowPort = port;
+
+        // AdjusTimerWindow側からの受信部
+        adjusTimerWindowPort.onMessage.addListener(onMessageAdjusTimer);
+        adjusTimerWindowPort.onDisconnect.addListener(() => {
+            console.log("disconnect adjustimer")
+            adjusTimerWindowPort = undefined;
+        })
+    }
     return true;
 }
