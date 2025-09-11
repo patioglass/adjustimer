@@ -2,9 +2,6 @@
     "manifest_version": 3,
     "name": "AdjusTimer",
     "version": "3.0.0",
-    "action": {
-      "default_popup": "src/popup/index.html"
-    },
     "content_scripts": [
       {
         "js": ["src/content/index.tsx"],
@@ -21,5 +18,11 @@
     "host_permissions": [
       "<all_urls>"
     ],
+    "icons": {
+      "16": "extension_16.png",
+      "32": "extension_32.png",
+      "48": "extension_48.png",
+      "128": "extension_128.png"
+    },
     "permissions": ["contextMenus", "tabs", "storage"]
 }
