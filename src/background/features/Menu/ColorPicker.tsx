@@ -1,8 +1,18 @@
 import { ReactElement } from "react";
+import { useAtom } from "jotai";
+import { getBackgroundColor, getTextColor } from "../../atom";
+import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR } from "../../../constants";
 
 const ColorPicker = (): ReactElement => {
-    const onChangeColor = () => {
-        console.log("ColorPicker: change");
+    const [ backgroundColor, setBackgroundColor ] = useAtom(getBackgroundColor);
+    const [ textColor, setTextColor ] = useAtom(getTextColor);
+
+    const handleUpdateBackGroundColor = (backgroundColor: string) => {
+        setBackgroundColor(backgroundColor);
+    }
+
+    const handleUpdateTextColor = (textColor: string) => {
+        setTextColor(textColor);
     }
     return (
         <div className="border p-3 text-center">
@@ -12,8 +22,8 @@ const ColorPicker = (): ReactElement => {
                     role="button"
                     type="color"
                     className="w-7 align-middle cursor-pointer"
-                    value={"#ffffff"}
-                    onChange={onChangeColor}
+                    value={backgroundColor ? backgroundColor : DEFAULT_BACKGROUND_COLOR}
+                    onChange={(e) => handleUpdateBackGroundColor(e.target.value)}
                 />
             </div>
             
@@ -22,8 +32,8 @@ const ColorPicker = (): ReactElement => {
                 role="button"
                 type="color"
                 className="w-7 align-middle cursor-pointer"
-                value={"#000000"}
-                onChange={onChangeColor}
+                value={textColor ? textColor : DEFAULT_TEXT_COLOR}
+                onChange={(e) => handleUpdateTextColor(e.target.value)}
             />
         </div>
     )

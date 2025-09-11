@@ -18,11 +18,6 @@ export class TabInfo {
     activeTab: boolean | undefined;
 }
 
-export type videoProps = {
-    currentVideo: VideoState,
-    port: any
-}
-
 export const CONTENT_SCRIPT_TYPE_UPDATE = "update";
 export const ADJUSTIMER_WINDOW_PORT_PREFIX = "event_AdjusTimer";
 export const REGEX_ADJUSTIMER_WINDOW_PORT = new RegExp(ADJUSTIMER_WINDOW_PORT_PREFIX);
@@ -40,6 +35,11 @@ export const MODE_UPDATE_TO_CONTENT_SCRIPT: string = 'MODE_UPDATE_TO_CONTENT_SCR
 
 export const REGEX_URL_DANIME = new RegExp("https://animestore.docomo.ne.jp/animestore/sc_d_pc=*");
 
+export const STORAGE_KEY_BACKGROUND_COLOR = "AdjusTimer_backgroundColor";
+export const STORAGE_KEY_TEXT_COLOR = "AdjusTimer_textColor";
+
+export const DEFAULT_BACKGROUND_COLOR = "#e2e8f0";
+export const DEFAULT_TEXT_COLOR = "#444444";
 
 export const isTargetUrl = (url: string | undefined) => {
     if (!url) return false;

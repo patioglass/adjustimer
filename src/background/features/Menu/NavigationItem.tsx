@@ -1,13 +1,16 @@
 import { ReactElement, useEffect, useState } from "react"
 import ColorPicker from "./ColorPicker"
-import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, isTargetUrl, TabInfo, videoProps } from "../../../constants";
+import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, isTargetUrl, TabInfo } from "../../../constants";
+import { useAtom } from "jotai";
+import { getCurrentVideo, getPort } from "../../atom";
 
-const NavigationItem = (props: videoProps): ReactElement => {
-    const { currentVideo, port } = props;
+const NavigationItem = (): ReactElement => {
+    const [ port, setPort ] = useAtom(getPort);
+    const [ currentVideo, setCurrentVideo ] = useAtom(getCurrentVideo);
     const [ selectTabs, setSelectTabs ] = useState<Array<TabInfo>>();
     const [ selectItems, setSelectItems ] = useState<Array<any>>();
     const [ initLoading, setInitLoading ] = useState<boolean>(false);
-    
+
     /**
      * 現在のタブを取得して、selectを更新する
      */

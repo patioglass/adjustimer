@@ -3,10 +3,8 @@ import NavigationItem from "./NavigationItem";
 import { ReactElement, useEffect, useState } from "react";
 import Footer from "../Footer/Footer";
 import Help from "./Help";
-import { videoProps } from "../../../constants";
 
-const Menu = (props: videoProps): ReactElement => {
-    const { currentVideo, port } = props;
+const Menu = (): ReactElement => {
     const [isOpen, setIsOpen] = useState<boolean>(true);
     const [accordionHeight, setAccordionHeight] = useState<number>(0);
 
@@ -54,7 +52,7 @@ const Menu = (props: videoProps): ReactElement => {
                             tracking-widest
                         ">
                             <Help />
-                            <NavigationItem currentVideo={currentVideo} port={port} />
+                            <NavigationItem />
                         </div>
                     </div>
                 </div>

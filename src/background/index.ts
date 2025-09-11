@@ -86,9 +86,6 @@ const onConnectContentScript = (message: any, sender: any, sendResponse: any) =>
     return true;
 }
 
-
-
-
 /**
  * chrome.runtime.onMessage.addListener(AdjusTimer Window ⇒ service worker)で実行する
  */
