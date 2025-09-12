@@ -1,7 +1,7 @@
 import Title from "./Title";
 import NavigationItem from "./NavigationItem";
 import { ReactElement, useEffect, useState } from "react";
-import Footer from "../Footer/footer";
+import Footer from "../Footer/Footer";
 import Help from "./Help";
 
 const Menu = (): ReactElement => {
@@ -29,7 +29,7 @@ const Menu = (): ReactElement => {
     return (
         <>
             <div
-                onClick={() => changeWindowSize(!isOpen)} 
+                onClick={() => changeWindowSize(!isOpen)}
                 className="
                     w-screen
                     bg-gray-100
