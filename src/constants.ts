@@ -22,6 +22,7 @@ export const CONTENT_SCRIPT_TYPE_UPDATE = "update";
 export const ADJUSTIMER_WINDOW_PORT_PREFIX = "event_AdjusTimer";
 export const REGEX_ADJUSTIMER_WINDOW_PORT = new RegExp(ADJUSTIMER_WINDOW_PORT_PREFIX);
 export const ADJUSTIMER_WINDOW_TYPE_READY = "ready_adjustimer";
+export const ADJUSTIMER_WINDOW_TYPE_CLOSE = "close_adjustimer";
 export const ADJUSTIMER_WINDOW_SET_TAB_ID = "set_tab_id_adjustimer";
 export const ADJUSTIMER_WINDOW_UPDATE = "update_adjustimer";
 export const ADJUSTIMER_WINDOW_TYPE_CHECK = "check_service_worker";

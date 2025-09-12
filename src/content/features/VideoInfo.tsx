@@ -2,11 +2,15 @@ import { useAtom } from "jotai";
 import { ReactElement, useEffect, useRef, useState } from "react";
 import { getVideo } from "../atom";
 import {
+    ADJUSTIMER_WINDOW_TYPE_CLOSE,
+    ADJUSTIMER_WINDOW_TYPE_READY,
     ADJUSTIMER_WINDOW_UPDATE,
     REGEX_URL_DANIME,
     VideoState,
 } from "../../constants";
 import { useMutationObserver } from "../hooks";
+
+let isAdjusTimer = false;
 
 const VideoInfo = (): ReactElement => {
     const [ video, setVideo ] = useAtom(getVideo); // AdjusTimer側に送るvideo情報
@@ -52,11 +56,12 @@ const VideoInfo = (): ReactElement => {
      *
      */
     const updateVideo = (): void => {
+        if (!isAdjusTimer) return;
+
         setVideo({
             currentLocation: currentLocation,
             currentTime: videoElement?.currentTime
         });
-        console.log("Content script: video update.")
         const updateVideoState: VideoState = {
             title: video.title,
             subTitle: video.subTitle,
@@ -117,9 +122,16 @@ const VideoInfo = (): ReactElement => {
         // service workerからのaction別に処理する
         console.log(`Content Script: recieve service worker.Type: ${message.action}`);
         switch(message.action) {
+            case ADJUSTIMER_WINDOW_TYPE_READY:
+                isAdjusTimer = true;
+                break;
             case ADJUSTIMER_WINDOW_UPDATE:
+                isAdjusTimer = true;
                 // videoElementを更新させ、updateVideoを発火させる
                 setUpdateFlag((updateFlag) => !updateFlag);
+                break;
+            case ADJUSTIMER_WINDOW_TYPE_CLOSE:
+                isAdjusTimer = false;
                 break;
             default:
                 break;

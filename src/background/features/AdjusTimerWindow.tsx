@@ -33,13 +33,12 @@ export const AdjusTimerWindow = (): ReactElement => {
         // 25秒ごとにsendMessageを呼ぶ(AdjusTimer起動中、service workerの永続化のため)
         const offscreen = setInterval(() => {
             if (port) {
+                console.log("AdjusTimer Window: port interval access.");
                 port.postMessage({action: ADJUSTIMER_WINDOW_TYPE_CHECK});
             }
         }, 25 * 1000);
 
-        return (
-            clearInterval(offscreen)
-        );
+        return  () => clearInterval(offscreen)
     }, [port])
 
     useEffect(() => {
