@@ -118,8 +118,11 @@ const VideoInfo = (): ReactElement => {
     }, []);
 
     useEffect(() => {
+        // dアニメは「動画再生」がデフォルトなので、名前を変える
         if (video.title) {
-            document.title = `${video.title} | ${video.subTitle}`;
+            if (REGEX_URL_DANIME.test(currentLocation.href)) {
+                document.title = `${video.title} | ${video.subTitle}`;
+            }
         }
     }, [video])
 
