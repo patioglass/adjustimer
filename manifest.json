@@ -5,7 +5,7 @@
     "content_scripts": [
       {
         "js": ["src/content/index.tsx"],
-        "run_at":"document_start",
+        "run_at": "document_idle",
         "matches": [
           "https://anime.dmkt-sp.jp/*",
           "https://animestore.docomo.ne.jp/*"

@@ -39,7 +39,7 @@ export const STORAGE_KEY_BACKGROUND_COLOR = "AdjusTimer_backgroundColor";
 export const STORAGE_KEY_TEXT_COLOR = "AdjusTimer_textColor";
 
 export const DEFAULT_BACKGROUND_COLOR = "#e2e8f0";
-export const DEFAULT_TEXT_COLOR = "#444444";
+export const DEFAULT_TEXT_COLOR = "#000000";
 
 export const isTargetUrl = (url: string | undefined) => {
     if (!url) return false;
