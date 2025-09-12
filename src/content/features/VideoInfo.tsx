@@ -107,11 +107,21 @@ const VideoInfo = (): ReactElement => {
      * AdjusTimerから「情報を取得する」が押下される etc...
      */
     useEffect(() => {
+        setVideo({
+            currentLocation: currentLocation,
+            currentTime: 0
+        });
         chrome.runtime.onMessage.addListener(onMessageServiceWorker);
         return () => {
             chrome.runtime.onMessage.removeListener(onMessageServiceWorker);
         }
     }, []);
+
+    useEffect(() => {
+        if (video.title) {
+            document.title = `${video.title} | ${video.subTitle}`;
+        }
+    }, [video])
 
     const onMessageServiceWorker = (message: any) => {
         // service workerからのaction別に処理する
