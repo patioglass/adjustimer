@@ -7,6 +7,9 @@ export const textColor = atom<string>();
 
 export const currentVideo = atom<VideoState>(initialVideoState);
 
+export const pipWindow = atom<Window | null>(null);
+export const isPipWindowSupported = atom<boolean>("documentPictureInPicture" in window);
+
 export const port = atom<any>();
 
 export const getBackgroundColor = atom(
@@ -40,5 +43,12 @@ export const getPort = atom(
     (get) => get(port),
     (get, set, updatePort: any) => {
         set(port, updatePort);
+    }
+)
+
+export const getPipWindow = atom(
+    (get) => get(pipWindow),
+    (get, set, update: Window | null) => {
+        set(pipWindow, update);
     }
 )

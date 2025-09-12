@@ -31,7 +31,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
                 url : 'src/background/adjustimer.html',
                 focused : true,
                 type : 'popup',
-                height : 910,
+                height : 940,
                 width : 1000
             },
             (window: any) => {

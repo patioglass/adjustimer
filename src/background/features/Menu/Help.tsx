@@ -1,11 +1,12 @@
-import imgUrl from "../../../../public/extension_48.png";
+import imgUrl from "../../../../public/extension_32.png";
 
 const Help = () => {
     return (
         <div className="p-3 bg-gray-100">
-            <img className="mx-auto" src={imgUrl} />
             <div className="text-left mt-5">
-                <p># 使い方</p>
+                <p className="text-xl"><img className="inline align-top" src={imgUrl} /># 使い方</p>
+                <hr />
+                <br />
                 <ul className="list-decimal list-inside">
                     <li>対象の動画ページを開く</li>
                     <li>右のメニューから対象の動画ページを選択する</li>
@@ -23,15 +24,15 @@ const Help = () => {
                         text-xs
                         text-white
                         rounded-lg
-                        bg-rose-500
+                        bg-gray-600
                         px-5 py-1.5
                         mt-1
                         transition-all
-                        duration-300
                         hover:bg-rose-400
                         hover:ring-2
                         hover:ring-rose-400
                         hover:ring-offset-2
+                        inline
                 ">
                     ▶使い方/Q&amp;Aページへ
                 </a>
