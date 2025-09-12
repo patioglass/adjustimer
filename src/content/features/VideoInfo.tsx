@@ -34,15 +34,10 @@ const VideoInfo = (): ReactElement => {
      *
      */
     useEffect(() => {
-        console.log("Content script: Reflesh video.")
         // 現在のページのvideo要素を取得しなおす
         const currentVideoElement = getVideoElement(currentLocation);
         if (currentVideoElement) {
-            if (videoElement) {
-                // すでに、videoElementが定義されている場合、eventlisnerを削除する
-                console.log("Content script: close timeupdate.")
-                videoElement.removeEventListener("timeupdate", updateVideo);
-            }
+            console.log("Content script: Reflesh video.")
             // videoElement の更新
             setVideoElement(currentVideoElement);
             updateVideo();
@@ -81,9 +76,9 @@ const VideoInfo = (): ReactElement => {
      *
      */
       useEffect(() => {
-        console.log("Content script: start timeupdate.")
-
+        console.log("Content script: update video Element.");
         if (videoElement) {
+            console.log("Content script: start timeupdate.")
             videoElement.removeEventListener('timeupdate', updateVideo);
             videoElement.addEventListener('timeupdate', updateVideo);
         }
@@ -120,7 +115,7 @@ const VideoInfo = (): ReactElement => {
 
     const onMessageServiceWorker = (message: any) => {
         // service workerからのaction別に処理する
-        console.log(`Content Script: recieve service worker.Type: ${message.action}`);
+        console.log(`Content Script: receive service worker.Type: ${message.action}`);
         switch(message.action) {
             case ADJUSTIMER_WINDOW_TYPE_READY:
                 isAdjusTimer = true;

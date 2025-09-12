@@ -47,6 +47,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
                     if (vid === closeWindowId) {
                         console.log("Close AdjusTimerWindow.");
                         adjusTimerWindowPort = undefined;
+                        currentTabId = undefined;
                         if (adjusTimerWindowPort) {
                             adjusTimerWindowPort.onMessage.removeEventListener(onMessageAdjusTimer);
                         }
@@ -135,6 +136,7 @@ const onConnectAdjusTimerWindow = (port: any) => {
                 console.log(`Service Worker: close AdjusTimer send to content script.`);
                 chrome.tabs.sendMessage(parseInt(currentTabId), {action: ADJUSTIMER_WINDOW_TYPE_CLOSE}).then(() => {})
             }
+            currentTabId = undefined;
         })
     }
     return true;
