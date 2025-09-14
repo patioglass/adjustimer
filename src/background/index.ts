@@ -141,3 +141,13 @@ const onConnectAdjusTimerWindow = (port: any) => {
     }
     return true;
 }
+
+// アンロード検知したらすべて初期に戻す
+chrome.runtime.onSuspend.addListener((): void => {
+    console.log("Service Worker: unload reflesh.");
+    adjusTimerWindowPort = undefined;
+    currentTabId = undefined;
+    if (adjusTimerWindowPort) {
+        adjusTimerWindowPort.onMessage.removeEventListener(onMessageAdjusTimer);
+    }
+})
