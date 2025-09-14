@@ -1,6 +1,6 @@
 <div align="center">
   <br>
- <img src="https://raw.githubusercontent.com/patioglass/adjustimer_v3/main/public/images/extension_128.png" alt="adjustimer_v3" width="128">
+ <img src="[https://raw.githubusercontent.com/patioglass/adjustimer_v3/main/public/images/extension_128.png](https://raw.githubusercontent.com/patioglass/AdjusTimer-v3/refs/heads/develop/public/extension_128.png)" alt="adjustimer_v3" width="128">
   <br>
   <h2>
     AdjusTimer V3
