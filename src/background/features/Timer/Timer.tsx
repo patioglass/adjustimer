@@ -13,14 +13,15 @@ const Timer = () => {
             w-screen
             font-sans
             text-center
+            font-extrabold
             grow"
             style={{
                 backgroundColor: backgroundColor ? backgroundColor : DEFAULT_BACKGROUND_COLOR,
                 color: textColor ? textColor : DEFAULT_TEXT_COLOR
             }}
         >
-            <p className="text-2xl">{currentVideo.title}</p>
-            <p className="text-xl">{currentVideo.subTitle}</p>
+            <p className="text-4xl">{currentVideo.title}</p>
+            <p className="text-3xl">{currentVideo.subTitle}</p>
             <p className="mt-10 text-6xl">{currentVideo.currentTime}</p>
         </div>
     );
