@@ -1,14 +1,16 @@
 {
     "manifest_version": 3,
     "name": "AdjusTimer",
-    "version": "3.0.0",
-    "action": {
-      "default_popup": "src/popup/index.html"
-    },
+    "description": "再生動画の再生時間を別ウィンドウで映す拡張",
+    "version": "3.0.1",
     "content_scripts": [
       {
         "js": ["src/content/index.tsx"],
-        "matches": ["https://www.google.com/*"]
+        "run_at": "document_idle",
+        "matches": [
+          "https://anime.dmkt-sp.jp/*",
+          "https://animestore.docomo.ne.jp/*"
+        ]
       }
     ],
     "background": {
@@ -16,5 +18,12 @@
     },
     "host_permissions": [
       "<all_urls>"
-    ]
+    ],
+    "icons": {
+      "16": "extension_16.png",
+      "32": "extension_32.png",
+      "48": "extension_48.png",
+      "128": "extension_128.png"
+    },
+    "permissions": ["contextMenus", "tabs", "storage"]
 }
