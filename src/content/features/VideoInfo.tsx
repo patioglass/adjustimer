@@ -69,11 +69,13 @@ const VideoInfo = (): ReactElement => {
                 if (!adDom) {
                     const primeVideo = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")
                     if (primeVideo.length > 0) {
-                        const playShowTime = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0].textContent;
-                        updateTime = timeStringToSeconds(playShowTime.split("/")[0].trim());
+                        const playShowTime: string | null = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0].textContent;
+                        if (playShowTime) {
+                            updateTime = timeStringToSeconds(playShowTime.split("/")[0].trim());
+                        }
                     }
                 } else {
-                    adBreakRemainTime = adDom?.textContent;
+                    adBreakRemainTime = adDom.textContent ? adDom.textContent : "";
                     isAdBreak = true;
                 }
                 break;
