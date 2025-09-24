@@ -70,7 +70,8 @@ export const AdjusTimerWindow = (): ReactElement => {
                     url: response.url,
                     currentTime: response.currentTime,
                     pageType: response.pageType,
-                    tabTitle: response.tabTitle
+                    isAdBreak: response.isAdBreak,
+                    adBreakRemainTime: response.adBreakRemainTime,
                 }
                 setCurrentVideo(updateVideoState);
                 break;

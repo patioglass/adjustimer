@@ -5,7 +5,11 @@ import {
     ADJUSTIMER_WINDOW_TYPE_CLOSE,
     ADJUSTIMER_WINDOW_TYPE_READY,
     ADJUSTIMER_WINDOW_UPDATE,
+    CONTENT_SCRIPT_TYPE_UPDATE,
+    REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
+    timeStringToSeconds,
+    VIDEO_NAME_AMAZON_PRIME,
     VideoState,
 } from "../../constants";
 import { useMutationObserver } from "../hooks";
@@ -22,6 +26,7 @@ const VideoInfo = (): ReactElement => {
 
     // headタグの変化でページ移動を検出、変化があった場合に updateFlag を更新
     const updateLocation = (): void => {
+        console.log("Content Script: change location.");
         setCurrentLocation(location);
     }
     useMutationObserver(document.head, updateLocation);
@@ -53,9 +58,36 @@ const VideoInfo = (): ReactElement => {
     const updateVideo = (): void => {
         if (!isAdjusTimer) return;
 
+        let updateTime: number | undefined = 0;
+        let isAdBreak: boolean = false;
+        let adBreakRemainTime: string = "";
+        switch(video.pageType) {
+            case VIDEO_NAME_AMAZON_PRIME:
+                // メモ: ウォッチパーティのように他の人と同期したい場合、一度currentTime合わせた後に、表示時間のずれた分をさらに再計算して再配置するしかなさそう
+                // Amazonは広告がない場合に、表示時間のDOMを取得して表示する
+                const adDom = document.querySelector(".atvwebplayersdk-ad-timer-remaining-time");
+                if (!adDom) {
+                    const primeVideo = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")
+                    if (primeVideo.length > 0) {
+                        const playShowTime = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0].textContent;
+                        updateTime = timeStringToSeconds(playShowTime.split("/")[0].trim());
+                    }
+                } else {
+                    adBreakRemainTime = adDom?.textContent;
+                    isAdBreak = true;
+                }
+                break;
+            default:
+                updateTime = videoElement?.currentTime;
+                break;
+
+        }
+
         setVideo({
             currentLocation: currentLocation,
-            currentTime: videoElement?.currentTime
+            currentTime: updateTime,
+            isAdBreak: isAdBreak,
+            adBreakRemainTime: adBreakRemainTime
         });
         const updateVideoState: VideoState = {
             title: video.title,
@@ -63,10 +95,11 @@ const VideoInfo = (): ReactElement => {
             url: video.url,
             currentTime: video.currentTime,
             pageType: video.pageType,
-            tabTitle: video.tabTitle
+            isAdBreak: video.isAdBreak,
+            adBreakRemainTime: video.adBreakRemainTime,
         }
         chrome.runtime.sendMessage(
-            Object.assign({action: "update"}, updateVideoState)
+            Object.assign({action: CONTENT_SCRIPT_TYPE_UPDATE}, updateVideoState)
         );
     }
     /**
@@ -95,6 +128,12 @@ const VideoInfo = (): ReactElement => {
             case REGEX_URL_DANIME.test(location.href):
                 targetVideo = document.querySelector("video");
                 break;
+            case REGEX_URL_AMAZON_PRIME.test(location.href):
+                const primeVideo = document.querySelector(".dv-player-fullscreen");
+                if (primeVideo) {
+                    targetVideo = primeVideo.querySelector("video");
+                }
+                break;
             default:
                 break;
         }
@@ -109,7 +148,9 @@ const VideoInfo = (): ReactElement => {
     useEffect(() => {
         setVideo({
             currentLocation: currentLocation,
-            currentTime: 0
+            currentTime: 0,
+            isAdBreak: false,
+            adBreakRemainTime: "0:00"
         });
         chrome.runtime.onMessage.addListener(onMessageServiceWorker);
         return () => {
