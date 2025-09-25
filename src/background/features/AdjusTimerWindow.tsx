@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect } from "react";
 import Timer from "./Timer/Timer";
 
 import "../../style.css";
@@ -70,7 +70,8 @@ export const AdjusTimerWindow = (): ReactElement => {
                     url: response.url,
                     currentTime: response.currentTime,
                     pageType: response.pageType,
-                    tabTitle: response.tabTitle
+                    isAdBreak: response.isAdBreak,
+                    adBreakRemainTime: response.adBreakRemainTime,
                 }
                 setCurrentVideo(updateVideoState);
                 break;
@@ -80,7 +81,7 @@ export const AdjusTimerWindow = (): ReactElement => {
     }
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-screen overflow-scroll hidden-scrollbar">
             <Timer />
             <Menu />
         </div>

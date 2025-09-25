@@ -77,7 +77,9 @@ const onConnectContentScript = (message: any, sender: any, sendResponse: any) =>
                 subTitle: message.subTitle,
                 url: message.url,
                 currentTime: message.currentTime,
-                pageType: message.pageType
+                pageType: message.pageType,
+                isAdBreak: message.isAdBreak,
+                adBreakRemainTime: message.adBreakRemainTime,
             });
             break;
         default:

@@ -1,20 +1,24 @@
 import { atom } from "jotai";
 import {
+    REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
     secondToTimeString,
+    TITLE_NOT_FOUND,
     updateVideoPayload,
     URL_TYPE_NOT_FOUND,
+    VIDEO_NAME_AMAZON_PRIME,
     VIDEO_NAME_DANIME,
     VideoState
 } from "../constants";
 
 export const initialVideoState: VideoState = {
-    title: '「情報を更新」か、ページを更新してAdjusTimerを再起動をしてください.',
+    title: '動画ページを開いてください。',
     subTitle: '',
     currentTime: '00:00:00',
     url: '',
     pageType: URL_TYPE_NOT_FOUND,
-    tabTitle: '',
+    isAdBreak: false,
+    adBreakRemainTime: "0:00"
 }
 
 export const currentUrl = atom<string>();
@@ -38,17 +42,29 @@ export const getVideo = atom(
                 targetVideoSubTitle = `${epNum} ${epTitle}`
                 newVideo.pageType = VIDEO_NAME_DANIME;
                 break;
+            case REGEX_URL_AMAZON_PRIME.test(update.currentLocation.href):
+                targetVideoTitle = document.querySelector(".dv-player-fullscreen .atvwebplayersdk-title-text")
+                                    ? document.querySelector(".dv-player-fullscreen .atvwebplayersdk-title-text")?.textContent
+                                    : TITLE_NOT_FOUND
+                targetVideoSubTitle = document.querySelector(".dv-player-fullscreen .atvwebplayersdk-subtitle-text")
+                                    ? document.querySelector(".dv-player-fullscreen .atvwebplayersdk-subtitle-text")?.textContent
+                                    : ""
+                newVideo.pageType = VIDEO_NAME_AMAZON_PRIME;
+                break;
             default:
-                targetVideoTitle = '未取得';
+                targetVideoTitle = TITLE_NOT_FOUND;
                 break;
         }
         newVideo.title = targetVideoTitle;
         newVideo.subTitle = targetVideoSubTitle;
         newVideo.url = update.currentLocation.href;
-        newVideo.currentTime = secondToTimeString(
-            update.currentTime ? update.currentTime : 0
-        );
-        newVideo.tabTitle = document.title;
+        if (!update.isAdBreak) {
+            newVideo.currentTime = secondToTimeString(
+                update.currentTime ? update.currentTime : 0
+            );
+        }
+        newVideo.isAdBreak = update.isAdBreak;
+        newVideo.adBreakRemainTime = update.adBreakRemainTime;
 
         set(videoAtom, newVideo);
     },
