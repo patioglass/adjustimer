@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:lp": "vite --mode docs",
     "build": "tsc -b && vite build",
+    "build:lp": "tsc -b && vite build --mode docs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -15,6 +17,7 @@
     "jotai": "^2.12.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.9.2",
     "tailwindcss": "^4.1.5"
   },
   "devDependencies": {
