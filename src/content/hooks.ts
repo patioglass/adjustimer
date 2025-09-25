@@ -16,12 +16,11 @@ export const useMutationObserver = (
     }
 ) => {
     useEffect(() => {
-        // DOMが見つかるまで探す
-
-        if (elements) {
-            const observer = new MutationObserver(callback);
-            return () => observer.disconnect();
-        }
+        if (!elements) return;
+        console.log("Content Script: start observe.");
+        const observer = new MutationObserver(callback);
+        observer.observe(elements, options);
+        return () => observer.disconnect();
     }, []);
 };
   
