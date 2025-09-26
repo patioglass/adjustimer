@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename="/AdjusTimer-v3/">
+    <BrowserRouter basename="/AdjusTimer/">
       <App />
     </BrowserRouter>
   </StrictMode>,
