@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
   if (mode === 'docs') {
     return {
       root: 'lp',
-      base: '/AdjusTimer/',
+      base: '/adjustimer/',
       build: {
         outDir: '../docs',
       },
