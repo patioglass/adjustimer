@@ -6,7 +6,7 @@ const Navigation =  (): ReactElement => {
         <nav className="w-full">
             <div className="flex justify-between max-w-5xl mx-auto">
                 <div className="flex items-center">
-                <a href="/"><img className="w-15" src={logo} /></a>
+                <Link to="/"><img className="w-15" src={logo} /></Link>
                 <h2 className="ml-3 text-xl font-bold">AdjusTimer</h2>
                 </div>
                 <div className="flex lg:hidden">
