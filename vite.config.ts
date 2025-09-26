@@ -12,11 +12,12 @@ export default defineConfig(({ mode }) => {
   if (mode === 'docs') {
     return {
       root: 'lp',
-      base: 'AdjusTimer-v3',
+      base: '/AdjusTimer-v3/',
       build: {
         outDir: '../docs',
       },
       plugins: [react(), tailwindcss()],
+      publicDir: resolve(__dirname, 'public'), // ←絶対パスで指定
     }
   } else {
     // === Chrome拡張用ビルド ===

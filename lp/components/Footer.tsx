@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import { Link } from "react-router-dom";
 
 const Footer = (): ReactElement => {
     return (
@@ -7,20 +8,20 @@ const Footer = (): ReactElement => {
             <div className="p-6 text-left">
                 <h2 className="text-lg font-bold mb-3">AdjusTimerについて</h2>
                 <ul className="text-sm/8">
-                <li><a href="">利用規約</a></li>
-                <li><a href="">プライバシーポリシー</a></li>
+                    <li><Link to="/terms-of-use">利用規約</Link></li>
+                    <li><Link to="/privacy-policy">プライバシーポリシー</Link></li>
                 </ul>
             </div>
             <div className="p-6 text-left">
                 <h2 className="text-lg font-bold mb-3">その他</h2>
                 <ul className="text-sm/8">
-                <li><a href="">アップデート情報</a></li>
+                <li><a href="https://www.fanbox.cc/@adjustimer/tags/%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88%E6%83%85%E5%A0%B1" target="_blank">アップデート情報</a></li>
                 </ul>
             </div>
             <div className="p-6 text-left">
                 <h2 className="text-lg font-bold mb-3">連絡先</h2>
                 <ul className="text-sm/8">
-                <li><a href="">Twitter(X) @adjustimer</a></li>
+                <li><a href="https://x.com/adjustimer" target="_blank">Twitter(X) @adjustimer</a></li>
                 </ul>
             </div>
             </div>
