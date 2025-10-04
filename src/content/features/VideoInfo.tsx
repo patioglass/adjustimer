@@ -6,10 +6,13 @@ import {
     ADJUSTIMER_WINDOW_TYPE_READY,
     ADJUSTIMER_WINDOW_UPDATE,
     CONTENT_SCRIPT_TYPE_UPDATE,
+    diffTimeFormat,
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
+    REGEX_URL_YOUTUBE,
     timeStringToSeconds,
     VIDEO_NAME_AMAZON_PRIME,
+    VIDEO_NAME_YOUTUBE,
     VideoState,
 } from "../../constants";
 import { useMutationObserver } from "../hooks";
@@ -61,6 +64,8 @@ const VideoInfo = (): ReactElement => {
         let updateTime: number | undefined = 0;
         let isAdBreak: boolean = false;
         let adBreakRemainTime: string = "";
+
+        // 広告の有無、amazon primeの特殊処理などの分岐
         switch(video.pageType) {
             case VIDEO_NAME_AMAZON_PRIME:
                 // メモ: ウォッチパーティのように他の人と同期したい場合、一度currentTime合わせた後に、表示時間のずれた分をさらに再計算して再配置するしかなさそう
@@ -78,6 +83,16 @@ const VideoInfo = (): ReactElement => {
                     adBreakRemainTime = adDom.textContent ? adDom.textContent : "";
                     isAdBreak = true;
                 }
+                break;
+            case VIDEO_NAME_YOUTUBE:
+                if (document.querySelector(".video-ads")?.innerHTML) {
+                    adBreakRemainTime = diffTimeFormat(
+                        document.querySelector(".ytp-time-current")?.textContent,
+                        document.querySelector(".ytp-time-duration")?.textContent
+                    );
+                    isAdBreak = true;
+                }
+                updateTime = videoElement?.currentTime;
                 break;
             default:
                 updateTime = videoElement?.currentTime;
@@ -128,6 +143,7 @@ const VideoInfo = (): ReactElement => {
         let targetVideo: HTMLVideoElement | null | undefined;
         switch(true) {
             case REGEX_URL_DANIME.test(location.href):
+            case REGEX_URL_YOUTUBE.test(location.href):
                 targetVideo = document.querySelector("video");
                 break;
             case REGEX_URL_AMAZON_PRIME.test(location.href):

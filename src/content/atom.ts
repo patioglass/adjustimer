@@ -2,12 +2,14 @@ import { atom } from "jotai";
 import {
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
+    REGEX_URL_YOUTUBE,
     secondToTimeString,
     TITLE_NOT_FOUND,
     updateVideoPayload,
     URL_TYPE_NOT_FOUND,
     VIDEO_NAME_AMAZON_PRIME,
     VIDEO_NAME_DANIME,
+    VIDEO_NAME_YOUTUBE,
     VideoState
 } from "../constants";
 
@@ -50,6 +52,13 @@ export const getVideo = atom(
                                     ? document.querySelector(".dv-player-fullscreen .atvwebplayersdk-subtitle-text")?.textContent
                                     : ""
                 newVideo.pageType = VIDEO_NAME_AMAZON_PRIME;
+                break;
+            case REGEX_URL_YOUTUBE.test(update.currentLocation.href):
+                targetVideoTitle = document.querySelector("h1.ytd-watch-metadata") && document.querySelector("h1.ytd-video-primary-info-renderer")
+                                    ? document.querySelector("h1.ytd-video-primary-info-renderer")?.textContent
+                                    : TITLE_NOT_FOUND;
+                targetVideoSubTitle = "";
+                newVideo.pageType = VIDEO_NAME_YOUTUBE;
                 break;
             default:
                 targetVideoTitle = TITLE_NOT_FOUND;
