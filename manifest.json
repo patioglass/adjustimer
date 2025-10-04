@@ -11,8 +11,7 @@
           "https://anime.dmkt-sp.jp/*",
           "https://animestore.docomo.ne.jp/*",
           "https://www.amazon.co.jp/gp/video/*",
-          "https://www.youtube.com/",
-          "https://www.youtube.com/watch*"
+          "https://www.youtube.com/*"
         ]
       }
     ],

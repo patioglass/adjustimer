@@ -107,7 +107,7 @@ const diffMinutes = (currentTime: string, durationTime: string) => {
   return fullTotal - currentTotal;
 }
 
-export const diffTimeFormat = (currentTime: string | undefined, durationTime: string | undefined) => {
+export const diffTimeFormat = (currentTime: string | undefined | null, durationTime: string | undefined | null) => {
   if (!currentTime || !durationTime) return "00:00";
 
   const diff = diffMinutes(currentTime, durationTime);
