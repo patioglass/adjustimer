@@ -32,6 +32,7 @@ export const ADJUSTIMER_WINDOW_TYPE_CHECK = "check_service_worker";
 
 export const VIDEO_NAME_DANIME = 'dAnime';
 export const VIDEO_NAME_AMAZON_PRIME = 'AmazonPrime';
+export const VIDEO_NAME_YOUTUBE = 'Youtube';
 export const URL_TYPE_NOT_FOUND: string = 'notFound';
 export const TITLE_NOT_FOUND = "動画の更新等をお試しください。";
 
@@ -41,6 +42,7 @@ export const MODE_UPDATE_TO_CONTENT_SCRIPT: string = 'MODE_UPDATE_TO_CONTENT_SCR
 
 export const REGEX_URL_DANIME = new RegExp("https://animestore.docomo.ne.jp/animestore/sc_d_pc=*");
 export const REGEX_URL_AMAZON_PRIME = new RegExp("https://www.amazon.co.jp/gp/video/*");
+export const REGEX_URL_YOUTUBE = new RegExp("https://www.youtube.com/watch*");
 
 export const STORAGE_KEY_BACKGROUND_COLOR = "AdjusTimer_backgroundColor";
 export const STORAGE_KEY_TEXT_COLOR = "AdjusTimer_textColor";
@@ -54,6 +56,7 @@ export const isTargetUrl = (url: string | undefined) => {
     switch(true) {
         case REGEX_URL_DANIME.test(url):
         case REGEX_URL_AMAZON_PRIME.test(url):
+        case REGEX_URL_YOUTUBE.test(url):
             isSuccess = true;
             break;
         default:

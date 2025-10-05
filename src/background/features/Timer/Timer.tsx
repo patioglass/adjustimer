@@ -41,7 +41,7 @@ const Timer = () => {
                             <path d="M12 9v4"></path>
                             <path d="M12 17h.01"></path>
                         </svg>
-                        広告再生中 - 残り:{currentVideo.adBreakRemainTime}
+                        広告再生中 - 残り:＜{currentVideo.adBreakRemainTime}＞
                     </span>
                 </div>
             )}
