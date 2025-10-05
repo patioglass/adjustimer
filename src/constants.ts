@@ -96,27 +96,3 @@ export const timeStringToSeconds = (timeStr: string) => {
     throw new Error("Invalid time format: " + timeStr);
   }
 }
-
-const diffMinutes = (currentTime: string, durationTime: string) => {
-  const [ch, cm] = currentTime.split(':').map(Number);
-  const [fh, fm] = durationTime.split(':').map(Number);
-
-  const currentTotal = ch * 60 + cm;
-  const fullTotal = fh * 60 + fm;
-
-  return fullTotal - currentTotal;
-}
-
-export const diffTimeFormat = (currentTime: string | undefined | null, durationTime: string | undefined | null) => {
-  if (!currentTime || !durationTime) return "00:00";
-
-  const diff = diffMinutes(currentTime, durationTime);
-
-  const sign = diff < 0 ? "-" : "";
-  const abs = Math.abs(diff);
-
-  const h = Math.floor(abs / 60);
-  const m = abs % 60;
-
-  return `${sign}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-}

@@ -6,10 +6,10 @@ import {
     ADJUSTIMER_WINDOW_TYPE_READY,
     ADJUSTIMER_WINDOW_UPDATE,
     CONTENT_SCRIPT_TYPE_UPDATE,
-    diffTimeFormat,
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
     REGEX_URL_YOUTUBE,
+    secondToTimeString,
     timeStringToSeconds,
     VIDEO_NAME_AMAZON_PRIME,
     VIDEO_NAME_YOUTUBE,
@@ -86,10 +86,10 @@ const VideoInfo = (): ReactElement => {
                 break;
             case VIDEO_NAME_YOUTUBE:
                 if (document.querySelector(".video-ads")?.innerHTML) {
-                    adBreakRemainTime = diffTimeFormat(
-                        document.querySelector(".ytp-time-current")?.textContent,
-                        document.querySelector(".ytp-time-duration")?.textContent
-                    );
+                    const adVideo: HTMLVideoElement | null = document.querySelector("video")
+                    if (adVideo) {
+                        adBreakRemainTime = secondToTimeString(adVideo.duration - adVideo.currentTime);
+                    }
                     isAdBreak = true;
                 }
                 updateTime = videoElement?.currentTime;
