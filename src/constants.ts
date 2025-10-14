@@ -34,6 +34,7 @@ export const VIDEO_NAME_AMAZON_PRIME = 'AmazonPrime';
 export const VIDEO_NAME_YOUTUBE = 'Youtube';
 export const VIDEO_NAME_NICONICO = 'Niconico';
 export const VIDEO_NAME_TVER = 'Tver';
+export const VIDEO_NAME_NETFLIX = 'Netflix';
 export const URL_TYPE_NOT_FOUND: string = 'notFound';
 export const TITLE_NOT_FOUND = "動画の更新等をお試しください。";
 
@@ -46,6 +47,7 @@ export const REGEX_URL_AMAZON_PRIME = new RegExp("https://www.amazon.co.jp/gp/vi
 export const REGEX_URL_YOUTUBE = new RegExp("https://www.youtube.com/watch*");
 export const REGEX_URL_NICONICO = new RegExp("https://www.nicovideo.jp/watch/*");
 export const REGEX_URL_TVER = new RegExp("https://tver.jp/episodes/*");
+export const REGEX_URL_NETFLIX = new RegExp("https://www.netflix.com/watch/*");
 export const STORAGE_KEY_BACKGROUND_COLOR = "AdjusTimer_backgroundColor";
 export const STORAGE_KEY_TEXT_COLOR = "AdjusTimer_textColor";
 
@@ -61,6 +63,7 @@ export const isTargetUrl = (url: string | undefined) => {
         case REGEX_URL_YOUTUBE.test(url):
         case REGEX_URL_NICONICO.test(url):
         case REGEX_URL_TVER.test(url):
+        case REGEX_URL_NETFLIX.test(url):
             isSuccess = true;
             break;
         default:

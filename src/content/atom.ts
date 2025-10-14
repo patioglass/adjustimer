@@ -2,6 +2,7 @@ import { atom } from "jotai";
 import {
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
+    REGEX_URL_NETFLIX,
     REGEX_URL_NICONICO,
     REGEX_URL_TVER,
     REGEX_URL_YOUTUBE,
@@ -12,6 +13,7 @@ import {
     URL_TYPE_NOT_FOUND,
     VIDEO_NAME_AMAZON_PRIME,
     VIDEO_NAME_DANIME,
+    VIDEO_NAME_NETFLIX,
     VIDEO_NAME_NICONICO,
     VIDEO_NAME_TVER,
     VIDEO_NAME_YOUTUBE,
@@ -137,6 +139,26 @@ export const getVideo = atom(
                     isAdBreak = false;
                 }
                 newVideo.pageType = VIDEO_NAME_TVER;
+                break;
+            case REGEX_URL_NETFLIX.test(update.currentLocation.href):
+                targetVideoTitle = document.querySelector(".netflixTitle")
+                                ? document.querySelector(".netflixTitle")?.textContent
+                                : TITLE_NOT_FOUND;
+                targetVideoSubTitle = document.querySelector(".netflixSubTitle")
+                                    ? document.querySelector(".netflixSubTitle")?.textContent
+                                    : "";
+                // 広告
+                const netflixAdTime = document.querySelector("[data-uia=ads-info-time]");
+                if (netflixAdTime) {
+                    isAdBreak = true;
+                    adBreakRemainTime = secondToTimeString(timeStringToSeconds(netflixAdTime.textContent));
+                }
+                // NetflixはvideoのcurrentTimeで時間を図っていないため、内部オブジェクトから再生時間を取得する
+                const currentTimeNetflix = document.querySelector(".netflixCurrentTime");
+                if (currentTimeNetflix) {
+                    updateTime = Number(currentTimeNetflix.textContent);
+                }
+                newVideo.pageType = VIDEO_NAME_NETFLIX;
                 break;
             default:
                 targetVideoTitle = TITLE_NOT_FOUND;

@@ -13,7 +13,8 @@
           "https://www.amazon.co.jp/gp/video/*",
           "https://www.youtube.com/*",
           "https://tver.jp/*",
-          "https://www.nicovideo.jp/watch/*"
+          "https://www.nicovideo.jp/watch/*",
+          "https://www.netflix.com/*"
         ]
       }
     ],
@@ -29,5 +30,15 @@
       "48": "extension_48.png",
       "128": "extension_128.png"
     },
-    "permissions": ["contextMenus", "tabs", "storage"]
+    "permissions": ["contextMenus", "tabs", "storage"],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "adjustimer-netflix-loader.js"
+        ],
+        "matches": [
+          "https://www.netflix.com/*"
+        ]
+      }
+    ]
 }

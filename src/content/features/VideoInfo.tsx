@@ -9,6 +9,7 @@ import {
     CONTENT_SCRIPT_TYPE_UPDATE,
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
+    REGEX_URL_NETFLIX,
     REGEX_URL_NICONICO,
     REGEX_URL_TVER,
     REGEX_URL_YOUTUBE,
@@ -27,6 +28,26 @@ const VideoInfo = (): ReactElement => {
     const [ currentLocation, setCurrentLocation ] = useState<Location>(urlRef.current); // 現在のページ
 
     /**
+     * 指定したファイルの中身をscriptタグに追記する（jsの挿入に使う）
+     * @param {string} file 挿入したいファイルのURL
+     * @param {string} node appendChildで挿入するタグ名
+     */
+    const injectScript = (file: string, node: string) => {
+        const scripts = document.querySelectorAll("script");
+        const extensionScript = scripts[scripts.length - 1];
+        if (!extensionScript?.src.match("adjustimer-netflix-loader.js")) {
+            const th = document.getElementsByTagName(node)[0];
+            const s = document.createElement('script');
+            s.setAttribute('type', 'text/javascript');
+            s.setAttribute('src', file);
+            th.appendChild(s);
+        }
+    }
+    if (REGEX_URL_NETFLIX.test(location.href)) {
+        injectScript(chrome.runtime.getURL("adjustimer-netflix-loader.js"), "body");
+    }
+
+    /**
      * 現ページのvideo要素を取得する
      * @param {Location} location 現在のlocation情報
      * @param {HTMLVideoElement | null | undefined} targetVideo 取得できたvideo要素
@@ -38,6 +59,7 @@ const VideoInfo = (): ReactElement => {
             case REGEX_URL_YOUTUBE.test(location.href):
             case REGEX_URL_NICONICO.test(location.href):
             case REGEX_URL_TVER.test(location.href):
+            case REGEX_URL_NETFLIX.test(location.href):
                 targetVideo = document.querySelector("video");
                 break;
             case REGEX_URL_AMAZON_PRIME.test(location.href):
