@@ -3,6 +3,7 @@ import {
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
     REGEX_URL_NICONICO,
+    REGEX_URL_TVER,
     REGEX_URL_YOUTUBE,
     secondToTimeString,
     timeStringToSeconds,
@@ -12,6 +13,7 @@ import {
     VIDEO_NAME_AMAZON_PRIME,
     VIDEO_NAME_DANIME,
     VIDEO_NAME_NICONICO,
+    VIDEO_NAME_TVER,
     VIDEO_NAME_YOUTUBE,
     VideoState
 } from "../constants";
@@ -114,6 +116,27 @@ export const getVideo = atom(
                 }
 
                 newVideo.pageType = VIDEO_NAME_NICONICO;
+                break;
+            case REGEX_URL_TVER.test(update.currentLocation.href):
+                targetVideoTitle = document.querySelector("[class^=titles_seriesTitle]")
+                                ? document.querySelector("[class^=titles_seriesTitle]")?.textContent
+                                : TITLE_NOT_FOUND;
+                targetVideoSubTitle = document.querySelector("[class^=titles_title]")
+                                    ? document.querySelector("[class^=titles_title]")?.textContent
+                                    : "";
+                // 広告
+                const tverAdVideos = document.querySelectorAll<HTMLVideoElement>("video[title='Advertisement']");
+                for (const ad of tverAdVideos) {
+                    if (!ad.paused && ad.duration) {
+                        adBreakRemainTime = secondToTimeString(ad.duration - ad.currentTime);
+                    }
+                }
+                if (document.querySelectorAll(".strp-ad-player div div[style='display: block;']").length > 0) {
+                    isAdBreak = true;
+                } else {
+                    isAdBreak = false;
+                }
+                newVideo.pageType = VIDEO_NAME_TVER;
                 break;
             default:
                 targetVideoTitle = TITLE_NOT_FOUND;

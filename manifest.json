@@ -12,6 +12,7 @@
           "https://animestore.docomo.ne.jp/*",
           "https://www.amazon.co.jp/gp/video/*",
           "https://www.youtube.com/*",
+          "https://tver.jp/*",
           "https://www.nicovideo.jp/watch/*"
         ]
       }

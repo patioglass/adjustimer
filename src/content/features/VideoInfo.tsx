@@ -10,6 +10,7 @@ import {
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
     REGEX_URL_NICONICO,
+    REGEX_URL_TVER,
     REGEX_URL_YOUTUBE,
     VideoState,
 } from "../../constants";
@@ -36,6 +37,7 @@ const VideoInfo = (): ReactElement => {
             case REGEX_URL_DANIME.test(location.href):
             case REGEX_URL_YOUTUBE.test(location.href):
             case REGEX_URL_NICONICO.test(location.href):
+            case REGEX_URL_TVER.test(location.href):
                 targetVideo = document.querySelector("video");
                 break;
             case REGEX_URL_AMAZON_PRIME.test(location.href):
@@ -69,7 +71,6 @@ const VideoInfo = (): ReactElement => {
     }
     // headタグの変化でページ移動を検出
     const updateLocation = (): void => {
-        console.log("Content Script: change location.");
         setCurrentLocation(location);
         updateVideoElement();
     }
@@ -116,9 +117,14 @@ const VideoInfo = (): ReactElement => {
         console.log("Content script: update video Element.");
         if (videoElement) {
             console.log("Content script: start timeupdate.")
-            document.querySelector("video")?.removeEventListener('progress', updateVideo);
+            document.querySelectorAll("video")?.forEach((v) => {
+                v.removeEventListener('progress', updateVideo);
+            })
             videoElement.removeEventListener('timeupdate', updateVideo);
-            document.querySelector("video")?.addEventListener('progress', updateVideo);
+
+            document.querySelectorAll("video")?.forEach((v) => {
+                v.addEventListener('progress', updateVideo);
+            })
             videoElement.addEventListener('timeupdate', updateVideo);
         }
     }, [videoElement]);
