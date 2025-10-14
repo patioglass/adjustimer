@@ -11,8 +11,6 @@ export interface VideoState {
 export interface updateVideoPayload {
     currentLocation: Location,
     currentTime: number | undefined,
-    isAdBreak: boolean,
-    adBreakRemainTime: string,
 }
 
 export class TabInfo {
@@ -28,11 +26,13 @@ export const ADJUSTIMER_WINDOW_TYPE_READY = "ready_adjustimer";
 export const ADJUSTIMER_WINDOW_TYPE_CLOSE = "close_adjustimer";
 export const ADJUSTIMER_WINDOW_SET_TAB_ID = "set_tab_id_adjustimer";
 export const ADJUSTIMER_WINDOW_UPDATE = "update_adjustimer";
+export const ADJUSTIMER_WINDOW_UPDATE_AD = "update_adjustimer_ad";
 export const ADJUSTIMER_WINDOW_TYPE_CHECK = "check_service_worker";
 
 export const VIDEO_NAME_DANIME = 'dAnime';
 export const VIDEO_NAME_AMAZON_PRIME = 'AmazonPrime';
 export const VIDEO_NAME_YOUTUBE = 'Youtube';
+export const VIDEO_NAME_NICONICO = 'Niconico';
 export const URL_TYPE_NOT_FOUND: string = 'notFound';
 export const TITLE_NOT_FOUND = "動画の更新等をお試しください。";
 
@@ -43,6 +43,7 @@ export const MODE_UPDATE_TO_CONTENT_SCRIPT: string = 'MODE_UPDATE_TO_CONTENT_SCR
 export const REGEX_URL_DANIME = new RegExp("https://animestore.docomo.ne.jp/animestore/sc_d_pc=*");
 export const REGEX_URL_AMAZON_PRIME = new RegExp("https://www.amazon.co.jp/gp/video/*");
 export const REGEX_URL_YOUTUBE = new RegExp("https://www.youtube.com/watch*");
+export const REGEX_URL_NICONICO = new RegExp("https://www.nicovideo.jp/watch/*");
 
 export const STORAGE_KEY_BACKGROUND_COLOR = "AdjusTimer_backgroundColor";
 export const STORAGE_KEY_TEXT_COLOR = "AdjusTimer_textColor";
@@ -57,6 +58,7 @@ export const isTargetUrl = (url: string | undefined) => {
         case REGEX_URL_DANIME.test(url):
         case REGEX_URL_AMAZON_PRIME.test(url):
         case REGEX_URL_YOUTUBE.test(url):
+        case REGEX_URL_NICONICO.test(url):
             isSuccess = true;
             break;
         default:

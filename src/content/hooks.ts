@@ -6,7 +6,7 @@ import { useEffect } from "react";
  * @param {callback} callback 検知後に発火するcallback
  */
 export const useMutationObserver = (
-    elements: any,
+    elements: Element | null,
     callback: any,
     options = {
         attributes: true,

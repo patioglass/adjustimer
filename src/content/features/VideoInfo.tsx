@@ -5,14 +5,12 @@ import {
     ADJUSTIMER_WINDOW_TYPE_CLOSE,
     ADJUSTIMER_WINDOW_TYPE_READY,
     ADJUSTIMER_WINDOW_UPDATE,
+    ADJUSTIMER_WINDOW_UPDATE_AD,
     CONTENT_SCRIPT_TYPE_UPDATE,
     REGEX_URL_AMAZON_PRIME,
     REGEX_URL_DANIME,
+    REGEX_URL_NICONICO,
     REGEX_URL_YOUTUBE,
-    secondToTimeString,
-    timeStringToSeconds,
-    VIDEO_NAME_AMAZON_PRIME,
-    VIDEO_NAME_YOUTUBE,
     VideoState,
 } from "../../constants";
 import { useMutationObserver } from "../hooks";
@@ -27,12 +25,30 @@ const VideoInfo = (): ReactElement => {
     const urlRef = useRef(location);
     const [ currentLocation, setCurrentLocation ] = useState<Location>(urlRef.current); // 現在のページ
 
-    // headタグの変化でページ移動を検出、変化があった場合に updateFlag を更新
-    const updateLocation = (): void => {
-        console.log("Content Script: change location.");
-        setCurrentLocation(location);
+    /**
+     * 現ページのvideo要素を取得する
+     * @param {Location} location 現在のlocation情報
+     * @param {HTMLVideoElement | null | undefined} targetVideo 取得できたvideo要素
+     */
+    const getVideoElement = (location: Location): HTMLVideoElement | null | undefined => {
+        let targetVideo: HTMLVideoElement | null | undefined;
+        switch(true) {
+            case REGEX_URL_DANIME.test(location.href):
+            case REGEX_URL_YOUTUBE.test(location.href):
+            case REGEX_URL_NICONICO.test(location.href):
+                targetVideo = document.querySelector("video");
+                break;
+            case REGEX_URL_AMAZON_PRIME.test(location.href):
+                const primeVideo = document.querySelector(".dv-player-fullscreen");
+                if (primeVideo) {
+                    targetVideo = primeVideo.querySelector("video");
+                }
+                break;
+            default:
+                break;
+        }
+        return targetVideo;
     }
-    useMutationObserver(document.head, updateLocation);
 
     /**
      *
@@ -41,7 +57,7 @@ const VideoInfo = (): ReactElement => {
      * ⇒ video の 更新を行う
      *
      */
-    useEffect(() => {
+    const updateVideoElement = (): void => {
         // 現在のページのvideo要素を取得しなおす
         const currentVideoElement = getVideoElement(currentLocation);
         if (currentVideoElement) {
@@ -50,7 +66,18 @@ const VideoInfo = (): ReactElement => {
             setVideoElement(currentVideoElement);
             updateVideo();
         }
-    }, [currentLocation, updateFlag]);
+    }
+    // headタグの変化でページ移動を検出
+    const updateLocation = (): void => {
+        console.log("Content Script: change location.");
+        setCurrentLocation(location);
+        updateVideoElement();
+    }
+    useMutationObserver(document.head, updateLocation);
+
+    useEffect(() => {
+        updateVideoElement();
+    }, [updateFlag]);
 
     /**
      *
@@ -61,50 +88,9 @@ const VideoInfo = (): ReactElement => {
     const updateVideo = (): void => {
         if (!isAdjusTimer) return;
 
-        let updateTime: number | undefined = 0;
-        let isAdBreak: boolean = false;
-        let adBreakRemainTime: string = "";
-
-        // 広告の有無、amazon primeの特殊処理などの分岐
-        switch(video.pageType) {
-            case VIDEO_NAME_AMAZON_PRIME:
-                // メモ: ウォッチパーティのように他の人と同期したい場合、一度currentTime合わせた後に、表示時間のずれた分をさらに再計算して再配置するしかなさそう
-                // Amazonは広告がない場合に、表示時間のDOMを取得して表示する
-                const adDom = document.querySelector(".atvwebplayersdk-ad-timer-remaining-time");
-                if (!adDom) {
-                    const primeVideo = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")
-                    if (primeVideo.length > 0) {
-                        const playShowTime: string | null = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0].textContent;
-                        if (playShowTime) {
-                            updateTime = timeStringToSeconds(playShowTime.split("/")[0].trim());
-                        }
-                    }
-                } else {
-                    adBreakRemainTime = adDom.textContent ? adDom.textContent : "";
-                    isAdBreak = true;
-                }
-                break;
-            case VIDEO_NAME_YOUTUBE:
-                if (document.querySelector(".video-ads")?.innerHTML) {
-                    const adVideo: HTMLVideoElement | null = document.querySelector("video")
-                    if (adVideo) {
-                        adBreakRemainTime = secondToTimeString(adVideo.duration - adVideo.currentTime);
-                    }
-                    isAdBreak = true;
-                }
-                updateTime = videoElement?.currentTime;
-                break;
-            default:
-                updateTime = videoElement?.currentTime;
-                break;
-
-        }
-
         setVideo({
             currentLocation: currentLocation,
-            currentTime: updateTime,
-            isAdBreak: isAdBreak,
-            adBreakRemainTime: adBreakRemainTime
+            currentTime: videoElement?.currentTime
         });
         const updateVideoState: VideoState = {
             title: video.title,
@@ -123,40 +109,19 @@ const VideoInfo = (): ReactElement => {
      *
      * 動画の対象 videoElement が変わった際に、時間の更新 timeupdate の eventListener 登録しなおす
      * addEventListener('timeupdate')
+     * 広告動画の判定でprogressを使う（ニコニコ対応）
      *
      */
       useEffect(() => {
         console.log("Content script: update video Element.");
         if (videoElement) {
             console.log("Content script: start timeupdate.")
+            document.querySelector("video")?.removeEventListener('progress', updateVideo);
             videoElement.removeEventListener('timeupdate', updateVideo);
+            document.querySelector("video")?.addEventListener('progress', updateVideo);
             videoElement.addEventListener('timeupdate', updateVideo);
         }
     }, [videoElement]);
-
-    /**
-     * 現ページのvideo要素を取得する
-     * @param {Location} location 現在のlocation情報
-     * @param {HTMLVideoElement | null | undefined} targetVideo 取得できたvideo要素
-     */
-    const getVideoElement = (location: Location): HTMLVideoElement | null | undefined => {
-        let targetVideo: HTMLVideoElement | null | undefined;
-        switch(true) {
-            case REGEX_URL_DANIME.test(location.href):
-            case REGEX_URL_YOUTUBE.test(location.href):
-                targetVideo = document.querySelector("video");
-                break;
-            case REGEX_URL_AMAZON_PRIME.test(location.href):
-                const primeVideo = document.querySelector(".dv-player-fullscreen");
-                if (primeVideo) {
-                    targetVideo = primeVideo.querySelector("video");
-                }
-                break;
-            default:
-                break;
-        }
-        return targetVideo;
-    }
 
     /**
      * content script ⇐ service workerから受信部を最初に定義
@@ -166,9 +131,7 @@ const VideoInfo = (): ReactElement => {
     useEffect(() => {
         setVideo({
             currentLocation: currentLocation,
-            currentTime: 0,
-            isAdBreak: false,
-            adBreakRemainTime: "0:00"
+            currentTime: 0
         });
         chrome.runtime.onMessage.addListener(onMessageServiceWorker);
         return () => {
@@ -187,12 +150,12 @@ const VideoInfo = (): ReactElement => {
 
     const onMessageServiceWorker = (message: any) => {
         // service workerからのaction別に処理する
-        console.log(`Content Script: receive service worker.Type: ${message.action}`);
         switch(message.action) {
             case ADJUSTIMER_WINDOW_TYPE_READY:
                 isAdjusTimer = true;
                 break;
             case ADJUSTIMER_WINDOW_UPDATE:
+            case ADJUSTIMER_WINDOW_UPDATE_AD:
                 isAdjusTimer = true;
                 // videoElementを更新させ、updateVideoを発火させる
                 setUpdateFlag((updateFlag) => !updateFlag);
@@ -203,6 +166,9 @@ const VideoInfo = (): ReactElement => {
             default:
                 break;
         }
+        // 広告時間の更新はログが出過ぎるので、ログ出力しない
+        if (message.action === ADJUSTIMER_WINDOW_UPDATE_AD) return;
+        console.log(`Content Script: receive service worker.Type: ${message.action}`);
     }
     return (
         <>

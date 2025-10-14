@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_TYPE_CLOSE, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE, CONTENT_SCRIPT_TYPE_UPDATE, MODE_CREATE_WINDOW, REGEX_ADJUSTIMER_WINDOW_PORT } from '../constants';
+import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_TYPE_CLOSE, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE, ADJUSTIMER_WINDOW_UPDATE_AD, CONTENT_SCRIPT_TYPE_UPDATE, MODE_CREATE_WINDOW, REGEX_ADJUSTIMER_WINDOW_PORT } from '../constants';
 
 let vid = -1;
 let currentTabId: string | undefined;
@@ -112,6 +112,7 @@ const onMessageAdjusTimer = (message: any, sender: any, sendResponse: any) => {
             console.log(`Service Worker: update currentTabId (${currentTabId})`);
             break;
         case ADJUSTIMER_WINDOW_UPDATE:
+        case ADJUSTIMER_WINDOW_UPDATE_AD:
             if (currentTabId) {
                 // (service worker ⇒ Content-Script)で実行する
                 console.log(`Service Worker: update video to content script.`);

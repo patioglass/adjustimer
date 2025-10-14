@@ -3,9 +3,11 @@ import Timer from "./Timer/Timer";
 
 import "../../style.css";
 import Menu from "./Menu/Menu";
-import { ADJUSTIMER_WINDOW_PORT_PREFIX, ADJUSTIMER_WINDOW_TYPE_CHECK, ADJUSTIMER_WINDOW_TYPE_READY, CONTENT_SCRIPT_TYPE_UPDATE, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR } from "../../constants";
+import { ADJUSTIMER_WINDOW_PORT_PREFIX, ADJUSTIMER_WINDOW_TYPE_CHECK, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE, ADJUSTIMER_WINDOW_UPDATE_AD, CONTENT_SCRIPT_TYPE_UPDATE, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR } from "../../constants";
 import { getBackgroundColor, getCurrentVideo, getPort, getTextColor } from "../atom";
 import { useAtom } from "jotai";
+
+let loopTimeoutId: number | null = null;
 
 export const AdjusTimerWindow = (): ReactElement => {
     const [ currentVideo, setCurrentVideo ] = useAtom(getCurrentVideo);
@@ -74,6 +76,21 @@ export const AdjusTimerWindow = (): ReactElement => {
                     adBreakRemainTime: response.adBreakRemainTime,
                 }
                 setCurrentVideo(updateVideoState);
+
+                // 広告がONの場合、content script側の動画のtimeupdateの更新がかからない可能性があるため
+                // 広告再生中はAdjusTimer側からも更新をkickする
+                if (response.isAdBreak) {
+                    // すでに動いているループがあれば止める
+                    if (loopTimeoutId !== null) {
+                        clearTimeout(loopTimeoutId);
+                        loopTimeoutId = null;
+                    }
+                    loopTimeoutId = setTimeout(() => {
+                        port.postMessage({
+                            action: ADJUSTIMER_WINDOW_UPDATE_AD
+                        });
+                    }, 1000) as any as number;
+                }
                 break;
             default:
                 break;
