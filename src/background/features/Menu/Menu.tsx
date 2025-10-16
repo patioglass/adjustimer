@@ -1,4 +1,3 @@
-import Title from "./Title";
 import NavigationItem from "./NavigationItem";
 import { ReactElement, useEffect, useState } from "react";
 import Footer from "../Footer/Footer";
@@ -42,7 +41,6 @@ const Menu = (): ReactElement => {
             <div className={"mt-auto accodion " + (isOpen ? "visible" : "hidden")}>
                 <div className="w-9/10 mb-3 text-center mx-auto">
                     <div className="overflow-hidden">
-                        <Title />
                         <div className="
                             flex
                             space-x-5

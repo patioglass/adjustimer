@@ -2,6 +2,7 @@ import Header from './Header';
 import Navigation from './Navigation';
 import primeLogo from '../../public/prime-video-logo-blue-rgb.png';
 import danimeLogo from '../../public/danime-logo.png';
+import youtubeLogo from '../../public/youtube-logo.png';
 import demo1 from '../../public/readme_image01.jpg'
 import demo2 from '../../public/readme_image02.jpg'
 import { ReactElement } from 'react';
@@ -46,6 +47,7 @@ const Home =  (): ReactElement => {
         <section className="py-20 px-8 text-center text-white w-auto m-auto flex justify-center items-center gap-4">
             <img className="w-30" src={primeLogo} />
             <img className="w-50" src={danimeLogo} />
+            <img className="w-50" src={youtubeLogo} />
         </section>
 
         {/* How to Use */}

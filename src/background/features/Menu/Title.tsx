@@ -14,7 +14,7 @@ const Title = (): ReactElement => {
     const openPipWindow = useAtomCallback(
         useCallback(async (get, set) => {
             const pw = await window.documentPictureInPicture?.requestWindow({
-                width: 700,
+                width: 800,
                 height: 350,
                 disallowReturnToOpener: false,
                 preferInitialWindowPlacement: false,
@@ -74,8 +74,9 @@ const Title = (): ReactElement => {
                 font-bold
                 mt-3
             ">
-                AdjusTimer(アジャスタイマー)
-                Ver. {manifest.version}
+                AdjusTimer
+                <br />
+                <span className="text-xl">Ver. {manifest.version}</span>
             </h1>
             {isSupported  ? (
                 <p className="
@@ -83,9 +84,9 @@ const Title = (): ReactElement => {
                         text-white
                         rounded-lg
                         bg-rose-500
-                        px-5 py-1.5
+                        px-5 py-1
                         mt-1
-                        w-1/2
+                        w-9/10
                         transition-all
                         duration-300
                         hover:bg-rose-400

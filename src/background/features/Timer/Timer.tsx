@@ -1,11 +1,25 @@
 import { useAtom } from "jotai";
-import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR } from "../../../constants";
-import { getBackgroundColor, getCurrentVideo, getTextColor } from "../../atom";
+import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, generateTextShadow } from "../../../constants";
+import { getBackgroundColor, getCurrentDate, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor, isShowCurrentDate } from "../../atom";
+import { useEffect } from "react";
 
 const Timer = () => {
     const [ currentVideo, setCurrentVideo ] = useAtom(getCurrentVideo);
     const [ backgroundColor, setBackgroundColor ] = useAtom(getBackgroundColor);
     const [ textColor, setTextColor ] = useAtom(getTextColor);
+    const [ customFont, setCustomFont] = useAtom(getCustomFont);
+    const [ shadowSize, setShadowSize] = useAtom(getShadowSize);
+    const [ shadowColor, setShadowColor] = useAtom(getShadowColor);
+    const [ fontWeight, setFontWeight ] = useAtom(getFontWeight);
+    const [ currentDate, setCurrentDate ] = useAtom(getCurrentDate);
+    const [ showCurrentDate, setShowCurrentDate ] = useAtom(isShowCurrentDate);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentDate(new Date());
+        }, 1000); // 1秒ごとに更新
+        return () => clearInterval(timer);
+    }, [])
 
     return (
         <div className="
@@ -17,14 +31,13 @@ const Timer = () => {
             grow"
             style={{
                 backgroundColor: backgroundColor ? backgroundColor : DEFAULT_BACKGROUND_COLOR,
-                color: textColor ? textColor : DEFAULT_TEXT_COLOR
             }}
         >
             {currentVideo.isAdBreak && (
                 <div>
                     <span className="
                         py-1
-                        px-1.5
+                        px-3
                         inline-flex
                         items-center
                         gap-x-1
@@ -33,22 +46,48 @@ const Timer = () => {
                         bg-red-100
                         text-red-800
                         rounded-full
-                        dark:bg-red-500/10
-                        dark:text-red-500
                     ">
                         <svg className="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
                             <path d="M12 9v4"></path>
                             <path d="M12 17h.01"></path>
                         </svg>
-                        広告再生中 - 残り:＜{currentVideo.adBreakRemainTime}＞
+                        <span className="text-sm">広告再生中 - 残り : {currentVideo.adBreakRemainTime}</span>
                     </span>
                 </div>
             )}
 
-            <p className="text-4xl">{currentVideo.title}</p>
-            <p className="text-3xl">{currentVideo.subTitle}</p>
-            <p className="mt-10 text-6xl">{currentVideo.currentTime}</p>
+            <div
+                style={{
+                    color: textColor ? textColor : DEFAULT_TEXT_COLOR,
+                    fontFamily: customFont,
+                    fontWeight: fontWeight * 100,
+                    textShadow: generateTextShadow(shadowSize, shadowColor),
+                }}
+            >
+                <p className="text-4xl">{currentVideo.title}</p>
+                <p className="text-3xl">{currentVideo.subTitle}</p>
+
+                <div className="relative">
+                    <div className={`
+                        absolute
+                        left-0
+                        top-0
+                        pointer-events-none
+                        p-3
+                        max-w-[160px]
+                        rounded-md
+                        bg-gray-500/30
+                        ${showCurrentDate ? "" : "hidden"}
+                    `}>
+                        <p className="text-xl">LIVE</p>
+                        <p className="text-3xl">{currentDate.toLocaleTimeString("ja-JP", { hour12: false })}</p>
+                        <hr />
+                        <p>{currentDate.toLocaleDateString("ja-JP")}</p>
+                    </div>
+                    <p className="mt-5 text-6xl flex items-center justify-center h-25">{currentVideo.currentTime}</p>
+                </div>
+            </div>
         </div>
     );
 }
