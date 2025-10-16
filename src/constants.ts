@@ -50,9 +50,25 @@ export const REGEX_URL_TVER = new RegExp("https://tver.jp/episodes/*");
 export const REGEX_URL_NETFLIX = new RegExp("https://www.netflix.com/watch/*");
 export const STORAGE_KEY_BACKGROUND_COLOR = "AdjusTimer_backgroundColor";
 export const STORAGE_KEY_TEXT_COLOR = "AdjusTimer_textColor";
+export const STORAGE_KEY_FONTFAMILIY = "AdjusTimer_fontFamily";
+export const STORAGE_KEY_SHADOW_SIZE = "AdjusTimer_shadowSize";
+export const STORAGE_KEY_SHADOW_COLOR = "AdjusTimer_shadowColor";
+export const STORAGE_KEY_FONT_WEIGHT = "AdjusTimer_fontWeight";
+export const STORAGE_KEY_IS_SHOW_DATE = "AdjusTimer_isShowDate";
 
 export const DEFAULT_BACKGROUND_COLOR = "#e2e8f0";
 export const DEFAULT_TEXT_COLOR = "#000000";
+export const CUSTOM_FONTS = [
+    "Noto Sans",
+    "Montserrat",
+    "Orbitron",
+    "Share Tech Mono",
+    "Russo One",
+    "Fredoka",
+    "Oxanium"
+
+];
+export const DEFAULT_FONT_WEIGHTS = 5;
 
 export const isTargetUrl = (url: string | undefined) => {
     if (!url) return false;
@@ -102,4 +118,15 @@ export const timeStringToSeconds = (timeStr: string) => {
   } else {
     throw new Error("Invalid time format: " + timeStr);
   }
+}
+
+export const generateTextShadow = (size: number, color: string) => {
+    const shadows = [];
+    for (let x = -size; x <= size; x++) {
+        for (let y = -size; y <= size; y++) {
+        if (x === 0 && y === 0) continue;
+        shadows.push(`${x}px ${y}px 0 ${color}`);
+        }
+    }
+    return shadows.join(", ");
 }

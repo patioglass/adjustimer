@@ -1,8 +1,8 @@
 import { ReactElement, useEffect, useState } from "react"
 import ColorPicker from "./ColorPicker"
-import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, isTargetUrl, TabInfo } from "../../../constants";
+import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, CUSTOM_FONTS, isTargetUrl, TabInfo } from "../../../constants";
 import { useAtom } from "jotai";
-import { getCurrentVideo, getPort } from "../../atom";
+import { getCurrentVideo, getCustomFont, getPort, getShadowColor, getShadowSize, isShowCurrentDate, shadowSize } from "../../atom";
 
 const NavigationItem = (): ReactElement => {
     const [ port, setPort ] = useAtom(getPort);
@@ -10,6 +10,8 @@ const NavigationItem = (): ReactElement => {
     const [ selectTabs, setSelectTabs ] = useState<Array<TabInfo>>();
     const [ selectItems, setSelectItems ] = useState<Array<any>>();
     const [ initLoading, setInitLoading ] = useState<boolean>(false);
+    const [ customFont, setCustomFont] = useAtom(getCustomFont);
+    const [ showCurrentDate, setShowCurrentDate ] = useAtom(isShowCurrentDate);
 
     /**
      * 現在のタブを取得して、selectを更新する
@@ -43,6 +45,20 @@ const NavigationItem = (): ReactElement => {
         // タブが新規で作られたらタブリストを更新する
         chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => tabEvent(tabId, changeInfo, tab));
         chrome.tabs.onRemoved.addListener(setTabList);
+
+        // フォントを全読み込み
+        CUSTOM_FONTS.forEach((font) => {
+            const fontParam = font.replace(/ /g, "+");
+            const linkId = `customGoogleFontLink_${fontParam}`;
+            let link = document.getElementById(linkId) as HTMLLinkElement | null;
+            if (!link) {
+                link = document.createElement("link");
+                link.id = linkId;
+                link.rel = "stylesheet";
+                document.head.appendChild(link);
+            }
+            link.href = `https://fonts.googleapis.com/css2?family=${fontParam}:wght@400;700&display=swap`;
+        })
         return () => {
             chrome.tabs.onUpdated.removeListener((tabId, changeInfo, tab) => tabEvent(tabId, changeInfo, tab));
             chrome.tabs.onRemoved.removeListener(setTabList);
@@ -106,8 +122,16 @@ const NavigationItem = (): ReactElement => {
             break-words
             w-1/2
         ">
-            <div className="text-left">
-                <p>【- 対象にするページ -】</p>
+            <div className="text-left w-100">
+                <input
+                    id="checked-checkbox"
+                    type="checkbox"
+                    checked={showCurrentDate}
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    onChange={(e) => setShowCurrentDate(e.target.checked)}
+                />
+                <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">現在時刻（タイマー左）を表示する</label>
+                <p className="text-xl font-bold mt-3">【- 対象にするページ -】</p>
                 <select className="
                     bg-gray-50
                     border
@@ -118,7 +142,7 @@ const NavigationItem = (): ReactElement => {
                     focus:border-blue-500
                     block
                     p-2.5
-                    w-full
+                    w-85
                     dark:bg-gray-700
                     dark:border-gray-600
                     dark:placeholder-gray-400
@@ -131,16 +155,34 @@ const NavigationItem = (): ReactElement => {
                 </select>
             </div>
 
-            <div className="mt-3 text-left">
-                <p>【- 動画URL -】</p>
+            <div className="mt-3 text-left w-100">
                 <p>{currentVideo.url}</p>
             </div>
 
             <div className="mt-3 text-left">
-                <p>【- 表示色の変更 -】</p>
+                <p className="text-xl font-bold">【- 文字の変更 -】</p>
+                <div className="mt-3">
+                    <span className="mr-2">フォント を選択：</span>
+                    <select
+                        className="border p-1"
+                        value={customFont}
+                        style={{fontFamily: customFont}}
+                        onChange={(e) => setCustomFont(e.target.value)}
+                    >
+                    {CUSTOM_FONTS.map((f) => (
+                        <option
+                            key={f}
+                            value={f}
+                            style={{fontFamily: f}}
+                        >
+                                {f}|({currentVideo.currentTime})
+                        </option>
+                    ))}
+                    </select>
+                </div>
+
                 <ColorPicker />
             </div>
-
             <div className="
                 text-lg
                 cursor-pointer

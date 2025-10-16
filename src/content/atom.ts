@@ -149,7 +149,7 @@ export const getVideo = atom(
                                     : "";
                 // 広告
                 const netflixAdTime = document.querySelector("[data-uia=ads-info-time]");
-                if (netflixAdTime) {
+                if (netflixAdTime && netflixAdTime.textContent) {
                     isAdBreak = true;
                     adBreakRemainTime = secondToTimeString(timeStringToSeconds(netflixAdTime.textContent));
                 }

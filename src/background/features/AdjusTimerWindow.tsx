@@ -3,8 +3,8 @@ import Timer from "./Timer/Timer";
 
 import "../../style.css";
 import Menu from "./Menu/Menu";
-import { ADJUSTIMER_WINDOW_PORT_PREFIX, ADJUSTIMER_WINDOW_TYPE_CHECK, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE, ADJUSTIMER_WINDOW_UPDATE_AD, CONTENT_SCRIPT_TYPE_UPDATE, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR } from "../../constants";
-import { getBackgroundColor, getCurrentVideo, getPort, getTextColor } from "../atom";
+import { ADJUSTIMER_WINDOW_PORT_PREFIX, ADJUSTIMER_WINDOW_TYPE_CHECK, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE, ADJUSTIMER_WINDOW_UPDATE_AD, CONTENT_SCRIPT_TYPE_UPDATE, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_IS_SHOW_DATE, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_TEXT_COLOR } from "../../constants";
+import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getPort, getShadowColor, getShadowSize, getTextColor, isShowCurrentDate } from "../atom";
 import { useAtom } from "jotai";
 
 let loopTimeoutId: number | null = null;
@@ -14,6 +14,11 @@ export const AdjusTimerWindow = (): ReactElement => {
     const [ port, setPort ] = useAtom(getPort);
     const [ backgroundColor, setBackgroundColor ] = useAtom(getBackgroundColor);
     const [ textColor, setTextColor ] = useAtom(getTextColor);
+    const [ customFont, setCustomFont] = useAtom(getCustomFont);
+    const [shadowSize, setShadowSize] = useAtom(getShadowSize);
+    const [shadowColor, setShadowColor] = useAtom(getShadowColor);
+    const [ fontWeight, setFontWeight ] = useAtom(getFontWeight);
+    const [ showCurrentDate, setShowCurrentDate ] = useAtom(isShowCurrentDate);
 
     /**
      * service workerとのport接続
@@ -45,9 +50,15 @@ export const AdjusTimerWindow = (): ReactElement => {
 
     useEffect(() => {
         // カラーピッカーの情報を取得
-        chrome.storage.local.get([STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR], (value) => {
+        // フォントの情報を取得
+        chrome.storage.local.get([STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_IS_SHOW_DATE], (value) => {
             setBackgroundColor(value[STORAGE_KEY_BACKGROUND_COLOR]);
             setTextColor(value[STORAGE_KEY_TEXT_COLOR]);
+            setCustomFont(value[STORAGE_KEY_FONTFAMILIY]);
+            setShadowSize(value[STORAGE_KEY_SHADOW_SIZE]);
+            setShadowColor(value[STORAGE_KEY_SHADOW_COLOR]);
+            setFontWeight(value[STORAGE_KEY_FONT_WEIGHT]);
+            setShowCurrentDate(value[STORAGE_KEY_IS_SHOW_DATE]);
         });
     }, [])
 

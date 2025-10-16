@@ -32,7 +32,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
                 focused : true,
                 type : 'popup',
                 height : 940,
-                width : 1000
+                width : 800
             },
             (window: any) => {
                 // 新規作成した AdjusTimer を使い回せるようにするため、
