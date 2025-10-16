@@ -51,7 +51,7 @@ export const AdjusTimerWindow = (): ReactElement => {
     useEffect(() => {
         // カラーピッカーの情報を取得
         // フォントの情報を取得
-        chrome.storage.local.get([STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_IS_SHOW_DATE], (value) => {
+        chrome.storage.local.get([STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_IS_SHOW_DATE], (value) => {
             setBackgroundColor(value[STORAGE_KEY_BACKGROUND_COLOR]);
             setTextColor(value[STORAGE_KEY_TEXT_COLOR]);
             setCustomFont(value[STORAGE_KEY_FONTFAMILIY]);
