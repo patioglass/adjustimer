@@ -58,7 +58,11 @@ export const AdjusTimerWindow = (): ReactElement => {
             setShadowSize(value[STORAGE_KEY_SHADOW_SIZE]);
             setShadowColor(value[STORAGE_KEY_SHADOW_COLOR]);
             setFontWeight(value[STORAGE_KEY_FONT_WEIGHT]);
-            setShowCurrentDate(value[STORAGE_KEY_IS_SHOW_DATE]);
+            if (value[STORAGE_KEY_IS_SHOW_DATE] === undefined) {
+                setShowCurrentDate(true);
+            } else {
+                setShowCurrentDate(value[STORAGE_KEY_IS_SHOW_DATE]);
+            }
         });
     }, [])
 
