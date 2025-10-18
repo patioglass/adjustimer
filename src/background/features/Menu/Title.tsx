@@ -14,7 +14,7 @@ const Title = (): ReactElement => {
     const openPipWindow = useAtomCallback(
         useCallback(async (get, set) => {
             const pw = await window.documentPictureInPicture?.requestWindow({
-                width: 800,
+                width: 850,
                 height: 350,
                 disallowReturnToOpener: false,
                 preferInitialWindowPlacement: false,
