@@ -3,6 +3,9 @@ import Navigation from './Navigation';
 import primeLogo from '../../public/prime-video-logo-blue-rgb.png';
 import danimeLogo from '../../public/danime-logo.png';
 import youtubeLogo from '../../public/youtube-logo.png';
+import netflixLogo from '../../public/netflix-logo.png';
+import niconicoLogo from '../../public/niconico-logo.png';
+import tverLogo from '../../public/tver-logo.png';
 import demo1 from '../../public/readme_image01.jpg'
 import demo2 from '../../public/readme_image02.jpg'
 import { ReactElement } from 'react';
@@ -48,6 +51,9 @@ const Home =  (): ReactElement => {
             <img className="w-30" src={primeLogo} />
             <img className="w-50" src={danimeLogo} />
             <img className="w-50" src={youtubeLogo} />
+            <img className="w-50" src={netflixLogo} />
+            <img className="w-50" src={niconicoLogo} />
+            <img className="w-50" src={tverLogo} />
         </section>
 
         {/* How to Use */}
