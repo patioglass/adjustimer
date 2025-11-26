@@ -179,7 +179,7 @@ export const getVideo = atom(
                 newVideo.pageType = VIDEO_NAME_UNEXT;
                 // タブ名前の変更
                 if (targetVideoTitle) {
-                    if (document.title !== `${targetVideoTitle} - ${targetVideoSubTitle} | ${newVideo.pageType}`) {
+                    if (document.title === "再生 | U-NEXT") {
                         document.title = `${targetVideoTitle} - ${targetVideoSubTitle} | ${newVideo.pageType}`;
                     }
                 }
