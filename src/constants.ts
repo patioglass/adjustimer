@@ -29,7 +29,7 @@ export const ADJUSTIMER_WINDOW_UPDATE = "update_adjustimer";
 export const ADJUSTIMER_WINDOW_UPDATE_AD = "update_adjustimer_ad";
 export const ADJUSTIMER_WINDOW_TYPE_CHECK = "check_service_worker";
 
-export const VIDEO_NAME_DANIME = 'dAnime';
+export const VIDEO_NAME_DANIME = 'dアニメストア';
 export const VIDEO_NAME_AMAZON_PRIME = 'AmazonPrime';
 export const VIDEO_NAME_YOUTUBE = 'Youtube';
 export const VIDEO_NAME_NICONICO = 'Niconico';
@@ -56,7 +56,6 @@ export const STORAGE_KEY_FONTFAMILIY = "AdjusTimer_fontFamily";
 export const STORAGE_KEY_SHADOW_SIZE = "AdjusTimer_shadowSize";
 export const STORAGE_KEY_SHADOW_COLOR = "AdjusTimer_shadowColor";
 export const STORAGE_KEY_FONT_WEIGHT = "AdjusTimer_fontWeight";
-export const STORAGE_KEY_IS_SHOW_DATE = "AdjusTimer_isShowDate";
 
 export const DEFAULT_BACKGROUND_COLOR = "#e2e8f0";
 export const DEFAULT_TEXT_COLOR = "#000000";

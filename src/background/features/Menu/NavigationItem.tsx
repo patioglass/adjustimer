@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from "react"
 import ColorPicker from "./ColorPicker"
 import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, CUSTOM_FONTS, isTargetUrl, TabInfo } from "../../../constants";
 import { useAtom } from "jotai";
-import { getCurrentVideo, getCustomFont, getPort, getShadowColor, getShadowSize, isShowCurrentDate, shadowSize } from "../../atom";
+import { getCurrentVideo, getCustomFont, getPort } from "../../atom";
 
 const NavigationItem = (): ReactElement => {
     const [ port, setPort ] = useAtom(getPort);
@@ -11,7 +11,6 @@ const NavigationItem = (): ReactElement => {
     const [ selectItems, setSelectItems ] = useState<Array<any>>();
     const [ initLoading, setInitLoading ] = useState<boolean>(false);
     const [ customFont, setCustomFont] = useAtom(getCustomFont);
-    const [ showCurrentDate, setShowCurrentDate ] = useAtom(isShowCurrentDate);
 
     /**
      * 現在のタブを取得して、selectを更新する
@@ -123,14 +122,6 @@ const NavigationItem = (): ReactElement => {
             w-1/2
         ">
             <div className="text-left w-100">
-                <input
-                    id="checked-checkbox"
-                    type="checkbox"
-                    checked={showCurrentDate}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    onChange={(e) => setShowCurrentDate(e.target.checked)}
-                />
-                <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">現在時刻（タイマー左）を表示する</label>
                 <p className="text-xl font-bold mt-3">【- 対象にするページ -】</p>
                 <select className="
                     bg-gray-50

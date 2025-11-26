@@ -169,15 +169,6 @@ const VideoInfo = (): ReactElement => {
         }
     }, []);
 
-    useEffect(() => {
-        // dアニメは「動画再生」がデフォルトなので、名前を変える
-        if (video.title) {
-            if (REGEX_URL_DANIME.test(currentLocation.href) || REGEX_URL_UNEXT.test(currentLocation.href)) {
-                document.title = `${video.title} | ${video.subTitle}`;
-            }
-        }
-    }, [video])
-
     const onMessageServiceWorker = (message: any) => {
         // service workerからのaction別に処理する
         switch(message.action) {
