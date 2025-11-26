@@ -5,6 +5,7 @@ import {
     REGEX_URL_NETFLIX,
     REGEX_URL_NICONICO,
     REGEX_URL_TVER,
+    REGEX_URL_UNEXT,
     REGEX_URL_YOUTUBE,
     secondToTimeString,
     timeStringToSeconds,
@@ -16,6 +17,7 @@ import {
     VIDEO_NAME_NETFLIX,
     VIDEO_NAME_NICONICO,
     VIDEO_NAME_TVER,
+    VIDEO_NAME_UNEXT,
     VIDEO_NAME_YOUTUBE,
     VideoState
 } from "../constants";
@@ -159,6 +161,15 @@ export const getVideo = atom(
                     updateTime = Number(currentTimeNetflix.textContent);
                 }
                 newVideo.pageType = VIDEO_NAME_NETFLIX;
+                break;
+            case REGEX_URL_UNEXT.test(update.currentLocation.href):
+                targetVideoTitle = document.querySelector("h2[class^=styles__Title]")
+                                ? document.querySelector("h2[class^=styles__Title]")?.textContent
+                                : TITLE_NOT_FOUND;
+                targetVideoSubTitle = document.querySelector("h3[class^=styles__SubTitle]")
+                                ? document.querySelector("h3[class^=styles__SubTitle]")?.textContent
+                                : "";
+                newVideo.pageType = VIDEO_NAME_UNEXT;
                 break;
             default:
                 targetVideoTitle = TITLE_NOT_FOUND;

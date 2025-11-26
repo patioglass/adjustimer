@@ -12,6 +12,7 @@ import {
     REGEX_URL_NETFLIX,
     REGEX_URL_NICONICO,
     REGEX_URL_TVER,
+    REGEX_URL_UNEXT,
     REGEX_URL_YOUTUBE,
     VideoState,
 } from "../../constants";
@@ -60,6 +61,7 @@ const VideoInfo = (): ReactElement => {
             case REGEX_URL_NICONICO.test(location.href):
             case REGEX_URL_TVER.test(location.href):
             case REGEX_URL_NETFLIX.test(location.href):
+            case REGEX_URL_UNEXT.test(location.href):
                 targetVideo = document.querySelector("video");
                 break;
             case REGEX_URL_AMAZON_PRIME.test(location.href):
@@ -170,7 +172,7 @@ const VideoInfo = (): ReactElement => {
     useEffect(() => {
         // dアニメは「動画再生」がデフォルトなので、名前を変える
         if (video.title) {
-            if (REGEX_URL_DANIME.test(currentLocation.href)) {
+            if (REGEX_URL_DANIME.test(currentLocation.href) || REGEX_URL_UNEXT.test(currentLocation.href)) {
                 document.title = `${video.title} | ${video.subTitle}`;
             }
         }
