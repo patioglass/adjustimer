@@ -1,7 +1,6 @@
 import { useAtom } from "jotai";
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, generateTextShadow } from "../../../constants";
-import { getBackgroundColor, getCurrentDate, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor, isShowCurrentDate } from "../../atom";
-import { useEffect } from "react";
+import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor } from "../../atom";
 
 const Timer = () => {
     const [ currentVideo, setCurrentVideo ] = useAtom(getCurrentVideo);
@@ -11,15 +10,6 @@ const Timer = () => {
     const [ shadowSize, setShadowSize] = useAtom(getShadowSize);
     const [ shadowColor, setShadowColor] = useAtom(getShadowColor);
     const [ fontWeight, setFontWeight ] = useAtom(getFontWeight);
-    const [ currentDate, setCurrentDate ] = useAtom(getCurrentDate);
-    const [ showCurrentDate, setShowCurrentDate ] = useAtom(isShowCurrentDate);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentDate(new Date());
-        }, 1000); // 1秒ごとに更新
-        return () => clearInterval(timer);
-    }, [])
 
     return (
         <div className="
@@ -69,22 +59,6 @@ const Timer = () => {
                 <p className="text-3xl">{currentVideo.subTitle}</p>
 
                 <div className="relative">
-                    <div className={`
-                        absolute
-                        left-0
-                        top-0
-                        pointer-events-none
-                        p-3
-                        max-w-[160px]
-                        rounded-md
-                        bg-gray-500/30
-                        ${showCurrentDate ? "" : "hidden"}
-                    `}>
-                        <p className="text-xl">LIVE</p>
-                        <p className="text-3xl">{currentDate.toLocaleTimeString("ja-JP", { hour12: false })}</p>
-                        <hr />
-                        <p>{currentDate.toLocaleDateString("ja-JP")}</p>
-                    </div>
                     <p className="mt-5 text-6xl flex items-center justify-center h-25">{currentVideo.currentTime}</p>
                 </div>
             </div>

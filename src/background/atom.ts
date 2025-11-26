@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { CUSTOM_FONTS, DEFAULT_FONT_WEIGHTS, DEFAULT_TEXT_COLOR, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_IS_SHOW_DATE, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_TEXT_COLOR, VideoState } from "../constants";
+import { CUSTOM_FONTS, DEFAULT_FONT_WEIGHTS, DEFAULT_TEXT_COLOR, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_TEXT_COLOR, VideoState } from "../constants";
 import { initialVideoState } from "../content/atom";
 
 export const backgroundColor = atom<string>();
@@ -95,23 +95,6 @@ export const getFontWeight = atom(
         chrome.storage.local.set({[STORAGE_KEY_FONT_WEIGHT]: newFontWeight})
             .then(() => {
                 set(fontWeight, newFontWeight ? newFontWeight : DEFAULT_FONT_WEIGHTS);
-            });
-    }
-)
-
-export const getCurrentDate = atom(
-    (get) => get(currentDate),
-    (get, set, updateDate: Date) => {
-        set(currentDate, updateDate);
-    }
-)
-
-export const isShowCurrentDate = atom(
-    (get) => get(showCurrentDate),
-    (get, set, update: boolean) => {
-        chrome.storage.local.set({[STORAGE_KEY_IS_SHOW_DATE]: update})
-            .then(() => {
-                set(showCurrentDate, update);
             });
     }
 )
