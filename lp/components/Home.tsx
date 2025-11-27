@@ -6,6 +6,7 @@ import youtubeLogo from '../../public/youtube-logo.png';
 import netflixLogo from '../../public/netflix-logo.png';
 import niconicoLogo from '../../public/niconico-logo.png';
 import tverLogo from '../../public/tver-logo.png';
+import unextLogo from '../../public/u-next-logo.png';
 import demo1 from '../../public/readme_image01.jpg'
 import demo2 from '../../public/readme_image02.jpg'
 import { ReactElement } from 'react';
@@ -54,6 +55,7 @@ const Home =  (): ReactElement => {
             <img className="w-50" src={netflixLogo} />
             <img className="w-50" src={niconicoLogo} />
             <img className="w-50" src={tverLogo} />
+            <img className="w-50" src={unextLogo} />
         </section>
 
         {/* How to Use */}
