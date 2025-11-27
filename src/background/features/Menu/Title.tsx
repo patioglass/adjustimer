@@ -31,9 +31,12 @@ const Title = (): ReactElement => {
                 }
             `;
             pw.document.head.appendChild(style);
-            pw.document.title = "AdjusTimer -PinP-";
+            // PinPが押されたときに、PinP用のタイトルにする（OBSのウィンドウキャプチャ用）
+            document.title = "AdjusTimer -ポップアウト-";
             // ユーザーが PiP ウィンドウを閉じたときにstateを更新する
             pw.addEventListener("pagehide", () => {
+                // PinPが閉じた瞬間に元のウィンドウ名に変える
+                document.title = "AdjusTimer";
                 set(pipWindow, null);
             });
           
