@@ -121,6 +121,15 @@ const NavigationItem = (): ReactElement => {
             break-words
             w-1/2
         ">
+            <div className="flex items-center gap-2 mt-1 rounded-lg bg-blue-50 border border-blue-300 text-blue-800 px-3 py-2 text-sm font-medium shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-4a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                </svg>
+                <span>ウィンドウキャプチャの仕様が変更になりました</span>
+            </div>
+            <div>
+                <a href="https://patiopatimon.com/adjustimer/#/obs-setting" target="_blank" className="text-red-800 font-bold underline underline-offset-4">こちら</a>を確認ください。
+            </div>
             <div className="text-left w-100">
                 <p className="text-xl font-bold mt-3">【- 対象にするページ -】</p>
                 <select className="

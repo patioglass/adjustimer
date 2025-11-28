@@ -9,11 +9,9 @@ import tverLogo from '../../public/tver-logo.png';
 import unextLogo from '../../public/u-next-logo.png';
 import demo1 from '../../public/readme_image01.jpg'
 import demo2 from '../../public/readme_image02.jpg'
-import obsSetting1 from '../../public/obs-setting-01.jpg'
-import obsSetting2 from '../../public/obs-setting-02.jpg'
-import obsSetting3 from '../../public/obs-setting-03.jpg'
 import { ReactElement } from 'react';
 import Footer from './Footer';
+import { Link } from 'react-router-dom';
 
 const Home =  (): ReactElement => {
   return (
@@ -91,31 +89,32 @@ const Home =  (): ReactElement => {
         </section>
 
         {/* OBS */}
-        <h2 className="text-3xl font-bold text-center mt-20" id="obs-setting">
+        <h2 className="text-3xl font-bold text-center mt-20">
             <p>OBSの設定</p>
             <p className="text-xs">- obs setting -</p>
         </h2>
-         <section className="py-20 px-8 lg:w-3/5 m-auto">
-            <div className="mb-20">
-                <h3 className="text-xl font-semibold mb-2">ウィンドウキャプチャのやり方</h3>
-                <p>1. 「ソース追加」⇒「ウィンドウキャプチャ」</p>
-                <p>2. AdjusTimerの「ポップアップを表示させる」（ピンクのボタン）を押す</p>
-                <p>3. 「AdjusTimer -ポップアウト-」があるので、「AdjusTimer -ポップアウト-」を選ぶ。</p>
-                <img src={obsSetting1} className="w-1/2 m-auto" />
-                <br />
-                <p>4. 「AdjusTimer -ポップアウト-」があるので、「AdjusTimer -ポップアウト-」を選ぶ。</p>
-                <p>5. 「ウィンドウのタイトルに一致する必要があります」を選ぶ。</p>
-                <img src={obsSetting2} className="w-1/2 m-auto" />
-                <br />
-                この設定で、OBSの立ち上げ時にポップアウトのウィンドウを使ったキャプチャ配信が可能となります。
-            </div>
-            <div className="mb-20">
-                <h3 className="text-xl font-semibold mb-2">クロマキー(背景透明)設定</h3>
-                <p>さきほど追加した「ウィンドウキャプチャ」を右クリック⇒「フィルタ」⇒「クロマキー」を追加</p>
-                <p>デフォルトだと緑が透明対象のため、AdjusTimer側の背景色を緑にする</p>
-                <img src={obsSetting3} className="w-1/2 m-auto" />
+         <section className="py-10 px-8 lg:w-3/5 m-auto">
+            <div className="mb-20 text-center">
+                <Link to="/obs-setting"
+                    className="
+                        text-lg
+                        text-white
+                        rounded-lg
+                        bg-red-500
+                        px-10 py-3.5
+                        mt-1
+                        transition-all
+                        hover:bg-red-300
+                        hover:ring-2
+                        hover:bg-red-300
+                        hover:ring-offset-2
+                        inline
+                "
+                >👉こちらをご確認ください</Link>
             </div>
         </section>
+
+        <hr />
 
         {/* Q&A */}
         <h2 className="text-3xl font-bold text-center mt-20">
