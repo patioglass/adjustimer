@@ -27,6 +27,9 @@ const Navigation =  (): ReactElement => {
                     <Link to="/"
                     className="block mx-4 mt-2 text-sm text-gray-700 capitalize lg:mt-0 dark:text-gray-200 hover:text-blue-600 dark:hover:text-indigo-400"
                     >ホーム</Link>
+                    <Link to="/obs-setting"
+                    className="block mx-4 mt-2 text-sm text-gray-700 capitalize lg:mt-0 dark:text-gray-200 hover:text-blue-600 dark:hover:text-indigo-400"
+                    >OBSの設定</Link>
                     <a
                     href="https://www.fanbox.cc/@adjustimer/tags/%E3%82%A2%E3%83%83%E3%83%97%E3%83%87%E3%83%BC%E3%83%88%E6%83%85%E5%A0%B1"
                     target="_blank"
