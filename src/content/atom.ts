@@ -34,10 +34,12 @@ export const initialVideoState: VideoState = {
 
 export const currentUrl = atom<string>();
 export const videoAtom = atom<VideoState>(initialVideoState);
+export const updateLocationSignalAtom = atom<number>(0);
 
 export const getVideo = atom(
     (get) => get(videoAtom),
     (get, set, update: updateVideoPayload) => {
+        const prevVideo = get(videoAtom);
         let newVideo = get(videoAtom);
         // タイトルを取得する
         let targetVideoTitle;
@@ -166,6 +168,18 @@ export const getVideo = atom(
                 if (currentTimeNetflix) {
                     updateTime = Number(currentTimeNetflix.textContent);
                 }
+
+                /**
+                 * もしvideoAtom(更新前)とnewVideo(更新後)のタイトルとサブタイトルのどちらかが異なった場合
+                 * VideoInfoのupdateLocationを実行する（SPAによるURL変更でタイトルのみが変わることがあるため）
+                */
+                if (
+                    prevVideo.title !== targetVideoTitle ||
+                    prevVideo.subTitle !== targetVideoSubTitle
+                ) {
+                    set(updateLocationSignalAtom, get(updateLocationSignalAtom) + 1);
+                }
+
                 newVideo.pageType = VIDEO_NAME_NETFLIX;
                 // タブ変更はnetflixはpublic/adjustimer-netflix-loader.jsで行う
                 break;
