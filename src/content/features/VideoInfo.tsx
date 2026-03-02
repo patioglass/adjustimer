@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { ReactElement, useEffect, useRef, useState } from "react";
-import { getVideo } from "../atom";
+import { getVideo, updateLocationSignalAtom } from "../atom";
 import {
     ADJUSTIMER_WINDOW_TYPE_CLOSE,
     ADJUSTIMER_WINDOW_TYPE_READY,
@@ -22,6 +22,7 @@ let isAdjusTimer = false;
 
 const VideoInfo = (): ReactElement => {
     const [ video, setVideo ] = useAtom(getVideo); // AdjusTimer側に送るvideo情報
+    const [ updateLocationSignal ] = useAtom(updateLocationSignalAtom);
     const [ videoElement, setVideoElement ] = useState<HTMLVideoElement>(); // 現在ウォッチしているvideo要素
 
     const [ updateFlag, setUpdateFlag ] = useState<boolean>(false); // 何かしらの更新をAdjusTimerから受け取った場合にスイッチ
@@ -34,18 +35,14 @@ const VideoInfo = (): ReactElement => {
      * @param {string} node appendChildで挿入するタグ名
      */
     const injectScript = (file: string, node: string) => {
-        const scripts = document.querySelectorAll("script");
-        const extensionScript = scripts[scripts.length - 1];
-        if (!extensionScript?.src.match("adjustimer-netflix-loader.js")) {
+        const extensionScript = document.querySelector("script[src*=\'adjustimer-netflix-loader.js'\]");
+        if (!extensionScript) {
             const th = document.getElementsByTagName(node)[0];
             const s = document.createElement('script');
             s.setAttribute('type', 'text/javascript');
             s.setAttribute('src', file);
             th.appendChild(s);
         }
-    }
-    if (REGEX_URL_NETFLIX.test(location.href)) {
-        injectScript(chrome.runtime.getURL("adjustimer-netflix-loader.js"), "body");
     }
 
     /**
@@ -93,12 +90,21 @@ const VideoInfo = (): ReactElement => {
             updateVideo();
         }
     }
-    // headタグの変化でページ移動を検出
     const updateLocation = (): void => {
         setCurrentLocation(location);
         updateVideoElement();
     }
+    // headタグの変化でページ移動を検出
     useMutationObserver(document.head, updateLocation);
+
+    // netflix対応（atom側でタイトルの変更があった際にupdateLocationSignalの変更を検知する）
+    useEffect(() => {
+        updateLocation();
+        updateVideoElement();
+        if (REGEX_URL_NETFLIX.test(location.href)) {
+            injectScript(chrome.runtime.getURL("adjustimer-netflix-loader.js"), "body");
+        }
+    }, [updateLocationSignal]);
 
     useEffect(() => {
         updateVideoElement();
