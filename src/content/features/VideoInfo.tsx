@@ -35,9 +35,8 @@ const VideoInfo = (): ReactElement => {
      * @param {string} node appendChildで挿入するタグ名
      */
     const injectScript = (file: string, node: string) => {
-        const scripts = document.querySelectorAll("script");
-        const extensionScript = scripts[scripts.length - 1];
-        if (!extensionScript?.src.match("adjustimer-netflix-loader.js")) {
+        const extensionScript = document.querySelector("script[src*=\'adjustimer-netflix-loader.js'\]");
+        if (!extensionScript) {
             const th = document.getElementsByTagName(node)[0];
             const s = document.createElement('script');
             s.setAttribute('type', 'text/javascript');

@@ -78,8 +78,8 @@ const videoLifecycleObserver = new MutationObserver((mutations) => {
   mutations.forEach(node => {
     node.removedNodes.forEach(() => {
       // watch-videoクラスはNetflixの動画プレイヤーのクラスで、これが削除されるときにトップページなどの動画再生ページ以外に遷移したと判断する
-      if (node.target.className === "watch-video") {
-            startCheckVideoPlayer();
+      if (node.target instanceof Element && node.target.classList.contains("watch-video")) {
+        startCheckVideoPlayer();
       }
     })
   });
@@ -97,17 +97,23 @@ const videoLifecycleObserver = new MutationObserver((mutations) => {
 });
 
 const startCheckVideoPlayer = () => {
-  const checkVideoPlayer = setInterval(() => {
+  if (checkVideoDOM) {
+    return;
+  }
+
+  checkVideoDOM = setInterval(() => {
     const videoPlayer = document.querySelector(".watch-video");
     const videoElement = videoPlayer ? videoPlayer.querySelector("video") : null;
     if (videoPlayer && videoElement) {
       attachVideoListener(videoElement);
       // mutation observerでvideoPlayerの子要素の変化を監視する(video要素の監視)
+      videoLifecycleObserver.disconnect();
       videoLifecycleObserver.observe(videoPlayer, {
         childList: true,
         subtree: true,
       });
-      clearInterval(checkVideoPlayer);
+      clearInterval(checkVideoDOM);
+      checkVideoDOM = null;
     }
   }, 500);
 }
