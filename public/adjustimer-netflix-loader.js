@@ -2,7 +2,6 @@ console.log("Content Script: inject script Netflix");
 let tabTitle = "";
 
 const setNetflixTitleAndTime = () => {
-  console.log("Content Script: find Netfilix title...");
   // タイトル取得
   const videoId = location.href.split("?")[0].split("/").slice(-1)[0];
   const currentTitle = window.netflix.appContext.state.playerApp.getState().videoPlayer.videoMetadata[videoId]?._video?._video?.title;
@@ -39,8 +38,8 @@ const setNetflixTitleAndTime = () => {
     if (document.querySelector(".netflixTitle")) {
       document.querySelector(".netflixTitle").textContent = adjusTimerTitle;
       document.querySelector(".netflixSubTitle").textContent = adjusTimerSubTitle;
-      document.querySelector(".netflixSubTitle").textContent = adjusTimerSubTitle;
       document.querySelector(".netflixCurrentTime").textContent = currentTime;
+      document.querySelector(".netflixFullTitle").textContent = `${adjusTimerTitle} | ${adjusTimerSubTitle}`;
     } else {
       // DOMに反映
       const titleNameElement = document.createElement("p");
@@ -60,13 +59,70 @@ const setNetflixTitleAndTime = () => {
       currentTimeElement.className = "netflixCurrentTime";
       currentTimeElement.textContent = currentTime;
       document.body.appendChild(currentTimeElement);
+
+      const videoFullTitle = document.createElement("p");
+      videoFullTitle.style.display = "none";
+      videoFullTitle.className = "netflixFullTitle";
+      videoFullTitle.textContent = `${adjusTimerTitle} | ${adjusTimerSubTitle}`;
+      document.body.appendChild(videoFullTitle);
     }
   }
 }
 
-let checkVideoDOM = setInterval(() => {
-  if (document.querySelector("video")) {
-    document.querySelector("video").addEventListener("timeupdate", setNetflixTitleAndTime);
-    clearInterval(checkVideoDOM);
+
+let checkVideoDOM = null;
+let currentVideoElement = null;
+// SPAの移動の際、video要素のみが削除されるため、それを検知するためのMutationObserverを入れる
+const videoLifecycleObserver = new MutationObserver((mutations) => {
+  const videoElement = document.querySelector("video");
+  mutations.forEach(node => {
+    node.removedNodes.forEach(() => {
+      // watch-videoクラスはNetflixの動画プレイヤーのクラスで、これが削除されるときにトップページなどの動画再生ページ以外に遷移したと判断する
+      if (node.target.className === "watch-video") {
+            startCheckVideoPlayer();
+      }
+    })
+  });
+  if (!videoElement) {
+    if (currentVideoElement) {
+      currentVideoElement.removeEventListener("timeupdate", setNetflixTitleAndTime);
+      currentVideoElement = null;
+    }
+    return;
   }
-}, 500);
+
+  if (videoElement !== currentVideoElement) {
+    attachVideoListener(videoElement);
+  }
+});
+
+const startCheckVideoPlayer = () => {
+  const checkVideoPlayer = setInterval(() => {
+    const videoPlayer = document.querySelector(".watch-video");
+    const videoElement = videoPlayer ? videoPlayer.querySelector("video") : null;
+    if (videoPlayer && videoElement) {
+      attachVideoListener(videoElement);
+      // mutation observerでvideoPlayerの子要素の変化を監視する(video要素の監視)
+      videoLifecycleObserver.observe(videoPlayer, {
+        childList: true,
+        subtree: true,
+      });
+      clearInterval(checkVideoPlayer);
+    }
+  }, 500);
+}
+startCheckVideoPlayer();
+
+// video要素にイベントリスナーをつける関数
+const attachVideoListener = (videoElement) => {
+  if (!videoElement || currentVideoElement === videoElement) {
+    return;
+  }
+
+  if (currentVideoElement) {
+    currentVideoElement.removeEventListener("timeupdate", setNetflixTitleAndTime);
+  }
+
+  currentVideoElement = videoElement;
+  currentVideoElement.addEventListener("timeupdate", setNetflixTitleAndTime);
+};
