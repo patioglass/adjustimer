@@ -130,11 +130,11 @@ export const getVideo = atom(
                 newVideo.pageType = VIDEO_NAME_NICONICO;
                 break;
             case REGEX_URL_TVER.test(update.currentLocation.href):
-                targetVideoTitle = document.querySelector("[class^=titles_seriesTitle]")
-                                ? document.querySelector("[class^=titles_seriesTitle]")?.textContent
+                targetVideoTitle = document.querySelector("[class^=EpisodeDescription_seriesTitle]")
+                                ? document.querySelector("[class^=EpisodeDescription_seriesTitle]")?.textContent
                                 : TITLE_NOT_FOUND;
-                targetVideoSubTitle = document.querySelector("[class^=titles_title]")
-                                    ? document.querySelector("[class^=titles_title]")?.textContent
+                targetVideoSubTitle = document.querySelector("[class^=EpisodeDescription_title]")
+                                    ? document.querySelector("[class^=EpisodeDescription_title]")?.textContent
                                     : "";
                 // 広告
                 const tverAdVideos = document.querySelectorAll<HTMLVideoElement>("video[title='Advertisement']");
