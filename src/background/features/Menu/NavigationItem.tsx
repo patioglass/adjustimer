@@ -2,7 +2,7 @@ import { ReactElement, useEffect, useState } from "react"
 import ColorPicker from "./ColorPicker"
 import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, CUSTOM_FONTS, isTargetUrl, TabInfo } from "../../../constants";
 import { useAtom } from "jotai";
-import { getCurrentVideo, getCustomFont, getPort } from "../../atom";
+import { getCurrentVideo, getCustomFont, getPort, getTimeFontSize, getTitleFontSize } from "../../atom";
 
 const NavigationItem = (): ReactElement => {
     const [ port, setPort ] = useAtom(getPort);
@@ -11,6 +11,8 @@ const NavigationItem = (): ReactElement => {
     const [ selectItems, setSelectItems ] = useState<Array<any>>();
     const [ initLoading, setInitLoading ] = useState<boolean>(false);
     const [ customFont, setCustomFont] = useAtom(getCustomFont);
+    const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
+    const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
 
     /**
      * 現在のタブを取得して、selectを更新する
@@ -179,6 +181,30 @@ const NavigationItem = (): ReactElement => {
                         </option>
                     ))}
                     </select>
+                </div>
+
+                <div className="mt-3">
+                    <span className="mr-2 align-middle">タイトル文字サイズ：{titleFontSize === 0 ? "非表示" : `${titleFontSize}px`}</span>
+                    <input
+                        type="range"
+                        className="align-middle w-40"
+                        min={0}
+                        max={60}
+                        value={titleFontSize}
+                        onChange={(e) => setTitleFontSize(Number(e.target.value))}
+                    />
+                </div>
+
+                <div className="mt-2">
+                    <span className="mr-2 align-middle">時間文字サイズ：{timeFontSize}px</span>
+                    <input
+                        type="range"
+                        className="align-middle w-40"
+                        min={24}
+                        max={180}
+                        value={timeFontSize}
+                        onChange={(e) => setTimeFontSize(Number(e.target.value))}
+                    />
                 </div>
 
                 <ColorPicker />

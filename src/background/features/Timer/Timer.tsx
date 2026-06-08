@@ -1,6 +1,60 @@
 import { useAtom } from "jotai";
-import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, generateTextShadow } from "../../../constants";
-import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor } from "../../atom";
+import { useEffect, useRef, useState } from "react";
+import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, DEFAULT_TIME_FONT_SIZE, DEFAULT_TITLE_FONT_SIZE, generateTextShadow } from "../../../constants";
+import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor, getTimeFontSize, getTitleFontSize } from "../../atom";
+
+const TITLE_LINE_COUNT = 2;
+const TITLE_LINE_COUNT_LARGE = 3;
+const TITLE_LINE_HEIGHT = 1.2;
+const MIN_TITLE_FONT_SIZE = 12;
+const TITLE_FONT_SIZE_THRESHOLD = 50;
+
+const splitTitleToTwoLines = (title: string): [string, string] => {
+    const normalized = (title || "").trim();
+    if (!normalized) return ["", ""];
+    if (normalized.length <= 1) return [normalized, ""];
+
+    const separators = [" - ", "｜", "|", "：", ":", " / ", "・"];
+    const center = Math.floor(normalized.length / 2);
+
+    let bestIndex = -1;
+    let bestDistance = Number.MAX_SAFE_INTEGER;
+    separators.forEach((sep) => {
+        let idx = normalized.indexOf(sep);
+        while (idx !== -1) {
+            const splitIndex = idx + sep.length;
+            const distance = Math.abs(splitIndex - center);
+            if (distance < bestDistance && splitIndex > 0 && splitIndex < normalized.length) {
+                bestDistance = distance;
+                bestIndex = splitIndex;
+            }
+            idx = normalized.indexOf(sep, idx + 1);
+        }
+    });
+
+    if (bestIndex === -1) {
+        bestIndex = center;
+    }
+
+    const first = normalized.slice(0, bestIndex).trim();
+    const second = normalized.slice(bestIndex).trim();
+    return [first, second];
+};
+
+const splitTitleToThreeLines = (title: string): [string, string, string] => {
+    const normalized = (title || "").trim();
+    if (!normalized) return ["", "", ""];
+    if (normalized.length <= 2) return [normalized, "", ""];
+
+    const firstCut = Math.max(1, Math.floor(normalized.length / 3));
+    const secondCut = Math.max(firstCut + 1, Math.floor((normalized.length * 2) / 3));
+
+    const first = normalized.slice(0, firstCut).trim();
+    const second = normalized.slice(firstCut, secondCut).trim();
+    const third = normalized.slice(secondCut).trim();
+
+    return [first, second, third];
+};
 
 const Timer = () => {
     const [ currentVideo, setCurrentVideo ] = useAtom(getCurrentVideo);
@@ -10,6 +64,86 @@ const Timer = () => {
     const [ shadowSize, setShadowSize] = useAtom(getShadowSize);
     const [ shadowColor, setShadowColor] = useAtom(getShadowColor);
     const [ fontWeight, setFontWeight ] = useAtom(getFontWeight);
+    const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
+    const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
+    const requestedTitleFontSize = titleFontSize ?? DEFAULT_TITLE_FONT_SIZE;
+    const [ adjustedTitleFontSize, setAdjustedTitleFontSize ] = useState<number>(DEFAULT_TITLE_FONT_SIZE);
+    const [ titleTwoLines, setTitleTwoLines ] = useState<string>("");
+    const [ titleLineCount, setTitleLineCount ] = useState<number>(TITLE_LINE_COUNT);
+    const titleWrapRef = useRef<HTMLDivElement | null>(null);
+    const titleRef = useRef<HTMLParagraphElement | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+        setAdjustedTitleFontSize(requestedTitleFontSize);
+    }, [titleFontSize, currentVideo.title]);
+
+    useEffect(() => {
+        const titleWrap = titleWrapRef.current;
+        const normalizedTitle = currentVideo.title || "";
+
+        if (requestedTitleFontSize === 0) {
+            setAdjustedTitleFontSize(0);
+            setTitleLineCount(TITLE_LINE_COUNT);
+            setTitleTwoLines("");
+            return;
+        }
+
+        if (!titleWrap) {
+            setAdjustedTitleFontSize(requestedTitleFontSize);
+            return;
+        }
+
+        const adjustTitleFontSize = () => {
+            if (!canvasRef.current) {
+                canvasRef.current = document.createElement("canvas");
+            }
+            const ctx = canvasRef.current.getContext("2d");
+            if (!ctx) {
+                setAdjustedTitleFontSize(requestedTitleFontSize);
+                return;
+            }
+
+            const maxWidth = titleWrap.clientWidth;
+            const [line1, line2] = splitTitleToTwoLines(normalizedTitle);
+            ctx.font = `${fontWeight * 100} ${requestedTitleFontSize}px ${customFont}`;
+            const twoLineMaxWidth = Math.max(ctx.measureText(line1).width, ctx.measureText(line2).width);
+
+            const shouldUseThreeLines = requestedTitleFontSize > TITLE_FONT_SIZE_THRESHOLD && twoLineMaxWidth > maxWidth;
+            const candidateLines = shouldUseThreeLines
+                ? splitTitleToThreeLines(normalizedTitle)
+                : [line1, line2];
+
+            setTitleLineCount(shouldUseThreeLines ? TITLE_LINE_COUNT_LARGE : TITLE_LINE_COUNT);
+            setTitleTwoLines(candidateLines.join("\n"));
+
+            let candidate = requestedTitleFontSize;
+
+            while (candidate > MIN_TITLE_FONT_SIZE) {
+                ctx.font = `${fontWeight * 100} ${candidate}px ${customFont}`;
+                const maxLineWidth = Math.max(...candidateLines.map((line) => ctx.measureText(line).width));
+                if (maxLineWidth <= maxWidth) {
+                    break;
+                }
+                candidate -= 1;
+            }
+
+            setAdjustedTitleFontSize(candidate);
+        };
+
+        adjustTitleFontSize();
+
+        const resizeObserver = new ResizeObserver(() => {
+            adjustTitleFontSize();
+        });
+        resizeObserver.observe(titleWrap);
+
+        window.addEventListener("resize", adjustTitleFontSize);
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener("resize", adjustTitleFontSize);
+        };
+    }, [requestedTitleFontSize, currentVideo.title, customFont, fontWeight]);
 
     return (
         <div className="
@@ -55,11 +189,52 @@ const Timer = () => {
                     textShadow: generateTextShadow(shadowSize, shadowColor),
                 }}
             >
-                <p className="text-4xl">{currentVideo.title}</p>
-                <p className="text-3xl">{currentVideo.subTitle}</p>
+                {requestedTitleFontSize > 0 && (
+                    <>
+                        <div
+                            ref={titleWrapRef}
+                            style={{
+                                height: `${Math.ceil(requestedTitleFontSize * titleLineCount * TITLE_LINE_HEIGHT)}px`,
+                                overflow: "hidden",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <p
+                                ref={titleRef}
+                                style={{
+                                    fontSize: `${adjustedTitleFontSize}px`,
+                                    lineHeight: `${TITLE_LINE_HEIGHT}`,
+                                    whiteSpace: "pre-line",
+                                    overflowWrap: "anywhere",
+                                    wordBreak: "break-word",
+                                    margin: 0,
+                                }}
+                            >
+                                {titleTwoLines}
+                            </p>
+                        </div>
+                        <p
+                            style={{
+                                fontSize: `${Math.max(adjustedTitleFontSize - 8, 12)}px`,
+                                marginTop: "4px",
+                                marginBottom: 0,
+                            }}
+                        >
+                            {currentVideo.subTitle}
+                        </p>
+                    </>
+                )}
 
                 <div className="relative">
-                    <p className="mt-5 text-6xl flex items-center justify-center h-25">{currentVideo.currentTime}</p>
+                    <p
+                        id="adjustimer-current-time"
+                        className="mt-2 flex items-center justify-center h-25"
+                        style={{ fontSize: `${timeFontSize ?? DEFAULT_TIME_FONT_SIZE}px` }}
+                    >
+                        {currentVideo.currentTime}
+                    </p>
                 </div>
             </div>
         </div>

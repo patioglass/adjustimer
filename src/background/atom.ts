@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { CUSTOM_FONTS, DEFAULT_FONT_WEIGHTS, DEFAULT_TEXT_COLOR, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_TEXT_COLOR, VideoState } from "../constants";
+import { CUSTOM_FONTS, DEFAULT_FONT_WEIGHTS, DEFAULT_TEXT_COLOR, DEFAULT_TIME_FONT_SIZE, DEFAULT_TITLE_FONT_SIZE, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_TIME_FONT_SIZE, STORAGE_KEY_TITLE_FONT_SIZE, VideoState } from "../constants";
 import { initialVideoState } from "../content/atom";
 
 export const backgroundColor = atom<string>();
@@ -15,6 +15,8 @@ export const customFont = atom<string>(CUSTOM_FONTS[0]);
 export const shadowSize = atom<number>(0);
 export const shadowColor = atom<string>(DEFAULT_TEXT_COLOR);
 export const fontWeight = atom<number>(5);
+export const titleFontSize = atom<number>(DEFAULT_TITLE_FONT_SIZE);
+export const timeFontSize = atom<number>(DEFAULT_TIME_FONT_SIZE);
 export const currentDate = atom<Date>(new Date());
 export const showCurrentDate = atom<boolean>(true);
 
@@ -95,6 +97,26 @@ export const getFontWeight = atom(
         chrome.storage.local.set({[STORAGE_KEY_FONT_WEIGHT]: newFontWeight})
             .then(() => {
                 set(fontWeight, newFontWeight ? newFontWeight : DEFAULT_FONT_WEIGHTS);
+            });
+    }
+)
+
+export const getTitleFontSize = atom(
+    (get) => get(titleFontSize),
+    (get, set, newFontSize: number | null) => {
+        chrome.storage.local.set({[STORAGE_KEY_TITLE_FONT_SIZE]: newFontSize})
+            .then(() => {
+                set(titleFontSize, newFontSize ?? DEFAULT_TITLE_FONT_SIZE);
+            });
+    }
+)
+
+export const getTimeFontSize = atom(
+    (get) => get(timeFontSize),
+    (get, set, newFontSize: number | null) => {
+        chrome.storage.local.set({[STORAGE_KEY_TIME_FONT_SIZE]: newFontSize})
+            .then(() => {
+                set(timeFontSize, newFontSize ? newFontSize : DEFAULT_TIME_FONT_SIZE);
             });
     }
 )
