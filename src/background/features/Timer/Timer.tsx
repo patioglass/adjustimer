@@ -8,6 +8,7 @@ const TITLE_LINE_COUNT_LARGE = 3;
 const TITLE_LINE_COUNT_SINGLE = 1;
 const TITLE_LINE_HEIGHT = 1.2;
 const MIN_TITLE_FONT_SIZE = 12;
+const MIN_SUBTITLE_FONT_SIZE = 8;
 const TITLE_FONT_SIZE_THRESHOLD = 50;
 const TITLE_SPLIT_SEPARATORS = [" - ", "｜", "|", "：", ":", " / ", "・", " "];
 
@@ -82,6 +83,7 @@ const Timer = () => {
     const [ titleOffsetY, setTitleOffsetY ] = useAtom(getTitleOffsetY);
     const requestedTitleFontSize = titleFontSize ?? DEFAULT_TITLE_FONT_SIZE;
     const [ adjustedTitleFontSize, setAdjustedTitleFontSize ] = useState<number>(DEFAULT_TITLE_FONT_SIZE);
+    const [ adjustedSubTitleFontSize, setAdjustedSubTitleFontSize ] = useState<number>(Math.max(DEFAULT_TITLE_FONT_SIZE - 8, 12));
     const [ titleTwoLines, setTitleTwoLines ] = useState<string>("");
     const [ titleLineCount, setTitleLineCount ] = useState<number>(TITLE_LINE_COUNT);
     const titleWrapRef = useRef<HTMLDivElement | null>(null);
@@ -90,11 +92,14 @@ const Timer = () => {
 
     useEffect(() => {
         setAdjustedTitleFontSize(requestedTitleFontSize);
+        setAdjustedSubTitleFontSize(Math.max(requestedTitleFontSize - 8, 12));
     }, [titleFontSize, currentVideo.title]);
 
     useEffect(() => {
         const titleWrap = titleWrapRef.current;
         const normalizedTitle = currentVideo.title || "";
+        const hasSubTitle = (currentVideo.subTitle || "").trim().length > 0;
+        const normalizedSubTitle = (currentVideo.subTitle || "").trim();
 
         if (requestedTitleFontSize === 0) {
             setAdjustedTitleFontSize(0);
@@ -149,7 +154,7 @@ const Timer = () => {
             let candidateLineCount = singleLineFits ? TITLE_LINE_COUNT_SINGLE : TITLE_LINE_COUNT;
             let candidate = twoLineFontSize ?? MIN_TITLE_FONT_SIZE;
 
-            if (!singleLineFits) {
+            if (!singleLineFits && !hasSubTitle) {
                 const threeLineCandidates = splitTitleToThreeLines(normalizedTitle);
                 const threeLineFontSize = findLargestFittingFontSize(threeLineCandidates);
 
@@ -165,6 +170,21 @@ const Timer = () => {
             setTitleLineCount(candidateLineCount);
             setTitleTwoLines(candidateLines.join("\n"));
             setAdjustedTitleFontSize(candidate);
+
+            if (hasSubTitle) {
+                const requestedSubTitleFontSize = Math.max(requestedTitleFontSize - 8, 12);
+                let subtitleCandidate = requestedSubTitleFontSize;
+                ctx.font = `${fontWeight * 100} ${subtitleCandidate}px ${customFont}`;
+
+                while (subtitleCandidate > MIN_SUBTITLE_FONT_SIZE && ctx.measureText(normalizedSubTitle).width > maxWidth) {
+                    subtitleCandidate -= 1;
+                    ctx.font = `${fontWeight * 100} ${subtitleCandidate}px ${customFont}`;
+                }
+
+                setAdjustedSubTitleFontSize(subtitleCandidate);
+            } else {
+                setAdjustedSubTitleFontSize(0);
+            }
         };
 
         adjustTitleFontSize();
@@ -173,13 +193,12 @@ const Timer = () => {
             adjustTitleFontSize();
         });
         resizeObserver.observe(titleWrap);
-
         window.addEventListener("resize", adjustTitleFontSize);
         return () => {
             resizeObserver.disconnect();
             window.removeEventListener("resize", adjustTitleFontSize);
         };
-    }, [requestedTitleFontSize, currentVideo.title, customFont, fontWeight]);
+    }, [requestedTitleFontSize, currentVideo.title, currentVideo.subTitle, customFont, fontWeight]);
 
     return (
         <div className="
@@ -230,40 +249,45 @@ const Timer = () => {
             >
                 {requestedTitleFontSize > 0 && (
                     <>
-                        <div
-                            ref={titleWrapRef}
-                            style={{
-                                height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT)}px`,
-                                overflow: "hidden",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                transform: `translateY(${titleOffsetY}px)`,
-                            }}
-                        >
-                            <p
-                                ref={titleRef}
+                        <div style={{ transform: `translateY(${titleOffsetY}px)` }}>
+                            <div
+                                ref={titleWrapRef}
                                 style={{
-                                    fontSize: `${adjustedTitleFontSize}px`,
-                                    lineHeight: `${TITLE_LINE_HEIGHT}`,
-                                    whiteSpace: "pre-line",
-                                    overflowWrap: "anywhere",
-                                    wordBreak: "break-word",
-                                    margin: 0,
+                                    height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT)}px`,
+                                    overflow: "hidden",
+                                    display: "flex",
+                                    alignItems: "flex-end",
+                                    justifyContent: "center",
                                 }}
                             >
-                                {titleTwoLines}
+                                <p
+                                    ref={titleRef}
+                                    style={{
+                                        fontSize: `${adjustedTitleFontSize}px`,
+                                        lineHeight: `${TITLE_LINE_HEIGHT}`,
+                                        whiteSpace: "pre-line",
+                                        overflowWrap: "anywhere",
+                                        wordBreak: "break-word",
+                                        margin: 0,
+                                    }}
+                                >
+                                    {titleTwoLines}
+                                </p>
+                            </div>
+                            <p
+                                style={{
+                                    fontSize: `${adjustedSubTitleFontSize}px`,
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "clip",
+                                    lineHeight: `${TITLE_LINE_HEIGHT}`,
+                                    marginTop: "2px",
+                                    marginBottom: 0,
+                                }}
+                            >
+                                {currentVideo.subTitle}
                             </p>
                         </div>
-                        <p
-                            style={{
-                                fontSize: `${Math.max(adjustedTitleFontSize - 8, 12)}px`,
-                                marginTop: "4px",
-                                marginBottom: 0,
-                            }}
-                        >
-                            {currentVideo.subTitle}
-                        </p>
                     </>
                 )}
 
