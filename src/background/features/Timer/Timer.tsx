@@ -147,8 +147,10 @@ const Timer = () => {
 
     return (
         <div className="
-            p-24
+            pt-5
+            pb-15
             w-screen
+            h-screen
             font-sans
             text-center
             font-extrabold
@@ -171,7 +173,7 @@ const Timer = () => {
                         text-red-800
                         rounded-full
                     ">
-                        <svg className="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg className="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
                             <path d="M12 9v4"></path>
                             <path d="M12 17h.01"></path>
@@ -182,6 +184,7 @@ const Timer = () => {
             )}
 
             <div
+                className={requestedTitleFontSize === 0 ? "flex h-full flex-col justify-center" : undefined}
                 style={{
                     color: textColor ? textColor : DEFAULT_TEXT_COLOR,
                     fontFamily: customFont,
@@ -194,7 +197,7 @@ const Timer = () => {
                         <div
                             ref={titleWrapRef}
                             style={{
-                                height: `${Math.ceil(requestedTitleFontSize * titleLineCount * TITLE_LINE_HEIGHT)}px`,
+                                height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT)}px`,
                                 overflow: "hidden",
                                 display: "flex",
                                 alignItems: "center",
@@ -230,7 +233,7 @@ const Timer = () => {
                 <div className="relative">
                     <p
                         id="adjustimer-current-time"
-                        className="mt-2 flex items-center justify-center h-25"
+                        className={`${requestedTitleFontSize === 0 ? "mt-0" : "mt-2"} flex h-25 items-center justify-center`}
                         style={{ fontSize: `${timeFontSize ?? DEFAULT_TIME_FONT_SIZE}px` }}
                     >
                         {currentVideo.currentTime}

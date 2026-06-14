@@ -15,7 +15,7 @@ const Title = (): ReactElement => {
         useCallback(async (get, set) => {
             const pw = await window.documentPictureInPicture?.requestWindow({
                 width: 850,
-                height: 350,
+                height: 400,
                 disallowReturnToOpener: false,
                 preferInitialWindowPlacement: false,
             });
@@ -47,7 +47,7 @@ const Title = (): ReactElement => {
                 .map((rule) => rule.cssText)
                 .join("");
                 const style = document.createElement("style");
-        
+                console.log(cssRules);
                 style.textContent = cssRules;
                 pw?.document.head.appendChild(style);
             } catch (_) {

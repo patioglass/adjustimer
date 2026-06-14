@@ -79,7 +79,7 @@ const Menu = (): ReactElement => {
                 </div>
             )}
 
-            <div className={"mt-auto accodion " + (isOpen ? "visible" : "hidden")}>
+            <div className={"mt-auto accodion relative " + (isOpen ? "visible" : "hidden")}>
                 <div className="w-9/10 mb-3 text-center mx-auto">
                     <div className="overflow-hidden">
                         <div className="

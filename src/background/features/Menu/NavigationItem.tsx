@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import ColorPicker from "./ColorPicker"
 import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, CUSTOM_FONTS, isTargetUrl, TabInfo } from "../../../constants";
 import { useAtom } from "jotai";
@@ -13,6 +14,7 @@ const NavigationItem = (): ReactElement => {
     const [ customFont, setCustomFont] = useAtom(getCustomFont);
     const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
     const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
+    const [ isTextSettingsModalOpen, setIsTextSettingsModalOpen ] = useState<boolean>(false);
 
     /**
      * 現在のタブを取得して、selectを更新する
@@ -65,6 +67,22 @@ const NavigationItem = (): ReactElement => {
             chrome.tabs.onRemoved.removeListener(setTabList);
         }
     }, [])
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setIsTextSettingsModalOpen(false);
+            }
+        };
+
+        if (isTextSettingsModalOpen) {
+            window.addEventListener("keydown", handleKeyDown);
+        }
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [isTextSettingsModalOpen]);
 
     /**
      * タブの新規作成、削除などが行われた場合に(setTabListの実行後)、selectの中身を再度セットする
@@ -125,7 +143,7 @@ const NavigationItem = (): ReactElement => {
         ">
             <div className="flex items-center gap-2 mt-1 rounded-lg bg-blue-50 border border-blue-300 text-blue-800 px-3 py-2 text-sm font-medium shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-4a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-4a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                 </svg>
                 <span>ウィンドウキャプチャの仕様が変更になりました</span>
             </div>
@@ -161,54 +179,6 @@ const NavigationItem = (): ReactElement => {
                 <p>{currentVideo.url}</p>
             </div>
 
-            <div className="mt-3 text-left">
-                <p className="text-xl font-bold">【- 文字の変更 -】</p>
-                <div className="mt-3">
-                    <span className="mr-2">フォント を選択：</span>
-                    <select
-                        className="border p-1"
-                        value={customFont}
-                        style={{fontFamily: customFont}}
-                        onChange={(e) => setCustomFont(e.target.value)}
-                    >
-                    {CUSTOM_FONTS.map((f) => (
-                        <option
-                            key={f}
-                            value={f}
-                            style={{fontFamily: f}}
-                        >
-                                {f}|({currentVideo.currentTime})
-                        </option>
-                    ))}
-                    </select>
-                </div>
-
-                <div className="mt-3">
-                    <span className="mr-2 align-middle">タイトル文字サイズ：{titleFontSize === 0 ? "非表示" : `${titleFontSize}px`}</span>
-                    <input
-                        type="range"
-                        className="align-middle w-40"
-                        min={0}
-                        max={60}
-                        value={titleFontSize}
-                        onChange={(e) => setTitleFontSize(Number(e.target.value))}
-                    />
-                </div>
-
-                <div className="mt-2">
-                    <span className="mr-2 align-middle">時間文字サイズ：{timeFontSize}px</span>
-                    <input
-                        type="range"
-                        className="align-middle w-40"
-                        min={24}
-                        max={180}
-                        value={timeFontSize}
-                        onChange={(e) => setTimeFontSize(Number(e.target.value))}
-                    />
-                </div>
-
-                <ColorPicker />
-            </div>
             <div className="
                 text-lg
                 cursor-pointer
@@ -228,6 +198,102 @@ const NavigationItem = (): ReactElement => {
             >
                 情報を取得する
             </div>
+
+            <div className="mt-3 text-left">
+                <p className="text-xl font-bold">【- 設定の変更 -】</p>
+                <div className="relative mt-5 inline-block">
+                    <div className="absolute -top-5 left-0 flex flex-col items-start">
+                        <span className="rounded-md bg-rose-500 px-2 py-1 text-[10px] font-extrabold tracking-wide text-white shadow-sm">
+                            新機能
+                        </span>
+                        <span className="ml-3 h-0 w-0 border-x-4 border-t-4 border-x-transparent border-t-rose-500"></span>
+                    </div>
+                    <button
+                        type="button"
+                        className="cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                        onClick={() => setIsTextSettingsModalOpen(true)}
+                    >
+                        文字の設定 ▷
+                    </button>
+                </div>
+            </div>
+            {isTextSettingsModalOpen && createPortal(
+                <div
+                    className="absolute inset-0 z-50 flex items-center bg-black/30"
+                    onClick={() => setIsTextSettingsModalOpen(false)}
+                >
+                    <div
+                        className="h-95 w-full align-middle overflow-y-auto bg-white p-5 text-left shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
+                            <p className="text-lg font-extrabold text-slate-800">文字の設定</p>
+                            <button
+                                type="button"
+                                className="rounded-md border border-slate-300 px-3 py-1 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                                onClick={() => setIsTextSettingsModalOpen(false)}
+                            >
+                                設定を閉じる
+                            </button>
+                        </div>
+
+                        <div className="mt-3">
+                            <span className="mr-2">フォント を選択：</span>
+                            <select
+                                className="border p-1"
+                                value={customFont}
+                                style={{fontFamily: customFont}}
+                                onChange={(e) => setCustomFont(e.target.value)}
+                            >
+                            {CUSTOM_FONTS.map((f) => (
+                                <option
+                                    key={f}
+                                    value={f}
+                                    style={{fontFamily: f}}
+                                >
+                                        {f}|({currentVideo.currentTime})
+                                </option>
+                            ))}
+                            </select>
+                        </div>
+
+                        <div className="mt-3 flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                                <span className="rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white shadow-sm">NEW</span>
+                                <span className="align-middle">タイトル文字サイズ：{titleFontSize === 0 ? "非表示" : `${titleFontSize}px`}</span>
+                            </div>
+                            <input
+                                type="range"
+                                className="align-middle w-40"
+                                min={0}
+                                max={50}
+                                value={titleFontSize}
+                                onChange={(e) => setTitleFontSize(Number(e.target.value))}
+                            />
+                        </div>
+
+                        <div className="mt-2 flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                                <span className="rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-extrabold tracking-wide text-white shadow-sm">NEW</span>
+                                <span className="align-middle">時間文字サイズ：{timeFontSize}px</span>
+                            </div>
+                            <input
+                                type="range"
+                                className="align-middle w-40"
+                                min={24}
+                                max={160}
+                                value={timeFontSize}
+                                onChange={(e) => setTimeFontSize(Number(e.target.value))}
+                            />
+                        </div>
+
+                        <div className="mt-3">
+                            <ColorPicker />
+                        </div>
+                    </div>
+                </div>,
+                document.querySelector(".accodion") as Element
+            )}
         </div>
     )
 }
