@@ -230,40 +230,41 @@ const Timer = () => {
             >
                 {requestedTitleFontSize > 0 && (
                     <>
-                        <div
-                            ref={titleWrapRef}
-                            style={{
-                                height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT)}px`,
-                                overflow: "hidden",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                transform: `translateY(${titleOffsetY}px)`,
-                            }}
-                        >
-                            <p
-                                ref={titleRef}
+                        <div style={{ transform: `translateY(${titleOffsetY}px)` }}>
+                            <div
+                                ref={titleWrapRef}
                                 style={{
-                                    fontSize: `${adjustedTitleFontSize}px`,
-                                    lineHeight: `${TITLE_LINE_HEIGHT}`,
-                                    whiteSpace: "pre-line",
-                                    overflowWrap: "anywhere",
-                                    wordBreak: "break-word",
-                                    margin: 0,
+                                    height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT)}px`,
+                                    overflow: "hidden",
+                                    display: "flex",
+                                    alignItems: "flex-end",
+                                    justifyContent: "center",
                                 }}
                             >
-                                {titleTwoLines}
+                                <p
+                                    ref={titleRef}
+                                    style={{
+                                        fontSize: `${adjustedTitleFontSize}px`,
+                                        lineHeight: `${TITLE_LINE_HEIGHT}`,
+                                        whiteSpace: "pre-line",
+                                        overflowWrap: "anywhere",
+                                        wordBreak: "break-word",
+                                        margin: 0,
+                                    }}
+                                >
+                                    {titleTwoLines}
+                                </p>
+                            </div>
+                            <p
+                                style={{
+                                    fontSize: `${Math.max(adjustedTitleFontSize - 8, 12)}px`,
+                                    marginTop: "2px",
+                                    marginBottom: 0,
+                                }}
+                            >
+                                {currentVideo.subTitle}
                             </p>
                         </div>
-                        <p
-                            style={{
-                                fontSize: `${Math.max(adjustedTitleFontSize - 8, 12)}px`,
-                                marginTop: "4px",
-                                marginBottom: 0,
-                            }}
-                        >
-                            {currentVideo.subTitle}
-                        </p>
                     </>
                 )}
 
