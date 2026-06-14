@@ -3,8 +3,8 @@ import Timer from "./Timer/Timer";
 
 import "../../style.css";
 import Menu from "./Menu/Menu";
-import { ADJUSTIMER_WINDOW_PORT_PREFIX, ADJUSTIMER_WINDOW_TYPE_CHECK, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE_AD, CONTENT_SCRIPT_TYPE_UPDATE, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_TIME_FONT_SIZE, STORAGE_KEY_TITLE_FONT_SIZE } from "../../constants";
-import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getPort, getShadowColor, getShadowSize, getTextColor, getTimeFontSize, getTitleFontSize} from "../atom";
+import { ADJUSTIMER_WINDOW_PORT_PREFIX, ADJUSTIMER_WINDOW_TYPE_CHECK, ADJUSTIMER_WINDOW_TYPE_READY, ADJUSTIMER_WINDOW_UPDATE_AD, CONTENT_SCRIPT_TYPE_UPDATE, STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_TIME_FONT_SIZE, STORAGE_KEY_TITLE_FONT_SIZE, STORAGE_KEY_TITLE_OFFSET_Y } from "../../constants";
+import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getPort, getShadowColor, getShadowSize, getTextColor, getTimeFontSize, getTitleFontSize, getTitleOffsetY } from "../atom";
 import { useAtom } from "jotai";
 
 let loopTimeoutId: number | null = null;
@@ -20,6 +20,7 @@ export const AdjusTimerWindow = (): ReactElement => {
     const [ fontWeight, setFontWeight ] = useAtom(getFontWeight);
     const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
     const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
+    const [ titleOffsetY, setTitleOffsetY ] = useAtom(getTitleOffsetY);
 
     /**
      * service workerとのport接続
@@ -52,7 +53,7 @@ export const AdjusTimerWindow = (): ReactElement => {
     useEffect(() => {
         // カラーピッカーの情報を取得
         // フォントの情報を取得
-        chrome.storage.local.get([STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_TITLE_FONT_SIZE, STORAGE_KEY_TIME_FONT_SIZE], (value) => {
+        chrome.storage.local.get([STORAGE_KEY_BACKGROUND_COLOR, STORAGE_KEY_TEXT_COLOR, STORAGE_KEY_FONTFAMILIY, STORAGE_KEY_SHADOW_SIZE, STORAGE_KEY_SHADOW_COLOR, STORAGE_KEY_FONT_WEIGHT, STORAGE_KEY_TITLE_FONT_SIZE, STORAGE_KEY_TIME_FONT_SIZE, STORAGE_KEY_TITLE_OFFSET_Y], (value) => {
             setBackgroundColor(value[STORAGE_KEY_BACKGROUND_COLOR]);
             setTextColor(value[STORAGE_KEY_TEXT_COLOR]);
             setCustomFont(value[STORAGE_KEY_FONTFAMILIY]);
@@ -61,6 +62,7 @@ export const AdjusTimerWindow = (): ReactElement => {
             setFontWeight(value[STORAGE_KEY_FONT_WEIGHT]);
             setTitleFontSize(value[STORAGE_KEY_TITLE_FONT_SIZE]);
             setTimeFontSize(value[STORAGE_KEY_TIME_FONT_SIZE]);
+            setTitleOffsetY(value[STORAGE_KEY_TITLE_OFFSET_Y]);
         });
     }, [])
 
