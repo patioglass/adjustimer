@@ -5,39 +5,52 @@ import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getS
 
 const TITLE_LINE_COUNT = 2;
 const TITLE_LINE_COUNT_LARGE = 3;
+const TITLE_LINE_COUNT_SINGLE = 1;
 const TITLE_LINE_HEIGHT = 1.2;
 const MIN_TITLE_FONT_SIZE = 12;
 const TITLE_FONT_SIZE_THRESHOLD = 50;
+const TITLE_SPLIT_SEPARATORS = [" - ", "｜", "|", "：", ":", " / ", "・", " "];
 
-const splitTitleToTwoLines = (title: string): [string, string] => {
+const splitTitleByPackedFirstLine = (title: string, maxWidth: number, ctx: CanvasRenderingContext2D): [string, string] => {
     const normalized = (title || "").trim();
     if (!normalized) return ["", ""];
-    if (normalized.length <= 1) return [normalized, ""];
+    if (normalized.length <= 1 || ctx.measureText(normalized).width <= maxWidth) return [normalized, ""];
 
-    const separators = [" - ", "｜", "|", "：", ":", " / ", "・"];
-    const center = Math.floor(normalized.length / 2);
+    let low = 1;
+    let high = normalized.length - 1;
+    let bestFit = 1;
 
-    let bestIndex = -1;
-    let bestDistance = Number.MAX_SAFE_INTEGER;
-    separators.forEach((sep) => {
-        let idx = normalized.indexOf(sep);
-        while (idx !== -1) {
-            const splitIndex = idx + sep.length;
-            const distance = Math.abs(splitIndex - center);
-            if (distance < bestDistance && splitIndex > 0 && splitIndex < normalized.length) {
-                bestDistance = distance;
-                bestIndex = splitIndex;
-            }
-            idx = normalized.indexOf(sep, idx + 1);
+    while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        const candidate = normalized.slice(0, mid).trimEnd();
+        if (!candidate) {
+            low = mid + 1;
+            continue;
         }
-    });
 
-    if (bestIndex === -1) {
-        bestIndex = center;
+        if (ctx.measureText(candidate).width <= maxWidth) {
+            bestFit = mid;
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
     }
 
-    const first = normalized.slice(0, bestIndex).trim();
-    const second = normalized.slice(bestIndex).trim();
+    let splitIndex = bestFit;
+    for (const sep of TITLE_SPLIT_SEPARATORS) {
+        const sepIdx = normalized.lastIndexOf(sep, bestFit - 1);
+        if (sepIdx > 0) {
+            const candidateIdx = sepIdx + sep.length;
+            const candidateFirst = normalized.slice(0, candidateIdx).trim();
+            if (candidateFirst && ctx.measureText(candidateFirst).width <= maxWidth) {
+                splitIndex = candidateIdx;
+                break;
+            }
+        }
+    }
+
+    const first = normalized.slice(0, splitIndex).trim();
+    const second = normalized.slice(splitIndex).trim();
     return [first, second];
 };
 
@@ -84,7 +97,7 @@ const Timer = () => {
 
         if (requestedTitleFontSize === 0) {
             setAdjustedTitleFontSize(0);
-            setTitleLineCount(TITLE_LINE_COUNT);
+            setTitleLineCount(TITLE_LINE_COUNT_SINGLE);
             setTitleTwoLines("");
             return;
         }
@@ -105,16 +118,25 @@ const Timer = () => {
             }
 
             const maxWidth = titleWrap.clientWidth;
-            const [line1, line2] = splitTitleToTwoLines(normalizedTitle);
             ctx.font = `${fontWeight * 100} ${requestedTitleFontSize}px ${customFont}`;
+            const singleLineFits = ctx.measureText(normalizedTitle).width <= maxWidth;
+
+            const [line1, line2] = splitTitleByPackedFirstLine(normalizedTitle, maxWidth, ctx);
             const twoLineMaxWidth = Math.max(ctx.measureText(line1).width, ctx.measureText(line2).width);
+            const shouldUseThreeLines = !singleLineFits && requestedTitleFontSize > TITLE_FONT_SIZE_THRESHOLD && twoLineMaxWidth > maxWidth;
+            const candidateLines = singleLineFits
+                ? [normalizedTitle]
+                : shouldUseThreeLines
+                    ? splitTitleToThreeLines(normalizedTitle)
+                    : [line1, line2];
 
-            const shouldUseThreeLines = requestedTitleFontSize > TITLE_FONT_SIZE_THRESHOLD && twoLineMaxWidth > maxWidth;
-            const candidateLines = shouldUseThreeLines
-                ? splitTitleToThreeLines(normalizedTitle)
-                : [line1, line2];
-
-            setTitleLineCount(shouldUseThreeLines ? TITLE_LINE_COUNT_LARGE : TITLE_LINE_COUNT);
+            setTitleLineCount(
+                singleLineFits
+                    ? TITLE_LINE_COUNT_SINGLE
+                    : shouldUseThreeLines
+                        ? TITLE_LINE_COUNT_LARGE
+                        : TITLE_LINE_COUNT
+            );
             setTitleTwoLines(candidateLines.join("\n"));
 
             let candidate = requestedTitleFontSize;

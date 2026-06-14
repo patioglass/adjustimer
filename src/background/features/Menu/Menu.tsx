@@ -85,7 +85,6 @@ const Menu = (): ReactElement => {
                         <div className="
                             flex
                             space-x-5
-                            mt-3
                             p-3
                             font-sans
                             tracking-widest
