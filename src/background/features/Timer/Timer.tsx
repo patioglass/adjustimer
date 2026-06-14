@@ -121,35 +121,48 @@ const Timer = () => {
             ctx.font = `${fontWeight * 100} ${requestedTitleFontSize}px ${customFont}`;
             const singleLineFits = ctx.measureText(normalizedTitle).width <= maxWidth;
 
-            const [line1, line2] = splitTitleByPackedFirstLine(normalizedTitle, maxWidth, ctx);
-            const twoLineMaxWidth = Math.max(ctx.measureText(line1).width, ctx.measureText(line2).width);
-            const shouldUseThreeLines = !singleLineFits && requestedTitleFontSize > TITLE_FONT_SIZE_THRESHOLD && twoLineMaxWidth > maxWidth;
-            const candidateLines = singleLineFits
-                ? [normalizedTitle]
-                : shouldUseThreeLines
-                    ? splitTitleToThreeLines(normalizedTitle)
-                    : [line1, line2];
+            const findLargestFittingFontSize = (lines: string[]) => {
+                let nextCandidate = requestedTitleFontSize;
 
-            setTitleLineCount(
-                singleLineFits
-                    ? TITLE_LINE_COUNT_SINGLE
-                    : shouldUseThreeLines
-                        ? TITLE_LINE_COUNT_LARGE
-                        : TITLE_LINE_COUNT
-            );
-            setTitleTwoLines(candidateLines.join("\n"));
-
-            let candidate = requestedTitleFontSize;
-
-            while (candidate > MIN_TITLE_FONT_SIZE) {
-                ctx.font = `${fontWeight * 100} ${candidate}px ${customFont}`;
-                const maxLineWidth = Math.max(...candidateLines.map((line) => ctx.measureText(line).width));
-                if (maxLineWidth <= maxWidth) {
-                    break;
+                while (nextCandidate > MIN_TITLE_FONT_SIZE) {
+                    ctx.font = `${fontWeight * 100} ${nextCandidate}px ${customFont}`;
+                    const maxLineWidth = Math.max(...lines.map((line) => ctx.measureText(line).width));
+                    if (maxLineWidth <= maxWidth) {
+                        return nextCandidate;
+                    }
+                    nextCandidate -= 1;
                 }
-                candidate -= 1;
+
+                ctx.font = `${fontWeight * 100} ${MIN_TITLE_FONT_SIZE}px ${customFont}`;
+                const minSizeMaxWidth = Math.max(...lines.map((line) => ctx.measureText(line).width));
+                return minSizeMaxWidth <= maxWidth ? MIN_TITLE_FONT_SIZE : null;
+            };
+
+            const twoLineCandidates = singleLineFits
+                ? [normalizedTitle]
+                : splitTitleByPackedFirstLine(normalizedTitle, maxWidth, ctx);
+
+            const twoLineFontSize = findLargestFittingFontSize(twoLineCandidates);
+
+            let candidateLines = twoLineCandidates;
+            let candidateLineCount = singleLineFits ? TITLE_LINE_COUNT_SINGLE : TITLE_LINE_COUNT;
+            let candidate = twoLineFontSize ?? MIN_TITLE_FONT_SIZE;
+
+            if (!singleLineFits) {
+                const threeLineCandidates = splitTitleToThreeLines(normalizedTitle);
+                const threeLineFontSize = findLargestFittingFontSize(threeLineCandidates);
+
+                if (threeLineFontSize !== null && (twoLineFontSize === null || threeLineFontSize > twoLineFontSize)) {
+                    candidateLines = threeLineCandidates;
+                    candidateLineCount = TITLE_LINE_COUNT_LARGE;
+                    candidate = threeLineFontSize;
+                } else if (twoLineFontSize !== null) {
+                    candidate = twoLineFontSize;
+                }
             }
 
+            setTitleLineCount(candidateLineCount);
+            setTitleTwoLines(candidateLines.join("\n"));
             setAdjustedTitleFontSize(candidate);
         };
 

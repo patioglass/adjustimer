@@ -266,7 +266,7 @@ const NavigationItem = (): ReactElement => {
                                 type="range"
                                 className="align-middle w-40"
                                 min={0}
-                                max={67}
+                                max={60}
                                 value={titleFontSize}
                                 onChange={(e) => setTitleFontSize(Number(e.target.value))}
                             />
