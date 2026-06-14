@@ -3,6 +3,7 @@ import Navigation from "./Navigation";
 import obsSetting1 from '../../public/obs-setting-01.jpg'
 import obsSetting2 from '../../public/obs-setting-02.jpg'
 import obsSetting3 from '../../public/obs-setting-03.jpg'
+import fontSettingGif from '../../public/font-setting.gif'
 
 const ObsSetting = ():ReactElement => {
     return (
@@ -22,7 +23,7 @@ const ObsSetting = ():ReactElement => {
                         <p>3. ウィンドウキャプチャのウィンドウ選択で、ポップアウトしたものを選択する。</p>
                         <img src={obsSetting1} className="w-1/2 m-auto" />
                         <br />
-                        <p>4. 「AdjusTimer -ポップアウト-」があるので、「AdjusTimer -ポップアウト-」を選ぶ。</p>
+                        <p>4. <b>「AdjusTimer -ポップアウト-」があるので、「AdjusTimer -ポップアウト-」を選ぶ。</b></p>
                         <p>「AdjusTimer -ポップアウト-」が2つあるが、どちらを選んでも同じ</p>
                         <p>5. 「ウィンドウのタイトルに一致する必要があります」を選ぶ。</p>
                         <img src={obsSetting2} className="w-1/2 m-auto" />
@@ -35,6 +36,13 @@ const ObsSetting = ():ReactElement => {
                     <p>さきほど追加した「ウィンドウキャプチャ」を右クリック⇒「フィルタ」⇒「クロマキー」を追加</p>
                     <p>デフォルトだと緑が透明対象のため、AdjusTimer側の背景色を緑にする</p>
                     <img src={obsSetting3} className="w-1/2 m-auto" />
+                </div>
+                <div className="p-6 rounded-sm">
+                    <h3 className="text-xl font-semibold mb-2">文字の設定</h3>
+                    <p>文字の設定からフォントやサイズを変更できます。</p>
+                    <p>文字の縁取りなどを設定することでOBSでの表示がより見やすくなります。</p>
+                    <p>タイトルのサイズを0にすると、タイトルを非表示にできます。</p>
+                    <img src={fontSettingGif}/>
                 </div>
             </section>
         </div>

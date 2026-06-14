@@ -56,9 +56,13 @@ export const STORAGE_KEY_FONTFAMILIY = "AdjusTimer_fontFamily";
 export const STORAGE_KEY_SHADOW_SIZE = "AdjusTimer_shadowSize";
 export const STORAGE_KEY_SHADOW_COLOR = "AdjusTimer_shadowColor";
 export const STORAGE_KEY_FONT_WEIGHT = "AdjusTimer_fontWeight";
+export const STORAGE_KEY_TITLE_FONT_SIZE = "AdjusTimer_titleFontSize";
+export const STORAGE_KEY_TIME_FONT_SIZE = "AdjusTimer_timeFontSize";
 
 export const DEFAULT_BACKGROUND_COLOR = "#e2e8f0";
 export const DEFAULT_TEXT_COLOR = "#000000";
+export const DEFAULT_TITLE_FONT_SIZE = 36;
+export const DEFAULT_TIME_FONT_SIZE = 60;
 export const CUSTOM_FONTS = [
     "Noto Sans",
     "Montserrat",

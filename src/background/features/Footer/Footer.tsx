@@ -21,12 +21,7 @@ const Footer = (): ReactElement => {
                 公式Twitter
             </a>
             などで気軽にお問い合わせください。
-            <div className="
-                policy
-                place-items-center
-                font-sans
-            ">
-                <span>
+             <span>
                     (
                         <a
                             href="https://patiopatimon.com/adjustimer/privacy.html"
@@ -39,7 +34,7 @@ const Footer = (): ReactElement => {
                         >プライバシーポリシー
                         </a>)
                 </span>
-            </div>
+
         </footer>
     )
 }

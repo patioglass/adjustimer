@@ -13,7 +13,6 @@ const Help = () => {
                     <li>対象の動画ページを開く</li>
                     <li>右のメニューから対象の動画ページを選択する</li>
                     <li>動画URLと一致しているかを確認する</li>
-                    <li>色のパレット部分を選択し、UIを好みに合わせる</li>
                     <li>「情報を取得する」を押す</li>
                     <li>うまく取得できない場合は、<a href="https://patiopatimon.com/adjustimer/" target="_blank" className="text-red-800 font-bold underline underline-offset-4">使い方ページ</a>を参考にしてください</li>
                 </ul>
