@@ -3,7 +3,7 @@ import { createPortal } from "react-dom"
 import ColorPicker from "./ColorPicker"
 import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, CUSTOM_FONTS, isTargetUrl, TabInfo } from "../../../constants";
 import { useAtom } from "jotai";
-import { getCurrentVideo, getCustomFont, getPort, getTimeFontSize, getTitleFontSize } from "../../atom";
+import { getCurrentVideo, getCustomFont, getPort, getTimeFontSize, getTitleFontSize, getTitleOffsetY } from "../../atom";
 
 const NavigationItem = (): ReactElement => {
     const [ port, setPort ] = useAtom(getPort);
@@ -14,6 +14,7 @@ const NavigationItem = (): ReactElement => {
     const [ customFont, setCustomFont] = useAtom(getCustomFont);
     const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
     const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
+    const [ titleOffsetY, setTitleOffsetY ] = useAtom(getTitleOffsetY);
     const [ isTextSettingsModalOpen, setIsTextSettingsModalOpen ] = useState<boolean>(false);
 
     /**
@@ -284,6 +285,20 @@ const NavigationItem = (): ReactElement => {
                                 max={160}
                                 value={timeFontSize}
                                 onChange={(e) => setTimeFontSize(Number(e.target.value))}
+                            />
+                        </div>
+
+                        <div className="mt-2 flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                                <span className="align-middle">タイトル位置（上下）：{titleOffsetY}px</span>
+                            </div>
+                            <input
+                                type="range"
+                                className="align-middle w-40"
+                                min={-120}
+                                max={120}
+                                value={titleOffsetY}
+                                onChange={(e) => setTitleOffsetY(Number(e.target.value))}
                             />
                         </div>
 

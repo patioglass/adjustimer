@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, DEFAULT_TIME_FONT_SIZE, DEFAULT_TITLE_FONT_SIZE, generateTextShadow } from "../../../constants";
-import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor, getTimeFontSize, getTitleFontSize } from "../../atom";
+import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor, getTimeFontSize, getTitleFontSize, getTitleOffsetY } from "../../atom";
 
 const TITLE_LINE_COUNT = 2;
 const TITLE_LINE_COUNT_LARGE = 3;
@@ -79,6 +79,7 @@ const Timer = () => {
     const [ fontWeight, setFontWeight ] = useAtom(getFontWeight);
     const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
     const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
+    const [ titleOffsetY, setTitleOffsetY ] = useAtom(getTitleOffsetY);
     const requestedTitleFontSize = titleFontSize ?? DEFAULT_TITLE_FONT_SIZE;
     const [ adjustedTitleFontSize, setAdjustedTitleFontSize ] = useState<number>(DEFAULT_TITLE_FONT_SIZE);
     const [ titleTwoLines, setTitleTwoLines ] = useState<string>("");
@@ -237,6 +238,7 @@ const Timer = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
+                                transform: `translateY(${titleOffsetY}px)`,
                             }}
                         >
                             <p
