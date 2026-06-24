@@ -151,6 +151,17 @@ const NavigationItem = (): ReactElement => {
             <div>
                 <a href="https://patiopatimon.com/adjustimer/#/obs-setting" target="_blank" className="text-red-800 font-bold underline underline-offset-4">こちら</a>を確認ください。
             </div>
+            <div className="mt-3 max-w-85 min-w-0 overflow-hidden rounded-lg border-2 border-red-700 bg-red-50 text-left shadow-md shadow-red-950/10">
+                <div className="flex items-center gap-2 rounded-t-md bg-red-700 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.515 2.625H3.72c-1.345 0-2.188-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-sm font-extrabold">重要なお知らせ</p>
+                </div>
+                <p className="min-w-0 whitespace-normal break-all px-3 py-3 text-xs font-bold leading-relaxed text-red-950">
+                    06/22確認：Amazon Primeの動画プレイヤーの仕様が変更されたため、Amazon Primeのタイマーが一時的にバグで正常に利用できなくなっています。
+                </p>
+            </div>
             <div className="text-left w-100">
                 <p className="text-xl font-bold mt-3">【- 対象にするページ -】</p>
                 <select className="
