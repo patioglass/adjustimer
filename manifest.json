@@ -35,10 +35,12 @@
     "web_accessible_resources": [
       {
         "resources": [
-          "adjustimer-netflix-loader.js"
+          "adjustimer-netflix-loader.js",
+          "adjustimer-amazon-loader.js"
         ],
         "matches": [
-          "https://www.netflix.com/*"
+          "https://www.netflix.com/*",
+          "https://www.amazon.co.jp/*"
         ]
       }
     ]

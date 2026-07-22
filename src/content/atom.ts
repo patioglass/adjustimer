@@ -72,21 +72,39 @@ export const getVideo = atom(
                 targetVideoSubTitle = document.querySelector(".dv-player-fullscreen .atvwebplayersdk-subtitle-text")
                                     ? document.querySelector(".dv-player-fullscreen .atvwebplayersdk-subtitle-text")?.textContent
                                     : ""
+                /**
+                 * もしvideoAtom(更新前)とnewVideo(更新後)のタイトルとサブタイトルのどちらかが異なった場合
+                 * VideoInfoのupdateLocationを実行する（SPAによるURL変更でタイトルのみが変わることがあるため）
+                */
+                if (
+                    prevVideo.title !== targetVideoTitle ||
+                    prevVideo.subTitle !== targetVideoSubTitle
+                ) {
+                    set(updateLocationSignalAtom, get(updateLocationSignalAtom) + 1);
+                }
 
-                // メモ: ウォッチパーティのように他の人と同期したい場合、一度currentTime合わせた後に、表示時間のずれた分をさらに再計算して再配置するしかなさそう
-                // Amazonは広告がない場合に、表示時間のDOMを取得して表示する
+                // React内部stateをページコンテキストのloaderからhidden DOM経由で受け取る。
+                // UIの時間表示は消えるため内部stateを優先し、DOM表示は旧UI向けfallbackにする。
                 const adDom = document.querySelector(".atvwebplayersdk-ad-timer-remaining-time");
-                if (!adDom) {
+                const amazonPlaybackState = document.getElementById("adjustimer-amazon-playback-state");
+                const amazonCurrentTimeMs = Number(amazonPlaybackState?.getAttribute("data-position-ms"));
+                const hasAmazonCurrentTime = amazonPlaybackState?.hasAttribute("data-position-ms")
+                    && Number.isFinite(amazonCurrentTimeMs);
+                const amazonAdPlaying = amazonPlaybackState?.getAttribute("data-ad-playing") === "true";
+                if (amazonAdPlaying || adDom) {
+                    adBreakRemainTime = adDom?.textContent || "";
+                    isAdBreak = true;
+                } else {
+                    if (hasAmazonCurrentTime) {
+                        updateTime = amazonCurrentTimeMs / 1000;
+                    }
                     const primeVideo = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")
-                    if (primeVideo.length > 0) {
+                    if (!hasAmazonCurrentTime && primeVideo.length > 0) {
                         const playShowTime: string | null = document.getElementsByClassName("atvwebplayersdk-timeindicator-text")[0].textContent;
                         if (playShowTime) {
                             updateTime = timeStringToSeconds(playShowTime.split("/")[0].trim());
                         }
                     }
-                } else {
-                    adBreakRemainTime = adDom.textContent ? adDom.textContent : "";
-                    isAdBreak = true;
                 }
                 if (targetVideoTitle === TITLE_NOT_FOUND) {
                     isAdBreak = false;

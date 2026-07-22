@@ -214,30 +214,6 @@ const Timer = () => {
                 backgroundColor: backgroundColor ? backgroundColor : DEFAULT_BACKGROUND_COLOR,
             }}
         >
-            {currentVideo.isAdBreak && (
-                <div>
-                    <span className="
-                        py-1
-                        px-3
-                        inline-flex
-                        items-center
-                        gap-x-1
-                        text-xs
-                        font-medium
-                        bg-red-100
-                        text-red-800
-                        rounded-full
-                    ">
-                        <svg className="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                            <path d="M12 9v4"></path>
-                            <path d="M12 17h.01"></path>
-                        </svg>
-                        <span className="text-sm">広告再生中 - 残り : {currentVideo.adBreakRemainTime}</span>
-                    </span>
-                </div>
-            )}
-
             <div
                 className={requestedTitleFontSize === 0 ? "flex h-full flex-col justify-center" : undefined}
                 style={{
@@ -253,13 +229,37 @@ const Timer = () => {
                             <div
                                 ref={titleWrapRef}
                                 style={{
-                                    height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT)}px`,
+                                    height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT) + (currentVideo.isAdBreak ? 32 : 0)}px`,
                                     overflow: "hidden",
                                     display: "flex",
-                                    alignItems: "flex-end",
-                                    justifyContent: "center",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "flex-end",
                                 }}
                             >
+                                {currentVideo.isAdBreak && (
+                                    <span className="
+                                        mb-1
+                                        py-1
+                                        px-3
+                                        inline-flex
+                                        self-center
+                                        items-center
+                                        gap-x-1
+                                        text-xs
+                                        font-medium
+                                        bg-red-100
+                                        text-red-800
+                                        rounded-full
+                                    ">
+                                        <svg className="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                                            <path d="M12 9v4"></path>
+                                            <path d="M12 17h.01"></path>
+                                        </svg>
+                                        <span className="text-sm">広告再生中 - 残り : {currentVideo.adBreakRemainTime}</span>
+                                    </span>
+                                )}
                                 <p
                                     ref={titleRef}
                                     style={{
