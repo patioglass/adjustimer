@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "AdjusTimer",
     "description": "再生動画の再生時間を別ウィンドウで映す拡張",
-    "version": "3.5.3",
+    "version": "3.6.0",
     "content_scripts": [
       {
         "js": ["src/content/index.tsx"],
@@ -35,10 +35,12 @@
     "web_accessible_resources": [
       {
         "resources": [
-          "adjustimer-netflix-loader.js"
+          "adjustimer-netflix-loader.js",
+          "adjustimer-amazon-loader.js"
         ],
         "matches": [
-          "https://www.netflix.com/*"
+          "https://www.netflix.com/*",
+          "https://www.amazon.co.jp/*"
         ]
       }
     ]
