@@ -35,7 +35,8 @@ const VideoInfo = (): ReactElement => {
      * @param {string} node appendChildで挿入するタグ名
      */
     const injectScript = (file: string, node: string) => {
-        const extensionScript = document.querySelector("script[src*=\'adjustimer-netflix-loader.js'\]");
+        const fileName = file.split("/").pop();
+        const extensionScript = document.querySelector(`script[src*='${fileName}']`);
         if (!extensionScript) {
             const th = document.getElementsByTagName(node)[0];
             const s = document.createElement('script');
@@ -103,6 +104,8 @@ const VideoInfo = (): ReactElement => {
         updateVideoElement();
         if (REGEX_URL_NETFLIX.test(location.href)) {
             injectScript(chrome.runtime.getURL("adjustimer-netflix-loader.js"), "body");
+        } else if (REGEX_URL_AMAZON_PRIME.test(location.href)) {
+            injectScript(chrome.runtime.getURL("adjustimer-amazon-loader.js"), "body");
         }
     }, [updateLocationSignal]);
 
