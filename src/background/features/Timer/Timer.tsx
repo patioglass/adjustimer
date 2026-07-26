@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR, DEFAULT_TIME_FONT_SIZE, DEFAULT_TITLE_FONT_SIZE, generateTextShadow } from "../../../constants";
-import { getBackgroundColor, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor, getTimeFontSize, getTitleFontSize, getTitleOffsetY } from "../../atom";
+import { getBackgroundColor, getCountdownEndsAt, getCountdownRemaining, getCountdownRunning, getCurrentVideo, getCustomFont, getFontWeight, getShadowColor, getShadowSize, getTextColor, getTimeFontSize, getTimerMode, getTitleFontSize, getTitleOffsetY } from "../../atom";
 
 const TITLE_LINE_COUNT = 2;
 const TITLE_LINE_COUNT_LARGE = 3;
@@ -11,6 +11,15 @@ const MIN_TITLE_FONT_SIZE = 12;
 const MIN_SUBTITLE_FONT_SIZE = 8;
 const TITLE_FONT_SIZE_THRESHOLD = 50;
 const TITLE_SPLIT_SEPARATORS = [" - ", "｜", "|", "：", ":", " / ", "・", " "];
+
+const formatCountdownTime = (totalSeconds: number) => {
+    const sign = totalSeconds < 0 ? "-" : "";
+    const absoluteSeconds = Math.abs(totalSeconds);
+    const hours = Math.floor(absoluteSeconds / 3600);
+    const minutes = Math.floor((absoluteSeconds % 3600) / 60);
+    const seconds = absoluteSeconds % 60;
+    return sign + [hours, minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
+};
 
 const splitTitleByPackedFirstLine = (title: string, maxWidth: number, ctx: CanvasRenderingContext2D): [string, string] => {
     const normalized = (title || "").trim();
@@ -81,6 +90,10 @@ const Timer = () => {
     const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
     const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
     const [ titleOffsetY, setTitleOffsetY ] = useAtom(getTitleOffsetY);
+    const [ timerMode ] = useAtom(getTimerMode);
+    const [ countdownRemaining, setCountdownRemaining ] = useAtom(getCountdownRemaining);
+    const [ countdownRunning, setCountdownRunning ] = useAtom(getCountdownRunning);
+    const [ countdownEndsAt, setCountdownEndsAt ] = useAtom(getCountdownEndsAt);
     const requestedTitleFontSize = titleFontSize ?? DEFAULT_TITLE_FONT_SIZE;
     const [ adjustedTitleFontSize, setAdjustedTitleFontSize ] = useState<number>(DEFAULT_TITLE_FONT_SIZE);
     const [ adjustedSubTitleFontSize, setAdjustedSubTitleFontSize ] = useState<number>(Math.max(DEFAULT_TITLE_FONT_SIZE - 8, 12));
@@ -89,6 +102,17 @@ const Timer = () => {
     const titleWrapRef = useRef<HTMLDivElement | null>(null);
     const titleRef = useRef<HTMLParagraphElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+        if (!countdownRunning || countdownEndsAt === null) return;
+
+        const intervalId = window.setInterval(() => {
+            const nextRemaining = Math.floor((Date.now() - countdownEndsAt) / 1000);
+            setCountdownRemaining(nextRemaining);
+        }, 200);
+
+        return () => window.clearInterval(intervalId);
+    }, [countdownEndsAt, countdownRunning, setCountdownEndsAt, setCountdownRemaining, setCountdownRunning]);
 
     useEffect(() => {
         setAdjustedTitleFontSize(requestedTitleFontSize);
@@ -209,11 +233,21 @@ const Timer = () => {
             font-sans
             text-center
             font-extrabold
+            overflow-hidden
             grow"
             style={{
                 backgroundColor: backgroundColor ? backgroundColor : DEFAULT_BACKGROUND_COLOR,
             }}
         >
+            <div
+                className="flex h-full"
+                style={{
+                    width: "200%",
+                    transform: timerMode === "video" ? "translateX(0)" : "translateX(-50%)",
+                    transition: "transform 500ms cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+            >
+            <div className="h-full min-w-0" style={{ width: "50%" }}>
             <div
                 className={requestedTitleFontSize === 0 ? "flex h-full flex-col justify-center" : undefined}
                 style={{
@@ -223,13 +257,14 @@ const Timer = () => {
                     textShadow: generateTextShadow(shadowSize, shadowColor),
                 }}
             >
-                {requestedTitleFontSize > 0 && (
-                    <>
-                        <div style={{ transform: `translateY(${titleOffsetY}px)` }}>
+                {(requestedTitleFontSize > 0 || currentVideo.isAdBreak) && (
+                    <div style={{ transform: `translateY(${titleOffsetY}px)` }}>
                             <div
                                 ref={titleWrapRef}
                                 style={{
-                                    height: `${Math.ceil(60 * TITLE_LINE_COUNT_LARGE * TITLE_LINE_HEIGHT) + (currentVideo.isAdBreak ? 32 : 0)}px`,
+                                    height: `${requestedTitleFontSize > 0
+                                        ? Math.ceil(60 * titleLineCount * TITLE_LINE_HEIGHT) + (currentVideo.isAdBreak ? 32 : 0)
+                                        : 32}px`,
                                     overflow: "hidden",
                                     display: "flex",
                                     flexDirection: "column",
@@ -260,35 +295,38 @@ const Timer = () => {
                                         <span className="text-sm">広告再生中 - 残り : {currentVideo.adBreakRemainTime}</span>
                                     </span>
                                 )}
+                                {requestedTitleFontSize > 0 && (
+                                    <p
+                                        ref={titleRef}
+                                        style={{
+                                            fontSize: `${adjustedTitleFontSize}px`,
+                                            lineHeight: `${TITLE_LINE_HEIGHT}`,
+                                            whiteSpace: "pre-line",
+                                            overflowWrap: "anywhere",
+                                            wordBreak: "break-word",
+                                            margin: 0,
+                                        }}
+                                    >
+                                        {titleTwoLines}
+                                    </p>
+                                )}
+                            </div>
+                            {requestedTitleFontSize > 0 && (
                                 <p
-                                    ref={titleRef}
                                     style={{
-                                        fontSize: `${adjustedTitleFontSize}px`,
+                                        fontSize: `${adjustedSubTitleFontSize}px`,
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "clip",
                                         lineHeight: `${TITLE_LINE_HEIGHT}`,
-                                        whiteSpace: "pre-line",
-                                        overflowWrap: "anywhere",
-                                        wordBreak: "break-word",
-                                        margin: 0,
+                                        marginTop: "2px",
+                                        marginBottom: 0,
                                     }}
                                 >
-                                    {titleTwoLines}
+                                    {currentVideo.subTitle}
                                 </p>
-                            </div>
-                            <p
-                                style={{
-                                    fontSize: `${adjustedSubTitleFontSize}px`,
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "clip",
-                                    lineHeight: `${TITLE_LINE_HEIGHT}`,
-                                    marginTop: "2px",
-                                    marginBottom: 0,
-                                }}
-                            >
-                                {currentVideo.subTitle}
-                            </p>
-                        </div>
-                    </>
+                            )}
+                    </div>
                 )}
 
                 <div className="relative">
@@ -300,6 +338,26 @@ const Timer = () => {
                         {currentVideo.currentTime}
                     </p>
                 </div>
+            </div>
+            </div>
+
+            <div
+                className="flex h-full min-w-0 flex-col items-center justify-center"
+                style={{
+                    width: "50%",
+                    color: textColor ? textColor : DEFAULT_TEXT_COLOR,
+                    fontFamily: customFont,
+                    fontWeight: fontWeight * 100,
+                    textShadow: generateTextShadow(shadowSize, shadowColor),
+                }}
+            >
+                <p
+                    className="flex h-25 items-center justify-center tabular-nums"
+                    style={{ fontSize: `${timeFontSize ?? DEFAULT_TIME_FONT_SIZE}px` }}
+                >
+                    {formatCountdownTime(countdownRemaining)}
+                </p>
+            </div>
             </div>
         </div>
     );

@@ -21,6 +21,38 @@ export const titleOffsetY = atom<number>(DEFAULT_TITLE_OFFSET_Y);
 export const currentDate = atom<Date>(new Date());
 export const showCurrentDate = atom<boolean>(true);
 
+export type TimerMode = "video" | "countdown";
+export const timerMode = atom<TimerMode>("video");
+export const countdownDuration = atom<number>(5 * 60);
+export const countdownRemaining = atom<number>(5 * 60);
+export const countdownRunning = atom<boolean>(false);
+export const countdownEndsAt = atom<number | null>(null);
+
+export const getTimerMode = atom(
+    (get) => get(timerMode),
+    (get, set, mode: TimerMode) => set(timerMode, mode)
+);
+
+export const getCountdownDuration = atom(
+    (get) => get(countdownDuration),
+    (get, set, seconds: number) => set(countdownDuration, Math.floor(seconds))
+);
+
+export const getCountdownRemaining = atom(
+    (get) => get(countdownRemaining),
+    (get, set, seconds: number) => set(countdownRemaining, Math.floor(seconds))
+);
+
+export const getCountdownRunning = atom(
+    (get) => get(countdownRunning),
+    (get, set, running: boolean) => set(countdownRunning, running)
+);
+
+export const getCountdownEndsAt = atom(
+    (get) => get(countdownEndsAt),
+    (get, set, endsAt: number | null) => set(countdownEndsAt, endsAt)
+);
+
 export const getBackgroundColor = atom(
     (get) => get(backgroundColor),
     (get, set, newColor: string) => {

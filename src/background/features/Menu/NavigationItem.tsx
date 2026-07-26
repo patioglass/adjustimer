@@ -3,7 +3,9 @@ import { createPortal } from "react-dom"
 import ColorPicker from "./ColorPicker"
 import { ADJUSTIMER_WINDOW_SET_TAB_ID, ADJUSTIMER_WINDOW_UPDATE, CUSTOM_FONTS, isTargetUrl, TabInfo } from "../../../constants";
 import { useAtom } from "jotai";
-import { getCurrentVideo, getCustomFont, getPort, getTimeFontSize, getTitleFontSize, getTitleOffsetY } from "../../atom";
+import { getCountdownDuration, getCountdownEndsAt, getCountdownRemaining, getCountdownRunning, getCurrentVideo, getCustomFont, getPort, getTimeFontSize, getTimerMode, getTitleFontSize, getTitleOffsetY, TimerMode } from "../../atom";
+
+type StopwatchInputPart = "hours" | "minutes" | "seconds";
 
 const NavigationItem = (): ReactElement => {
     const [ port, setPort ] = useAtom(getPort);
@@ -16,6 +18,73 @@ const NavigationItem = (): ReactElement => {
     const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
     const [ titleOffsetY, setTitleOffsetY ] = useAtom(getTitleOffsetY);
     const [ isTextSettingsModalOpen, setIsTextSettingsModalOpen ] = useState<boolean>(false);
+    const [ timerMode, setTimerMode ] = useAtom(getTimerMode);
+    const [ , setCountdownDuration ] = useAtom(getCountdownDuration);
+    const [ countdownRemaining, setCountdownRemaining ] = useAtom(getCountdownRemaining);
+    const [ countdownRunning, setCountdownRunning ] = useAtom(getCountdownRunning);
+    const [ countdownEndsAt, setCountdownEndsAt ] = useAtom(getCountdownEndsAt);
+    const [ editingInputPart, setEditingInputPart ] = useState<StopwatchInputPart | null>(null);
+    const [ inputDraft, setInputDraft ] = useState<string>("");
+
+    const countdownSign = countdownRemaining < 0 ? -1 : 1;
+    const absoluteCountdown = Math.abs(countdownRemaining);
+    const countdownHours = countdownSign * Math.floor(absoluteCountdown / 3600);
+    const countdownMinutes = countdownSign * Math.floor((absoluteCountdown % 3600) / 60);
+    const countdownSeconds = countdownSign * (absoluteCountdown % 60);
+
+    const changeTimerMode = (mode: TimerMode) => {
+        setTimerMode(mode);
+    };
+
+    const updateCountdownDuration = (part: StopwatchInputPart, value: number) => {
+        const safeValue = Number.isFinite(value) ? Math.floor(value) : 0;
+        const nextHours = part === "hours" ? Math.min(Math.max(safeValue, -99), 99) : countdownHours;
+        const nextMinutes = part === "minutes" ? Math.min(Math.max(safeValue, -59), 59) : countdownMinutes;
+        const nextSeconds = part === "seconds" ? Math.min(Math.max(safeValue, -59), 59) : countdownSeconds;
+        const nextDuration = nextHours * 3600 + nextMinutes * 60 + nextSeconds;
+        setCountdownRunning(false);
+        setCountdownEndsAt(null);
+        setCountdownDuration(nextDuration);
+        setCountdownRemaining(nextDuration);
+    };
+
+    const updateStopwatchInput = (part: StopwatchInputPart, value: string) => {
+        setInputDraft(value);
+        if (/^-?\d+$/.test(value)) {
+            updateCountdownDuration(part, Number(value));
+        }
+    };
+
+    const finishStopwatchInput = (part: StopwatchInputPart) => {
+        if (/^-?\d+$/.test(inputDraft)) {
+            updateCountdownDuration(part, Number(inputDraft));
+        }
+        setEditingInputPart(null);
+        setInputDraft("");
+    };
+
+    const toggleCountdown = () => {
+        if (countdownRunning) {
+            const pausedRemaining = countdownEndsAt === null
+                ? countdownRemaining
+                : Math.floor((Date.now() - countdownEndsAt) / 1000);
+            setCountdownRemaining(pausedRemaining);
+            setCountdownRunning(false);
+            setCountdownEndsAt(null);
+            return;
+        }
+
+        setCountdownEndsAt(Date.now() - countdownRemaining * 1000);
+        setCountdownRunning(true);
+    };
+
+    const adjustCountdown = (delta: number) => {
+        const nextRemaining = countdownRemaining + delta;
+        setCountdownRemaining(nextRemaining);
+        if (countdownRunning) {
+            setCountdownEndsAt((countdownEndsAt ?? Date.now()) - delta * 1000);
+        }
+    };
 
     /**
      * 現在のタブを取得して、selectを更新する
@@ -142,26 +211,8 @@ const NavigationItem = (): ReactElement => {
             break-words
             w-1/2
         ">
-            <div className="flex items-center gap-2 mt-1 rounded-lg bg-blue-50 border border-blue-300 text-blue-800 px-3 py-2 text-sm font-medium shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-4a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                </svg>
-                <span>OBSの設定</span>
-            </div>
-            <div>
-                <a href="https://patiopatimon.com/adjustimer/#/obs-setting" target="_blank" className="text-red-800 font-bold underline underline-offset-4">こちら</a>を確認ください。
-            </div>
-            <div className="mt-3 max-w-85 min-w-0 overflow-hidden rounded-lg border-2 border-red-700 bg-red-50 text-left shadow-md shadow-red-950/10">
-                <div className="flex items-center gap-2 rounded-t-md bg-red-700 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.515 2.625H3.72c-1.345 0-2.188-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                    </svg>
-                    <p className="text-sm font-extrabold">重要なお知らせ</p>
-                </div>
-                <p className="min-w-0 whitespace-normal break-all px-3 py-3 text-xs font-bold leading-relaxed text-red-950">
-                    06/22確認：Amazon Primeの動画プレイヤーの仕様が変更されたため、Amazon Primeのタイマーが一時的にバグで正常に利用できなくなっています。
-                </p>
-            </div>
+            <div className={`grid transition-all duration-500 ${timerMode === "video" ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+                <div className={`min-h-0 overflow-hidden transition-transform duration-500 ${timerMode === "video" ? "translate-x-0" : "-translate-x-full"}`}>
             <div className="text-left w-100">
                 <p className="text-xl font-bold mt-3">【- 対象にするページ -】</p>
                 <select className="
@@ -188,7 +239,12 @@ const NavigationItem = (): ReactElement => {
             </div>
 
             <div className="mt-3 text-left w-100">
-                <p>{currentVideo.url}</p>
+                <p
+                    className="line-clamp-3 max-w-85 break-all"
+                    title={currentVideo.url || ""}
+                >
+                    {currentVideo.url}
+                </p>
             </div>
 
             <div className="
@@ -210,16 +266,81 @@ const NavigationItem = (): ReactElement => {
             >
                 情報を取得する
             </div>
+                </div>
+            </div>
 
             <div className="mt-3 text-left">
                 <p className="text-xl font-bold">【- 設定の変更 -】</p>
-                <div className="relative mt-5 inline-block">
-                    <div className="absolute -top-5 left-0 flex flex-col items-start">
+                <div className="relative mt-5 w-85 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left shadow-sm">
+                    <div className="absolute -top-5 left-3 flex flex-col items-start">
                         <span className="rounded-md bg-rose-500 px-2 py-1 text-[10px] font-extrabold tracking-wide text-white shadow-sm">
                             新機能
                         </span>
                         <span className="ml-3 h-0 w-0 border-x-4 border-t-4 border-x-transparent border-t-rose-500"></span>
                     </div>
+                    <p className="mb-2 text-xs font-extrabold text-slate-600">タイマーモード</p>
+                    <div className="grid grid-cols-2 rounded-lg bg-slate-200 p-1">
+                        <button
+                            type="button"
+                            onClick={() => changeTimerMode("video")}
+                            className={`cursor-pointer rounded-md px-3 py-2 text-sm font-bold transition-all duration-300 ${timerMode === "video" ? "bg-white text-blue-700 shadow" : "text-slate-500"}`}
+                        >
+                            動画連動
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => changeTimerMode("countdown")}
+                            className={`cursor-pointer rounded-md px-3 py-2 text-sm font-bold transition-all duration-300 ${timerMode === "countdown" ? "bg-white text-emerald-700 shadow" : "text-slate-500"}`}
+                        >
+                            緊急用タイマー
+                        </button>
+                    </div>
+
+                    <div className={`grid transition-all duration-500 ${timerMode === "countdown" ? "mt-3 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+                        <div className="min-h-0 overflow-hidden">                            
+                            <div className="grid grid-cols-3 gap-2">
+                                {[
+                                    { label: "時", part: "hours" as const, value: countdownHours, max: 99 },
+                                    { label: "分", part: "minutes" as const, value: countdownMinutes, max: 59 },
+                                    { label: "秒", part: "seconds" as const, value: countdownSeconds, max: 59 },
+                                ].map(({ label, part, value, max }) => (
+                                    <label key={part} className="text-center text-xs font-bold text-slate-600">
+                                        <input
+                                            type="number"
+                                            min={part === "hours" ? -99 : -59}
+                                            max={max}
+                                            value={editingInputPart === part ? inputDraft : value}
+                                            onFocus={(event) => {
+                                                setEditingInputPart(part);
+                                                setInputDraft(event.currentTarget.value);
+                                            }}
+                                            onChange={(event) => updateStopwatchInput(part, event.target.value)}
+                                            onBlur={() => finishStopwatchInput(part)}
+                                            onKeyDown={(event) => {
+                                                if (event.key === "Enter") event.currentTarget.blur();
+                                            }}
+                                            className="mb-1 w-full rounded-md border border-slate-300 bg-white px-2 py-2 text-center text-base font-bold text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+                                        />
+                                        {label}
+                                    </label>
+                                ))}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={toggleCountdown}
+                                className="mt-3 w-full cursor-pointer rounded-lg bg-emerald-600 px-3 py-2.5 font-extrabold text-white transition-colors hover:bg-emerald-500"
+                            >
+                                {countdownRunning ? "Ⅱ 一時停止" : "▶ 開始"}
+                            </button>
+                            <p>通常のストップウォッチ機能です。情報取得がうまくいかない場合などにご利用ください。</p>
+                            <div className="mt-2 grid grid-cols-2 gap-2">
+                                <button type="button" onClick={() => adjustCountdown(-1)} className="cursor-pointer rounded-lg border border-emerald-600 bg-white py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-50">◀ 1秒戻す</button>
+                                <button type="button" onClick={() => adjustCountdown(1)} className="cursor-pointer rounded-lg border border-emerald-600 bg-white py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-50">1秒進める ▶</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="mt-3 inline-block">
                     <button
                         type="button"
                         className="cursor-pointer rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
