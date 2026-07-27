@@ -9,7 +9,6 @@ const TITLE_LINE_COUNT_SINGLE = 1;
 const TITLE_LINE_HEIGHT = 1.2;
 const MIN_TITLE_FONT_SIZE = 12;
 const MIN_SUBTITLE_FONT_SIZE = 8;
-const TITLE_FONT_SIZE_THRESHOLD = 50;
 const TITLE_SPLIT_SEPARATORS = [" - ", "｜", "|", "：", ":", " / ", "・", " "];
 
 const formatCountdownTime = (totalSeconds: number) => {
@@ -249,7 +248,7 @@ const Timer = () => {
             >
             <div className="h-full min-w-0" style={{ width: "50%" }}>
             <div
-                className={requestedTitleFontSize === 0 ? "flex h-full flex-col justify-center" : undefined}
+                className="flex h-full flex-col justify-center"
                 style={{
                     color: textColor ? textColor : DEFAULT_TEXT_COLOR,
                     fontFamily: customFont,
