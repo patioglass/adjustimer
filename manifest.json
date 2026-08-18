@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "AdjusTimer",
     "description": "再生動画の再生時間を別ウィンドウで映す拡張",
-    "version": "3.6.1",
+    "version": "3.6.2",
     "content_scripts": [
       {
         "js": ["src/content/index.tsx"],
@@ -11,6 +11,7 @@
           "https://anime.dmkt-sp.jp/*",
           "https://animestore.docomo.ne.jp/*",
           "https://www.amazon.co.jp/*",
+          "https://www.primevideo.com/*",
           "https://www.youtube.com/*",
           "https://tver.jp/*",
           "https://www.nicovideo.jp/watch/*",
@@ -40,7 +41,8 @@
         ],
         "matches": [
           "https://www.netflix.com/*",
-          "https://www.amazon.co.jp/*"
+          "https://www.amazon.co.jp/*",
+          "https://www.primevideo.com/*"
         ]
       }
     ]
