@@ -4,6 +4,7 @@ import {
     REGEX_URL_DANIME,
     REGEX_URL_NETFLIX,
     REGEX_URL_NICONICO,
+    REGEX_URL_PRIME_VIDDEO,
     REGEX_URL_TVER,
     REGEX_URL_UNEXT,
     REGEX_URL_YOUTUBE,
@@ -66,11 +67,21 @@ export const getVideo = atom(
                 }
                 break;
             case REGEX_URL_AMAZON_PRIME.test(update.currentLocation.href):
-                targetVideoTitle = document.querySelector(".dv-player-fullscreen .atvwebplayersdk-title-text")
-                                    ? document.querySelector(".dv-player-fullscreen .atvwebplayersdk-title-text")?.textContent
+            case REGEX_URL_PRIME_VIDDEO.test(update.currentLocation.href):
+                targetVideoTitle = document.querySelector(".atvwebplayersdk-title-text")
+                                    ? document.querySelector(".atvwebplayersdk-title-text")?.textContent
                                     : TITLE_NOT_FOUND
-                targetVideoSubTitle = document.querySelector(".dv-player-fullscreen .atvwebplayersdk-subtitle-text")
-                                    ? document.querySelector(".dv-player-fullscreen .atvwebplayersdk-subtitle-text")?.textContent
+                // 動画ページを開いておらず、詳細ページであればタイトルだけならとってこれる
+                if (targetVideoTitle === TITLE_NOT_FOUND) {
+                    const primeVideoTitle = document.querySelector('[data-automation-id="title"]');
+                    targetVideoTitle = primeVideoTitle
+                                    ? primeVideoTitle.textContent
+                                    : document.title.match("Prime Video:")
+                                        ? document.title.replace("Prime Video: ", "")
+                                        : TITLE_NOT_FOUND;
+                }
+                targetVideoSubTitle = document.querySelector(".dv-player-fullscreen .atvwebplayersdk-episode-info")
+                                    ? document.querySelector(".dv-player-fullscreen .atvwebplayersdk-episode-info")?.textContent
                                     : ""
                 /**
                  * もしvideoAtom(更新前)とnewVideo(更新後)のタイトルとサブタイトルのどちらかが異なった場合

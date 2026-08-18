@@ -11,6 +11,7 @@ import {
     REGEX_URL_DANIME,
     REGEX_URL_NETFLIX,
     REGEX_URL_NICONICO,
+    REGEX_URL_PRIME_VIDDEO,
     REGEX_URL_TVER,
     REGEX_URL_UNEXT,
     REGEX_URL_YOUTUBE,
@@ -60,13 +61,9 @@ const VideoInfo = (): ReactElement => {
             case REGEX_URL_TVER.test(location.href):
             case REGEX_URL_NETFLIX.test(location.href):
             case REGEX_URL_UNEXT.test(location.href):
-                targetVideo = document.querySelector("video");
-                break;
             case REGEX_URL_AMAZON_PRIME.test(location.href):
-                const primeVideo = document.querySelector(".dv-player-fullscreen");
-                if (primeVideo) {
-                    targetVideo = primeVideo.querySelector("video");
-                }
+            case REGEX_URL_PRIME_VIDDEO.test(location.href):
+                targetVideo = document.querySelector("video");
                 break;
             default:
                 break;
@@ -104,7 +101,7 @@ const VideoInfo = (): ReactElement => {
         updateVideoElement();
         if (REGEX_URL_NETFLIX.test(location.href)) {
             injectScript(chrome.runtime.getURL("adjustimer-netflix-loader.js"), "body");
-        } else if (REGEX_URL_AMAZON_PRIME.test(location.href)) {
+        } else if (REGEX_URL_AMAZON_PRIME.test(location.href) || REGEX_URL_PRIME_VIDDEO.test(location.href)) {
             injectScript(chrome.runtime.getURL("adjustimer-amazon-loader.js"), "body");
         }
     }, [updateLocationSignal]);
@@ -141,26 +138,55 @@ const VideoInfo = (): ReactElement => {
     }
     /**
      *
-     * 動画の対象 videoElement が変わった際に、時間の更新 timeupdate の eventListener 登録しなおす
+     * 動画の対象 videoElement が変わった際に、時間の更新イベントを登録しなおす
      * addEventListener('timeupdate')
+     * Amazon Primeでは、挿入した再生状態要素の属性変更を監視する
      * 広告動画の判定でprogressを使う（ニコニコ対応）
      *
      */
       useEffect(() => {
         console.log("Content script: update video Element.");
-        if (videoElement) {
-            console.log("Content script: start timeupdate.")
-            document.querySelectorAll("video")?.forEach((v) => {
-                v.removeEventListener('progress', updateVideo);
-            })
-            videoElement.removeEventListener('timeupdate', updateVideo);
+        if (!videoElement) return;
 
-            document.querySelectorAll("video")?.forEach((v) => {
-                v.addEventListener('progress', updateVideo);
-            })
-            videoElement.addEventListener('timeupdate', updateVideo);
+        const isAmazonPrime = REGEX_URL_AMAZON_PRIME.test(currentLocation.href)
+            || REGEX_URL_PRIME_VIDDEO.test(currentLocation.href);
+
+        if (isAmazonPrime) {
+            const playbackStateObserver = new MutationObserver(updateVideo);
+            const observePlaybackState = (): boolean => {
+                const amazonPlaybackState = document.getElementById("adjustimer-amazon-playback-state");
+                if (!amazonPlaybackState) return false;
+
+                playbackStateObserver.observe(amazonPlaybackState, { attributes: true });
+                return true;
+            };
+
+            const playbackStateElementObserver = new MutationObserver(() => {
+                if (observePlaybackState()) {
+                    playbackStateElementObserver.disconnect();
+                }
+            });
+
+            if (!observePlaybackState()) {
+                playbackStateElementObserver.observe(document.documentElement, { childList: true, subtree: true });
+            }
+
+            return () => {
+                playbackStateObserver.disconnect();
+                playbackStateElementObserver.disconnect();
+            };
         }
-    }, [videoElement]);
+
+        console.log("Content script: start timeupdate.")
+        const videoElements = document.querySelectorAll("video");
+        videoElements.forEach((v) => v.addEventListener('progress', updateVideo));
+        videoElement.addEventListener('timeupdate', updateVideo);
+
+        return () => {
+            videoElements.forEach((v) => v.removeEventListener('progress', updateVideo));
+            videoElement.removeEventListener('timeupdate', updateVideo);
+        };
+    }, [videoElement, currentLocation]);
 
     /**
      * content script ⇐ service workerから受信部を最初に定義
@@ -196,6 +222,11 @@ const VideoInfo = (): ReactElement => {
             case ADJUSTIMER_WINDOW_UPDATE:
             case ADJUSTIMER_WINDOW_UPDATE_AD:
                 isAdjusTimer = true;
+                // Amazon Prime専用、injectしたjsをクリアさせるために、属性を付与する
+                if (document.getElementById("adjustimer-amazon-playback-state")) {
+                    const amazonPlaybackState = document.getElementById("adjustimer-amazon-playback-state");
+                    amazonPlaybackState?.setAttribute("data-reflesh", "true");
+                }
                 // videoElementを更新させ、updateVideoを発火させる
                 setUpdateFlag((updateFlag) => !updateFlag);
                 break;

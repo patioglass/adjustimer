@@ -6,13 +6,16 @@ import { useAtom } from "jotai";
 import { getCountdownDuration, getCountdownEndsAt, getCountdownRemaining, getCountdownRunning, getCurrentVideo, getCustomFont, getPort, getTimeFontSize, getTimerMode, getTitleFontSize, getTitleOffsetY, TimerMode } from "../../atom";
 
 type StopwatchInputPart = "hours" | "minutes" | "seconds";
+const RESTART_TAB_ID_KEY = "adjustimer-restart-tab-id";
 
 const NavigationItem = (): ReactElement => {
     const [ port, setPort ] = useAtom(getPort);
     const [ currentVideo, setCurrentVideo ] = useAtom(getCurrentVideo);
     const [ selectTabs, setSelectTabs ] = useState<Array<TabInfo>>();
     const [ selectItems, setSelectItems ] = useState<Array<any>>();
+    const [ selectedTabId, setSelectedTabId ] = useState<string>(() => sessionStorage.getItem(RESTART_TAB_ID_KEY) ?? "");
     const [ initLoading, setInitLoading ] = useState<boolean>(false);
+    const [ isReloading, setIsReloading ] = useState<boolean>(false);
     const [ customFont, setCustomFont] = useAtom(getCustomFont);
     const [ titleFontSize, setTitleFontSize ] = useAtom(getTitleFontSize);
     const [ timeFontSize, setTimeFontSize ] = useAtom(getTimeFontSize);
@@ -168,10 +171,16 @@ const NavigationItem = (): ReactElement => {
         if (updateSelectTabs && updateSelectTabs.length > 0) {
             // 最初開いた画面の初期選択状態のものをservice workerに送信
             if (!initLoading) {
+                const restartTabId = sessionStorage.getItem(RESTART_TAB_ID_KEY);
+                const initialTabId = restartTabId && updateSelectTabs.some((item) => String(item.key) === restartTabId)
+                    ? restartTabId
+                    : String(updateSelectTabs[0].key);
                 port.postMessage({
                     action: ADJUSTIMER_WINDOW_SET_TAB_ID,
-                    tabId: updateSelectTabs[0].key
+                    tabId: initialTabId
                 });
+                setSelectedTabId(initialTabId);
+                sessionStorage.removeItem(RESTART_TAB_ID_KEY);
                 setInitLoading(true);
             }
             setSelectItems(updateSelectTabs);
@@ -180,7 +189,9 @@ const NavigationItem = (): ReactElement => {
         }
     }, [selectTabs])
 
-    const handleChangeUrl = () => {}
+    const handleChangeUrl = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedTabId(event.target.value);
+    }
 
     /**
      * 「情報を取得する」を押したら、情報の更新をservice workerに伝える
@@ -201,6 +212,41 @@ const NavigationItem = (): ReactElement => {
             }
         }
     }
+
+    /**
+     * 選択中のタブを再読み込みし、Content Scriptの再起動後に情報を再取得する
+     */
+    const handleClickReload = () => {
+        const currentSelector: HTMLSelectElement | null = document.querySelector("select option:checked");
+        if (!currentSelector || currentSelector.value === "0" || isReloading) return;
+
+        const tabId = Number(currentSelector.value);
+        if (!Number.isInteger(tabId)) return;
+
+        setIsReloading(true);
+        port.postMessage({
+            action: ADJUSTIMER_WINDOW_SET_TAB_ID,
+            tabId: currentSelector.value
+        });
+
+        const handleReloaded = (updatedTabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
+            if (updatedTabId !== tabId || changeInfo.status !== "complete") return;
+
+            chrome.tabs.onUpdated.removeListener(handleReloaded);
+            port.postMessage({
+                action: ADJUSTIMER_WINDOW_UPDATE,
+                tabId: currentSelector.value
+            });
+            sessionStorage.setItem(RESTART_TAB_ID_KEY, currentSelector.value);
+            window.location.reload();
+        };
+
+        chrome.tabs.onUpdated.addListener(handleReloaded);
+        chrome.tabs.reload(tabId).catch(() => {
+            chrome.tabs.onUpdated.removeListener(handleReloaded);
+            setIsReloading(false);
+        });
+    };
 
     return (
         <div className="
@@ -232,6 +278,7 @@ const NavigationItem = (): ReactElement => {
                     dark:text-white
                     dark:focus:ring-blue-500
                     dark:focus:border-blue-500"
+                    value={selectedTabId}
                     onChange={handleChangeUrl}
                 >
                     {selectItems}
@@ -247,24 +294,37 @@ const NavigationItem = (): ReactElement => {
                 </p>
             </div>
 
-            <div className="
-                text-lg
-                cursor-pointer
-                text-white
-                font-extrabold
-                rounded-lg
-                bg-orange-500
-                px-25 py-3
-                mt-3
-                transition-all
-                duration-300
-                hover:bg-orange-400
-                hover:ring-2
-                hover:ring-orange-400
-                hover:ring-offset-2"
-                onClick={handleClickUpdate}
-            >
-                情報を取得する
+            <div className="mt-3 flex w-85 gap-2">
+                <button
+                    type="button"
+                    className="flex-1 cursor-pointer rounded-lg bg-orange-500 px-4 py-3 text-lg font-extrabold text-white transition-all duration-300 hover:bg-orange-400 hover:ring-2 hover:ring-orange-400 hover:ring-offset-2"
+                    onClick={handleClickUpdate}
+                >
+                    情報を取得する
+                </button>
+                <button
+                    type="button"
+                    className="flex size-13 cursor-pointer items-center justify-center rounded-lg bg-red-500 text-white transition-all duration-300 hover:bg-red-400 hover:ring-2 hover:ring-red-400 hover:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+                    onClick={handleClickReload}
+                    disabled={isReloading}
+                    title="ページを更新してAdjusTimerを再起動"
+                    aria-label="ページを更新してAdjusTimerを再起動"
+                >
+                    <svg
+                        className={`size-6 ${isReloading ? "animate-spin" : ""}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5" />
+                        <path d="M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5" />
+                    </svg>
+                </button>
             </div>
                 </div>
             </div>
@@ -272,13 +332,7 @@ const NavigationItem = (): ReactElement => {
             <div className="mt-3 text-left">
                 <p className="text-xl font-bold">【- 設定の変更 -】</p>
                 <div className="relative mt-5 w-85 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left shadow-sm">
-                    <div className="absolute -top-5 left-3 flex flex-col items-start">
-                        <span className="rounded-md bg-rose-500 px-2 py-1 text-[10px] font-extrabold tracking-wide text-white shadow-sm">
-                            新機能
-                        </span>
-                        <span className="ml-3 h-0 w-0 border-x-4 border-t-4 border-x-transparent border-t-rose-500"></span>
-                    </div>
-                    <p className="mb-2 text-xs font-extrabold text-slate-600">タイマーモード</p>
+                    <p className="mb-2 text-xs font-extrabold text-slate-600">モード切り替え</p>
                     <div className="grid grid-cols-2 rounded-lg bg-slate-200 p-1">
                         <button
                             type="button"

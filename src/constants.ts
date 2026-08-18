@@ -45,6 +45,7 @@ export const MODE_UPDATE_TO_CONTENT_SCRIPT: string = 'MODE_UPDATE_TO_CONTENT_SCR
 
 export const REGEX_URL_DANIME = new RegExp("https://animestore.docomo.ne.jp/animestore/sc_d_pc=*");
 export const REGEX_URL_AMAZON_PRIME = new RegExp("^https:\/\/www\.amazon\.co\.jp\/(gp\/video|[^\/]+\/dp)\/.*");
+export const REGEX_URL_PRIME_VIDDEO = new RegExp("^https:\/\/www\.primevideo\.com\/(region\/fe|detail)\/.*");
 export const REGEX_URL_YOUTUBE = new RegExp("https://www.youtube.com/(watch|live)/*");
 export const REGEX_URL_NICONICO = new RegExp("https://www.nicovideo.jp/watch/*");
 export const REGEX_URL_TVER = new RegExp("https://tver.jp/episodes/*");
@@ -83,6 +84,7 @@ export const isTargetUrl = (url: string | undefined) => {
     switch(true) {
         case REGEX_URL_DANIME.test(url):
         case REGEX_URL_AMAZON_PRIME.test(url):
+        case REGEX_URL_PRIME_VIDDEO.test(url):
         case REGEX_URL_YOUTUBE.test(url):
         case REGEX_URL_NICONICO.test(url):
         case REGEX_URL_TVER.test(url):
