@@ -8,6 +8,8 @@ const INTERVAL_TIME = 300;
 
   const STATE_ELEMENT_ID = "adjustimer-amazon-playback-state";
   let cachedContexts = null;
+  let currentUrl = location.href;
+  let playerChanged = false;
 
   const getFiber = (element) => {
     if (!element) return null;
@@ -47,11 +49,19 @@ const INTERVAL_TIME = 300;
   const getPositionMs = (contexts) => {
     const timelinePosition = Number(contexts?.timeline?.timelineInfo?.positionMs);
     // ReactのuseStateの値の参照なので、前の情報を取得することになるため、＋INTERVAL_TIME秒 する
-    console.log(timelinePosition)
-    return Number.isFinite(timelinePosition) ? timelinePosition + INTERVAL_TIME : null;
+    return Number.isFinite(timelinePosition) ? timelinePosition + INTERVAL_TIME + 200 : null;
   };
 
   const update = () => {
+
+    const dataRefresh = document.getElementById(STATE_ELEMENT_ID)?.getAttribute("data-reflesh") === "true";
+    if (playerChanged || dataRefresh) {
+      cachedContexts = null;
+      playerChanged = false;
+      document.getElementById(STATE_ELEMENT_ID)?.setAttribute("data-reflesh", "false");
+      console.log("Content Script: inject script playerChanged cache clear.");
+    }
+
     let positionMs = getPositionMs(cachedContexts);
     if (positionMs === null) {
       cachedContexts = findContexts();
@@ -79,15 +89,16 @@ const INTERVAL_TIME = 300;
   };
 
   new MutationObserver((mutations) => {
-    const playerChanged = mutations.some((mutation) =>
+    const locationChanged = currentUrl !== location.href;
+    const playerElementChanged = mutations.some((mutation) =>
       [...mutation.addedNodes, ...mutation.removedNodes].some((node) =>
         node instanceof Element && (node.matches("video, .webPlayerSDKContainer, .webPlayerUIContainer")
           || Boolean(node.querySelector("video, .webPlayerSDKContainer, .webPlayerUIContainer")))
       )
     );
-    if (playerChanged) {
-      cachedContexts = null;
-      console.log("Content Script: inject script playerChanged cache clear.");
+    if (locationChanged || playerElementChanged) {
+      currentUrl = location.href;
+      playerChanged = true;
       update();
     }
   }).observe(document.documentElement, { childList: true, subtree: true });
